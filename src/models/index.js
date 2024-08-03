@@ -1,0 +1,19 @@
+module.exports.DisposableEmailModel = require('./disposableEmailDomains.model');
+module.exports.AdminModel = require('./admin.model');
+module.exports.AdminRoles = require('./adminRoles.model');
+module.exports.ContactUsModel = require('./contactUs.model');
+module.exports.FAQModel = require('./faq.model');
+module.exports.Token = require('./token.model');
+module.exports.UserModel = require('./user.model');
+module.exports.ReviewModel = require('./review.model');
+module.exports.RoleBaseAccessModel = require('./roleBaseAccess.model');
+module.exports.UserTicket = require('./ticket.model');
+module.exports.UserSubscriptionModel = require('./userSubscription.model');
+module.exports.TransactionModel = require('./transaction.model');
+
+module.exports.MatchesModel = require('./matches.model');
+module.exports.SeriesModel = require('./series.model');
+module.exports.NewsModel = require('./news.model');
+module.exports.PlayerModel = require('./player.model');
+module.exports.TeamsModel = require('./team.model');
+module.exports.VenuesModel = require('./venue.model');
