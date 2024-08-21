@@ -22,6 +22,7 @@ async function login() {
 async function fetchDataWithToken() {
     try {
         const requestBody = { "limit": 50, "pageno": 1, "sport_id": 4, "series_id": 0, "type": "home" }
+        console.log("🚀 ~ file: cricketOodCronJob.js:25 ~ fetchDataWithToken ~ requestBody:", requestBody)
         // Get the stored token from the database
         let tokenDoc = await Token.findOne({ type: 'bigbetexchange' });
         let token = tokenDoc ? tokenDoc.token : null;
