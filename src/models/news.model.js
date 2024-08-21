@@ -5,13 +5,13 @@ const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const NewsSchema = mongoose.Schema({
-    news_id: { type: Number, required: true, unique: true },
+    news_id: { type: Number, required: true },
     series_id: Number,
-    title: { type: String, required: true },
-    description: { type: String, required: true },
-    image: { type: String, required: true },
-    pub_date: { type: String, required: true },
-    content: { type: [String], required: true },
+    title: { type: String },
+    description: { type: String },
+    image: { type: String },
+    pub_date: { type: String },
+    content: { type: [String] },
     is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin
     is_delete: { type: Number, default: 1 }, //0 is delete, 1 is Active this is for Admin
 },

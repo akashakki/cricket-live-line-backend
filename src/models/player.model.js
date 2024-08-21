@@ -41,7 +41,7 @@ const CareerStatsSchema = new mongoose.Schema({
   }, { _id: false });
 
 const PlayerSchema = mongoose.Schema({
-    player_id: { type: String, required: true, unique: true },
+    player_id: { type: String, required: true },
     name: { type: String, required: true },
     play_role: { type: String },
     image: { type: String },

@@ -11,6 +11,11 @@ module.exports.UserTicket = require('./ticket.model');
 module.exports.UserSubscriptionModel = require('./userSubscription.model');
 module.exports.TransactionModel = require('./transaction.model');
 
+module.exports.OodSeriesModel = require('./oodSeriesList.model');
+
+module.exports.MatchesRunnerModel = require('./runner.model');
+module.exports.MatchesSessionModel = require('./oodMatchSession.model');
+
 module.exports.MatchesModel = require('./matches.model');
 module.exports.SeriesModel = require('./series.model');
 module.exports.NewsModel = require('./news.model');

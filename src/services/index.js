@@ -11,6 +11,9 @@ module.exports.FAQService = require('./faq.service');
 module.exports.ReviewService = require('./review.service');
 
 
+module.exports.OodSeriesService = require('./oodSeries.service');
+
+
 module.exports.SeriesService = require('./series.service');
 module.exports.NewsService = require('./news.service');
 module.exports.PlayerService = require('./player.service');

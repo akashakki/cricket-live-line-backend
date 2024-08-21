@@ -8,6 +8,12 @@ const create = catchAsync(async (req, res) => {
     res.send(industry);
 });
 
+const getHomeLists = catchAsync(async (req, res) => {
+    console.log('==============HOME LIST==========')
+    const result = await MatchService.queriesForHomeList();
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
 const getLists = catchAsync(async (req, res) => {
     const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status']);
     const result = await MatchService.queries(options);
@@ -43,6 +49,7 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 
 module.exports = {
     create,
+    getHomeLists,
     getLists,
     getById,
     updateById,

@@ -13,6 +13,9 @@ const userTicketRoute = require('./ticket.route');
 const ContactUsRoute = require('./contactUs.route');
 const FAQRoute = require('./faq.route');
 
+const OodSeriesRoute = require('./oodSeries.route');
+
+const HomePageRoute = require('./homePage.route');
 const SeriesRoute = require('./series.route');
 const NewsRoute = require('./news.route');
 const PlayerRoute = require('./player.route');
@@ -37,6 +40,10 @@ const defaultRoutes = [
   { path: '/contact-us', route: ContactUsRoute },
   { path: '/faq', route: FAQRoute },
   
+  { path: '/ood-series', route: OodSeriesRoute },
+
+
+  { path: '/homeList', route: HomePageRoute },
   { path: '/series', route: SeriesRoute },
   { path: '/news', route: NewsRoute },
   { path: '/player', route: PlayerRoute },

@@ -1,5 +1,6 @@
 const { MatchesModel } = require('../models');
 const CONSTANT = require('../config/constant');
+const { options } = require('joi');
 
 /**
  * Create a Record
@@ -16,6 +17,135 @@ const create = async (requestBody) => {
     const data = await MatchesModel.create(requestBody);
     return { data: data, code: 200, message: CONSTANT.CREATED };
 };
+
+/**
+ * Query For Home Page Match List
+ * @returns {Promise<QueryResult>}
+ */
+const queriesForHomeList = async (options) => {
+    try {
+        const currentDate = new Date();
+        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+
+        const query = [
+            // Stage 1: Separate live matches
+            {
+                $match: {
+                    match_status: "Live"
+                }
+            },
+            {
+                $sort: { "date_wise": 1 } // Sort live matches by date
+            },
+            {
+                $unionWith: {
+                    coll: "matches",
+                    pipeline: [
+                        // Stage 2: Upcoming matches for the next 4 days
+                        {
+                            $match: {
+                                match_status: "Upcoming",
+                                $expr: {
+                                    $and: [
+                                        { $gte: [{ $dateFromString: { dateString: "$date_wise" } }, currentDate] },
+                                        { $lt: [{ $dateFromString: { dateString: "$date_wise" } }, new Date(currentDate.getTime() + 4 * 24 * 60 * 60 * 1000)] }
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            $sort: { "date_wise": 1 } // Sort upcoming matches by date
+                        },
+                        {
+                            $unionWith: {
+                                coll: "matches",
+                                pipeline: [
+                                    // Stage 3: Finished matches from the previous 1 day
+                                    {
+                                        $match: {
+                                            match_status: "Finished",
+                                            $expr: {
+                                                $and: [
+                                                    { $gte: [{ $dateFromString: { dateString: "$date_wise" } }, new Date(currentDate.getTime() - 24 * 60 * 60 * 1000)] },
+                                                    { $lt: [{ $dateFromString: { dateString: "$date_wise" } }, currentDate] }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    {
+                                        $sort: { "date_wise": 1 } // Sort finished matches by date
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                $sort: { "date_wise": 1 } // Final sort by date
+            },
+            {
+                $limit: 20 // Limit the result to 20 records
+            },
+            {
+                $project: {
+                    date_wise: 1,
+                    match_date: 1,
+                    _id: 0, // Exclude _id field if not needed
+                    "squad": 1,
+                    "match_id": 1,
+                    "forms": 1,
+                    "head_to_head": 1,
+                    "is_hundred": 1,
+                    "man_of_match": 1,
+                    "man_of_match_player": 1,
+                    "match_date": 1,
+                    "match_time": 1,
+                    "match_type": 1,
+                    "matchs": 1,
+                    "pace_spin": 1,
+                    "place": 1,
+                    "referee": 1,
+                    "result": 1,
+                    "series": 1,
+                    "series_id": 407,
+                    "series_type": 1,
+                    "team_a": 1,
+                    "team_a_id": 16,
+                    "team_a_img": 1,
+                    "team_a_short": 1,
+                    "team_b": 1,
+                    "team_b_id": 1,
+                    "team_b_img": 1,
+                    "team_b_short": 1,
+                    "team_comparison": 1,
+                    "third_umpire": 1,
+                    "toss": 1,
+                    "toss_comparison": 1,
+                    "umpire": 1,
+                    "venue": 1,
+                    "venue_id": 1,
+                    "venue_weather": 1,
+                    "weather": 1,
+                    "match_status": 1
+                }
+            }
+        ];
+
+        const data = await MatchesModel.aggregate(query);
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching matches:", error);
+        throw new Error("Error fetching match data");
+    }
+};
+
+
+
+
+
 
 /**
  * Query for Record
@@ -128,6 +258,7 @@ const getListWithoutPagination = async (options) => {
 
 module.exports = {
     create,
+    queriesForHomeList,
     queries,
     getById,
     updateById,

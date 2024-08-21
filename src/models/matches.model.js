@@ -55,6 +55,7 @@ const PlayerSchema = new mongoose.Schema({
     match_id: { type: Number, required: true, unique: true },
     series_id: { type: Number, required: true },
     series: { type: String, default: "" },
+    date_wise: String,
     match_date: { type: String, default: "" },
     match_time: { type: String, default: "" },
     matchs: { type: String, default: "" },

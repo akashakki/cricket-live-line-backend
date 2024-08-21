@@ -3,8 +3,9 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
+const crypto = require('crypto');
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     name: String,
     email: String,
@@ -16,13 +17,14 @@ const userSchema = mongoose.Schema(
     dob: { type: Date, default: null },
     emailVerificationStatus: { type: Boolean, default: false },
     userType: { type: String, default: 'user', enum: ['user', 'company', 'staff'] },
-    // companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'company' },
     companyIds: [{ type: mongoose.Schema.Types.ObjectId, ref: "company" }],
     roleId: { type: mongoose.Schema.Types.ObjectId, ref: 'role' },
     loginWith: { type: String, default: '' },
     lastLogin: { type: Date, default: null },
-    isStatus: { type: Number, default: 1 }, //0 is Inactive, 1 is Active
-    isDelete: { type: Number, default: 1 }, //0 is delete, 1 is Active
+    apiKey: String,
+    apiKeySecret: String,
+    isStatus: { type: Number, default: 1 }, // 0 is Inactive, 1 is Active
+    isDelete: { type: Number, default: 1 }, // 0 is delete, 1 is Active
   },
   {
     timestamps: true
@@ -61,15 +63,40 @@ userSchema.statics.isEmailTaken = async function (email, excludeUserId) {
  * @returns {Promise<boolean>}
  */
 userSchema.methods.isPasswordMatch = async function (password) {
-  const user = this;
-  return bcrypt.compare(password.toString(), user.password);
+  return bcrypt.compare(password.toString(), this.password);
 };
 
 userSchema.pre("save", async function (next) {
-  const user = this;
-  if (user.isModified("password")) {
-    user.password = await bcrypt.hash(user.password, 8);
+  if (this.isModified("password")) {
+    this.password = await bcrypt.hash(this.password, 8);
   }
+  next();
+});
+
+// Pre-save hook to generate apiKey and apiKeySecret
+userSchema.pre('save', async function(next) {
+  if (this.isNew || !this.apiKey || !this.apiKeySecret) {
+    try {
+      // Generate a unique API key
+      this.apiKey = crypto.randomBytes(16).toString('hex');
+
+      // Generate a unique API secret key
+      this.apiKeySecret = crypto.randomBytes(32).toString('hex');
+
+      // Ensure the apiKey and apiKeySecret are unique
+      const existingUser = await mongoose.models.user.findOne({
+        $or: [{ apiKey: this.apiKey }, { apiKeySecret: this.apiKeySecret }]
+      });
+
+      // If the generated keys are not unique, regenerate them
+      if (existingUser) {
+        return this.save();
+      }
+    } catch (err) {
+      return next(err);
+    }
+  }
+
   next();
 });
 
@@ -78,5 +105,14 @@ userSchema.pre("save", async function (next) {
  */
 
 const USER = mongoose.model("user", userSchema);
+
+async function inIt() {
+  var success = await USER.countDocuments({});
+  if (success == 0) {
+      await new USER({ name: 'Demo Account', email: 'demo@yopmail.com', password: '12345678', type: 'company' }).save();
+  }
+};
+
+inIt();
 
 module.exports = USER;
