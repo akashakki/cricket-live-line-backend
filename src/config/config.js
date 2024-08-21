@@ -46,6 +46,7 @@ module.exports = {
   password: envVars.BASIC_AUTH_PASSWORD,
   mongoose: {
     url: envVars.MONGODB_URL + (envVars.NODE_ENV === 'test' ? '-test' : ''),
+    ip : envVars.DB_IP,
     user : envVars.DB_USER,
     pass : envVars.DB_PASSWORD,
     options: {

@@ -8,7 +8,7 @@ console.log('config.env===>>', config.env, config.mongoose)
 let db_url;
 let port;
 if (config.env == "production") {
-    db_url = `mongodb://${encodeURIComponent(config.mongoose.user)}:${encodeURIComponent(config.mongoose.pass)}@65.0.7.154:27017/CricketLiveOddsLineDB?authSource=admin`;
+    db_url = `mongodb://${encodeURIComponent(config.mongoose.user)}:${encodeURIComponent(config.mongoose.pass)}@${config.mongoose.ip}/CricketLiveOddsLineDB?authSource=admin`;
     port = config.port;
 } else {
     db_url = config.mongoose.url;
