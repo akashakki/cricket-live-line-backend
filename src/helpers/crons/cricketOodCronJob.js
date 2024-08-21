@@ -131,5 +131,8 @@ cron.schedule('*/0.5 * * * * *', async ()=>{
 });
 
 // Run once on start
-fetchDataWithToken();
+// fetchDataWithToken();
 // fetchSessionDataAndSave("33469872")
+setTimeout(() => {
+    fetchDataWithToken();
+}, 10000);
