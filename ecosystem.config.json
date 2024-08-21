@@ -1,7 +1,7 @@
 {
   "apps": [
     {
-      "name": "discoverDayz",
+      "name": "Crichamp",
       "script": "src/index.js",
       "instances": 1,
       "autorestart": true,
