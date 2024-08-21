@@ -57,6 +57,7 @@ if (config.env === 'production') {
 
 // v1 api routes
 app.use('/v1', routes);
+app.use('/v4', routes);
 
 // upload folder route
 app.use('/uploads', express.static('uploads'));

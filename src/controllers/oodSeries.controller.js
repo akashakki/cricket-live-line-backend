@@ -14,6 +14,14 @@ const getLists = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getSeriesList = catchAsync(async (req, res) => {
+    const data = await OodSeriesService.getSeriesList();
+    if (!data) {
+        res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
+    }
+    res.send({ data: data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
+});
+
 const getByMatchId = catchAsync(async (req, res) => {
     const data = await OodSeriesService.getByMatchId(req.params.match_id);
     if (!data) {
@@ -61,6 +69,7 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 module.exports = {
     create,
     getLists,
+    getSeriesList,
     getById,
     getByMatchId,
     getSessionByMatchId,

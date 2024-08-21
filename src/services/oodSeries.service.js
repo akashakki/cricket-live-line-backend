@@ -47,9 +47,9 @@ const queries = async (options) => {
         })
     }
     // const data = await OodSeriesModel.paginate(condition, options);
-    const InplayMatches = await OodSeriesModel.find({matchType: 'Inplay', is_delete: 1})
-    const UpCommingMatches = await OodSeriesModel.find({matchType: 'Upcoming', is_delete: 1})
-    return {InplayMatches, UpCommingMatches};
+    const InplayMatches = await OodSeriesModel.find({ matchType: 'Inplay', is_delete: 1 })
+    const UpCommingMatches = await OodSeriesModel.find({ matchType: 'Upcoming', is_delete: 1 })
+    return { InplayMatches, UpCommingMatches };
 };
 
 /**
@@ -67,18 +67,28 @@ const getById = async (id) => {
  * @param {ObjectId} id
  * @returns {Promise<Record>}
  */
+const getSeriesList = async (id) => {
+    var data = await MatchesRunnerModel.find({}).select('series_id seriesName sport_id')
+    return data;
+};
+
+/**
+ * Get Record by id
+ * @param {ObjectId} id
+ * @returns {Promise<Record>}
+ */
 const getByMatchId = async (id) => {
-    var data = await MatchesRunnerModel.findOne({matchId: id})
+    var data = await MatchesRunnerModel.findOne({ matchId: id })
     return data;
 };
 
 const getSessionByMatchId = async (id) => {
-    var data = await MatchesSessionModel.findOne({match_id: id})
+    var data = await MatchesSessionModel.findOne({ match_id: id })
     return data;
 };
 
 const getMatchSessionByMatchId = async (id) => {
-    var data = await MatchesSessionModel.find({match_id: id})
+    var data = await MatchesSessionModel.find({ match_id: id })
     return data;
 };
 
@@ -151,6 +161,7 @@ module.exports = {
     create,
     queries,
     getById,
+    getSeriesList,
     getByMatchId,
     getSessionByMatchId,
     getMatchSessionByMatchId,

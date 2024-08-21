@@ -11,6 +11,10 @@ router
     .get(validateRequest('gets'), validate(playerValidation.getList), OodSeriesController.getLists);
 
 router
+    .route('/series-list')
+    .get(validateRequest('get'), OodSeriesController.getSeriesList)
+
+router
     .route('/match-session/:match_id')
     .get(validateRequest('get'), OodSeriesController.getSessionByMatchId)
 
