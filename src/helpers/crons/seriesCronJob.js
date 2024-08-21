@@ -144,4 +144,4 @@ cron.schedule('0 0 * * *', async () => {
     console.log('Running a job at 00:00 at midnight');
     fetchSeriesList()
 });
-fetchSeriesList()
+// fetchSeriesList()
