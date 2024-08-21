@@ -13,7 +13,7 @@ const userTicketRoute = require('./ticket.route');
 const ContactUsRoute = require('./contactUs.route');
 const FAQRoute = require('./faq.route');
 
-const OodSeriesRoute = require('./oodSeries.route');
+const OddSeriesRoute = require('./oodSeries.route');
 
 const HomePageRoute = require('./homePage.route');
 const SeriesRoute = require('./series.route');
@@ -40,7 +40,7 @@ const defaultRoutes = [
   { path: '/contact-us', route: ContactUsRoute },
   { path: '/faq', route: FAQRoute },
   
-  { path: '/ood-series', route: OodSeriesRoute },
+  { path: '/odds-series', route: OddSeriesRoute },
 
 
   { path: '/homeList', route: HomePageRoute },

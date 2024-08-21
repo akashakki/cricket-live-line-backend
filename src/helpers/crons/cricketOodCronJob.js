@@ -108,7 +108,7 @@ async function fetchSessionDataAndSave(m_id) {
 }
 
 async function fetchMatches(){
-    const fetchInpaySeries = await OodSeriesModel.find({matchType: 'Inplay'});
+    const fetchInpaySeries = await OodSeriesModel.find({});
     // console.log("🚀 ~ file: cricketOodCronJob.js:98 ~ cron.schedule ~ fetchInpaySeries:", fetchInpaySeries)
     for (const element of fetchInpaySeries) {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
@@ -124,11 +124,11 @@ cron.schedule('0 */2 * * *', () => {
 });
 
 // Cron job to run every half second
-// cron.schedule('*/0.5 * * * * *', async ()=>{
-// // cron.schedule('* * * * * *', async ()=>{
-//     console.log('Running cron job...every half second');
-//     fetchMatches();
-// });
+cron.schedule('*/0.5 * * * * *', async ()=>{
+// cron.schedule('* * * * * *', async ()=>{
+    console.log('Running cron job...every half second');
+    fetchMatches();
+});
 
 // Run once on start
 // fetchDataWithToken();
