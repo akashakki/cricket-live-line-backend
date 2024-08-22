@@ -18,6 +18,7 @@ const getList = {
     query: Joi.object().keys({
         sortBy: Joi.string(),
         searchBy: Joi.string().allow('').allow(null),
+        series_id: Joi.string().allow('').allow(null),
         status: Joi.string().allow('').allow(null),
         limit: Joi.number().integer(),
         page: Joi.number().integer(),

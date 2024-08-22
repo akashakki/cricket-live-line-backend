@@ -27,28 +27,43 @@ const create = async (requestBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queries = async (options) => {
-    var condition = { $and: [{ is_delete: 1, InplayStatus: 'OPEN' }] };
+    var condition = { $and: [{ is_delete: 1 }] };
+
+    // Search condition
     if (options.searchBy && options.searchBy != 'undefined') {
         var searchBy = {
             $regex: ".*" + options.searchBy + ".*",
-            $options: "si"
+            $options: "si" // case-insensitive and dot-all
         }
         condition.$and.push({
             $or: [{
                 name: searchBy
             }]
-        })
+        });
     }
+
+    // Status condition
     if (options.status && options.status != 'undefined') {
         condition.$and.push({
             $or: [{
                 status: options.status
             }]
-        })
+        });
     }
-    // const data = await OodSeriesModel.paginate(condition, options);
-    const InplayMatches = await OodSeriesModel.find({ matchType: 'Inplay', is_delete: 1 })
-    const UpCommingMatches = await OodSeriesModel.find({ matchType: 'Upcoming', is_delete: 1 })
+
+    // Series ID condition
+    if (options.series_id && options.series_id != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                series_id: options.series_id
+            }]
+        });
+    }
+
+    // Retrieve matches with the condition applied
+    const InplayMatches = await OodSeriesModel.find({ ...condition, matchType: 'Inplay' });
+    const UpCommingMatches = await OodSeriesModel.find({ ...condition, matchType: 'Upcoming' });
+
     return { InplayMatches, UpCommingMatches };
 };
 
