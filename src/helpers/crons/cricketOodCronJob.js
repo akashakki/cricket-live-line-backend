@@ -107,15 +107,29 @@ async function fetchSessionDataAndSave(m_id) {
     }
 }
 
-async function fetchMatches(){
+async function fetchInplayMatches(){
     const fetchInpaySeries = await OodSeriesModel.find({matchType: 'Inplay'});
-    // console.log("🚀 ~ file: cricketOodCronJob.js:98 ~ cron.schedule ~ fetchInpaySeries:", fetchInpaySeries)
     for (const element of fetchInpaySeries) {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
         fetchSessionDataAndSave(element?.match_id);
     }
 }
+
+async function fetchUpcomingMatches(){
+    const fetchInpaySeries = await OodSeriesModel.find({matchType: 'Upcoming'});
+    for (const element of fetchInpaySeries) {
+        console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
+        fetchMatchDataAndSave(element?.match_id, element?.sport_id)
+        fetchSessionDataAndSave(element?.match_id);
+    }
+}
+
+// Schedule the fetchUpcomingMatches function to run every 30 minutes
+cron.schedule('*/30 * * * *', async () => {
+    console.log('Running fetchUpcomingMatches job every 30 minutes...');
+    await fetchUpcomingMatches();
+});
 
 // Schedule the cron job to run every 2 hours
 cron.schedule('0 */2 * * *', () => {
@@ -127,12 +141,10 @@ cron.schedule('0 */2 * * *', () => {
 // cron.schedule('*/0.5 * * * * *', async ()=>{
 cron.schedule('* * * * * *', async ()=>{
     console.log('Running cron job...every second');
-    fetchMatches();
+    fetchInplayMatches();
 });
 
 // Run once on start
-// fetchDataWithToken();
-// fetchSessionDataAndSave("33469872")
-setTimeout(() => {
-    fetchDataWithToken();
-}, 10000);
+// setTimeout(() => {
+//     fetchDataWithToken();
+// }, 10000);
