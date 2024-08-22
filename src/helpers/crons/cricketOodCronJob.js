@@ -124,15 +124,15 @@ cron.schedule('0 */2 * * *', () => {
 });
 
 // Cron job to run every half second
-cron.schedule('*/0.5 * * * * *', async ()=>{
-// cron.schedule('* * * * * *', async ()=>{
-    console.log('Running cron job...every half second');
+// cron.schedule('*/0.5 * * * * *', async ()=>{
+cron.schedule('* * * * * *', async ()=>{
+    console.log('Running cron job...every second');
     fetchMatches();
 });
 
 // Run once on start
 // fetchDataWithToken();
 // fetchSessionDataAndSave("33469872")
-// setTimeout(() => {
-//     fetchDataWithToken();
-// }, 10000);
+setTimeout(() => {
+    fetchDataWithToken();
+}, 10000);
