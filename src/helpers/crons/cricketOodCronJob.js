@@ -108,7 +108,7 @@ async function fetchSessionDataAndSave(m_id) {
 }
 
 async function fetchMatches(){
-    const fetchInpaySeries = await OodSeriesModel.find({});
+    const fetchInpaySeries = await OodSeriesModel.find({matchType: 'Inplay'});
     // console.log("🚀 ~ file: cricketOodCronJob.js:98 ~ cron.schedule ~ fetchInpaySeries:", fetchInpaySeries)
     for (const element of fetchInpaySeries) {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
