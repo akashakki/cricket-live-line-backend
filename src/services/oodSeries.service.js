@@ -83,7 +83,31 @@ const getById = async (id) => {
  * @returns {Promise<Record>}
  */
 const getSeriesList = async (id) => {
-    var data = await MatchesRunnerModel.find({}).select('series_id seriesName sport_id')
+    const data = await OodSeriesModel.aggregate([
+        {
+            $match: {
+                is_delete: 1 // Only fetch records that are not deleted
+            }
+        },
+        {
+            $group: {
+                _id: {
+                    series_id: "$series_id",
+                    seriesName: "$seriesName",
+                    sport_id: "$sport_id"
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0, // Remove the _id field from the output
+                series_id: "$_id.series_id",
+                seriesName: "$_id.seriesName",
+                sport_id: "$_id.sport_id"
+            }
+        }
+    ]);
+
     return data;
 };
 
