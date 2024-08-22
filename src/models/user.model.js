@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema(
     apiKeySecret: String,
     isStatus: { type: Number, default: 1 }, // 0 is Inactive, 1 is Active
     isDelete: { type: Number, default: 1 }, // 0 is delete, 1 is Active
+
+    // Reference to Subscription
+    subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'subscription' }
   },
   {
     timestamps: true
@@ -74,7 +77,7 @@ userSchema.pre("save", async function (next) {
 });
 
 // Pre-save hook to generate apiKey and apiKeySecret
-userSchema.pre('save', async function(next) {
+userSchema.pre('save', async function (next) {
   if (this.isNew || !this.apiKey || !this.apiKeySecret) {
     try {
       // Generate a unique API key
@@ -109,7 +112,7 @@ const USER = mongoose.model("user", userSchema);
 async function inIt() {
   var success = await USER.countDocuments({});
   if (success == 0) {
-      await new USER({ name: 'Demo Account', email: 'demo@yopmail.com', password: '12345678', type: 'company' }).save();
+    await new USER({ name: 'Demo Account', email: 'demo@yopmail.com', password: '12345678', type: 'company' }).save();
   }
 };
 

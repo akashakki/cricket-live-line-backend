@@ -176,6 +176,7 @@ const sendTicketConfirmationEmail = async (userEmail, name, ticketDetails) => {
 };
 
 module.exports = {
+    sendEmail,
     sendOtpOnMail: sendOtpOnMail,
     sendResetPasswordEmail: sendResetPasswordEmail,
     sendVerificationEmail: sendVerificationEmail,
