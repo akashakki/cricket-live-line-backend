@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const axios = require('axios');
+const config = require('../../config/config');
 const { MatchesModel, PlayerModel, VenuesModel, TeamsModel } = require('../../models');
 
 
@@ -95,7 +96,7 @@ async function fetchMatchDetails(match_id, date_wise, match_status) {
 
             // Save player details
             const players = [
-                ...(matchDetails.squad?.team_a?.player || []), 
+                ...(matchDetails.squad?.team_a?.player || []),
                 ...(matchDetails.squad?.team_b?.player || [])
             ];
 
@@ -105,7 +106,7 @@ async function fetchMatchDetails(match_id, date_wise, match_status) {
 
             // Create or update match details
             console.log("🚀 ~ file: matchCronJob.js:107 ~ fetchMatchDetails ~ matchDetails:", date_wise)
-            if(date_wise){
+            if (date_wise) {
                 matchDetails['date_wise'] = date_wise;
             }
             matchDetails['match_status'] = match_status;
@@ -118,18 +119,19 @@ async function fetchMatchDetails(match_id, date_wise, match_status) {
 
 
 
-// Schedule tasks to be run on the server.
-cron.schedule('0 0 * * *', async () => {
-    // cron.schedule('* * * * *', async () => {
-    console.log('Running a job at 00:00 at midnight');
+if (config.env == "production") {// Schedule tasks to be run on the server.
+    cron.schedule('0 0 * * *', async () => {
+        // cron.schedule('* * * * *', async () => {
+        console.log('Running a job at 00:00 at midnight');
+        fetchMatchList()
+    });
+
+    cron.schedule('0 */1 * * *', async () => {
+        // cron.schedule('* * * * *', async () => {
+        console.log('Running a job at every hour');
+        fetchLiveMatchList()
+    });
+
     fetchMatchList()
-});
-
-cron.schedule('0 */1 * * *', async () => {
-    // cron.schedule('* * * * *', async () => {
-    console.log('Running a job at every hour');
     fetchLiveMatchList()
-});
-
-// fetchMatchList()
-// fetchLiveMatchList()
+}

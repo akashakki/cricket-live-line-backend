@@ -61,6 +61,11 @@ const getById = async (id) => {
     return data;
 };
 
+const getByNewsId = async (id) => {
+    var data = await NewsModel.findOne({news_id: id})
+    return data;
+};
+
 /**
  * Update industry by id
  * @param {ObjectId} id
@@ -96,7 +101,7 @@ const deleteById = async (id) => {
 };
 
 const getListWithoutPagination = async (options) => {
-    var condition = { $and: [{ isDelete: 1 }] };
+    var condition = { $and: [{ }] };
     if (options.searchBy && options.searchBy != 'undefined') {
         var searchBy = {
             $regex: ".*" + options.searchBy + ".*",
@@ -122,9 +127,26 @@ const getListWithoutPagination = async (options) => {
         query = query.limit(options.limit);
     }
 
-    const Industry = await query.exec();
-    return Industry;
+    const Series = await query.exec();
+    return Series;
 };
+
+const getNewsBySeriesId = async (series_id) => {
+    // Base condition: filter for upcoming matches
+    var condition = { $and: [{}] };
+
+    // Check if series_id is valid
+    if (series_id && series_id !== 'undefined') {
+        condition.$and.push({
+            series_id: Number(series_id)
+        });
+    }
+
+    // Fetch matches from MongoDB without date comparison initially
+    let news = await NewsModel.find(condition);
+
+    return news;
+}
 
 module.exports = {
     create,
@@ -132,5 +154,7 @@ module.exports = {
     getById,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getNewsBySeriesId,
+    getByNewsId
 };

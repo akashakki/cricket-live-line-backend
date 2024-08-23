@@ -43,9 +43,9 @@ const defaultRoutes = [
   { path: '/odds-series', route: OddSeriesRoute },
 
 
-  { path: '/homeList', route: HomePageRoute },
+  { path: '/', route: HomePageRoute },
   { path: '/series', route: SeriesRoute },
-  { path: '/news', route: NewsRoute },
+  { path: '/admin-news', route: NewsRoute },
   { path: '/player', route: PlayerRoute },
   { path: '/team', route: TeamRoute },
   { path: '/venue', route: VenuesRoute },

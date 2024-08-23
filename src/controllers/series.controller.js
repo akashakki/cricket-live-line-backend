@@ -4,8 +4,13 @@ const { SeriesService } = require('../services');
 const CONSTANT = require('../config/constant');
 
 const create = catchAsync(async (req, res) => {
-    const industry = await SeriesService.create(req.body);
-    res.send(industry);
+    const data = await SeriesService.create(req.body);
+    res.send(data);
+});
+
+const getSeriesLists = catchAsync(async (req, res) => {
+    const result = await SeriesService.getSeriesList(req);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getLists = catchAsync(async (req, res) => {
@@ -15,16 +20,24 @@ const getLists = catchAsync(async (req, res) => {
 });
 
 const getById = catchAsync(async (req, res) => {
-    const industry = await SeriesService.getById(req.params.id);
-    if (!industry) {
+    const data = await SeriesService.getById(req.params.id);
+    if (!data) {
         res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
     }
-    res.send({ data: industry, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
+    res.send({ data: data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
+});
+
+const getBySeriesId = catchAsync(async (req, res) => {
+    const data = await SeriesService.getBySeriesId(req.params.id);
+    if (!data) {
+        res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
+    }
+    res.send({ data: data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
 });
 
 const updateById = catchAsync(async (req, res) => {
-    const industry = await SeriesService.updateById(req.params.id, req.body);
-    res.send(industry);
+    const data = await SeriesService.updateById(req.params.id, req.body);
+    res.send(data);
 });
 
 const deleteById = catchAsync(async (req, res) => {
@@ -43,8 +56,10 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 
 module.exports = {
     create,
+    getSeriesLists,
     getLists,
     getById,
+    getBySeriesId,
     updateById,
     deleteById,
     getListWithoutPagination

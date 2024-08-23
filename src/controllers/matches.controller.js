@@ -9,7 +9,6 @@ const create = catchAsync(async (req, res) => {
 });
 
 const getHomeLists = catchAsync(async (req, res) => {
-    console.log('==============HOME LIST==========')
     const result = await MatchService.queriesForHomeList();
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
@@ -47,6 +46,16 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getRecentMatchesBySeriesId = catchAsync(async (req, res)=>{
+    const result = await MatchService.getRecentMatchesBySeriesId(req.body.series_id);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+})
+
+const getUpcomingMatchesBySeriesId = catchAsync(async (req, res)=>{
+    const result = await MatchService.getUpcomingMatchesBySeriesId(req.body.series_id);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+})
+
 module.exports = {
     create,
     getHomeLists,
@@ -54,5 +63,7 @@ module.exports = {
     getById,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getRecentMatchesBySeriesId,
+    getUpcomingMatchesBySeriesId
 };

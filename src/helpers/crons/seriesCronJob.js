@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const axios = require('axios');
+const config = require('../../config/config');
 const { SeriesModel, MatchesModel, PlayerModel, VenuesModel, TeamsModel, NewsModel } = require('../../models');
 
 async function fetchSeriesList() {
@@ -125,6 +126,7 @@ const fetchSeriesDetails = async (series_id) => {
                     ...seriesDetails.upcomingMatchesBySeriesId?.data
                 ];
                 for (const match of matchs) {
+                    match['series_id'] = series_id
                     await MatchesModel.findOneAndUpdate({ match_id: match.match_id }, match, { upsert: true });
                 }
             }
@@ -138,10 +140,11 @@ const fetchSeriesDetails = async (series_id) => {
 };
 
 
-// Schedule tasks to be run on the server.
-cron.schedule('0 0 * * *', async () => {
-    // cron.schedule('* * * * *', async () => {
-    console.log('Running a job at 00:00 at midnight');
-    fetchSeriesList()
-});
-// fetchSeriesList()
+if (config.env == "production") {// Schedule tasks to be run on the server.
+    cron.schedule('0 0 * * *', async () => {
+        // cron.schedule('* * * * *', async () => {
+        console.log('Running a job at 00:00 at midnight');
+        fetchSeriesList()
+    });
+    // fetchSeriesList()
+}

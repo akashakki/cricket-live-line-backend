@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const axios = require('axios');
+const config = require('../../config/config');
 const { Token, OodSeriesModel, MatchesRunnerModel, MatchesSessionModel } = require('../../models'); // Import the token model
 const API_BASE_URL = 'https://bigbetexchange.com/api/v5';
 
@@ -100,15 +101,15 @@ async function fetchSessionDataAndSave(m_id) {
         console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchSessionDataAndSave ~ m_id:", m_id)
         for (const sessions of matchData) {
             sessions['match_id'] = m_id;
-            await MatchesSessionModel.findOneAndUpdate({ match_id: m_id, SelectionId:sessions?.SelectionId }, sessions, { upsert: true, new: true });
+            await MatchesSessionModel.findOneAndUpdate({ match_id: m_id, SelectionId: sessions?.SelectionId }, sessions, { upsert: true, new: true });
         }
     } catch (error) {
         console.error('Error fetching or saving data:', error);
     }
 }
 
-async function fetchInplayMatches(){
-    const fetchInpaySeries = await OodSeriesModel.find({matchType: 'Inplay'});
+async function fetchInplayMatches() {
+    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Inplay' });
     for (const element of fetchInpaySeries) {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
@@ -116,8 +117,8 @@ async function fetchInplayMatches(){
     }
 }
 
-async function fetchUpcomingMatches(){
-    const fetchInpaySeries = await OodSeriesModel.find({matchType: 'Upcoming'});
+async function fetchUpcomingMatches() {
+    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Upcoming' });
     for (const element of fetchInpaySeries) {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
@@ -131,18 +132,21 @@ cron.schedule('*/30 * * * *', async () => {
     await fetchUpcomingMatches();
 });
 
-// Schedule the cron job to run every 2 hours
-cron.schedule('0 */2 * * *', () => {
-    console.log('Running cron job...');
-    fetchDataWithToken();
-});
+console.log("🚀 ~ file: cricketOodCronJob.js:136 ~ config.env:", config.env)
+if (config.env == "production") {
+    // Schedule the cron job to run every 2 hours
+    cron.schedule('0 */2 * * *', () => {
+        console.log('Running cron job...');
+        fetchDataWithToken();
+    });
 
-// Cron job to run every half second
-// cron.schedule('*/0.5 * * * * *', async ()=>{
-cron.schedule('* * * * * *', async ()=>{
-    console.log('Running cron job...every second');
-    fetchInplayMatches();
-});
+    // Cron job to run every half second
+    // cron.schedule('*/0.5 * * * * *', async ()=>{
+    cron.schedule('* * * * * *', async () => {
+        console.log('Running cron job...every second');
+        fetchInplayMatches();
+    });
+}
 
 // Run once on start
 // setTimeout(() => {

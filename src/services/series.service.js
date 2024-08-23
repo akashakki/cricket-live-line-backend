@@ -17,6 +17,11 @@ const create = async (requestBody) => {
     return { data: data, code: 200, message: CONSTANT.CREATED };
 };
 
+const getSeriesList = async () => {
+    var data = await SeriesModel.find({})
+    return data;
+};
+
 /**
  * Query for Record
  * @param {Object} options - Query options
@@ -58,6 +63,16 @@ const queries = async (options) => {
  */
 const getById = async (id) => {
     var data = await SeriesModel.findById(id)
+    return data;
+};
+
+/**
+ * Get Record by Series_id
+ * @param {ObjectId} id
+ * @returns {Promise<Record>}
+ */
+const getBySeriesId = async (id) => {
+    var data = await SeriesModel.findOne({ series_id: id })
     return data;
 };
 
@@ -129,7 +144,9 @@ const getListWithoutPagination = async (options) => {
 module.exports = {
     create,
     queries,
+    getSeriesList,
     getById,
+    getBySeriesId,
     updateById,
     deleteById,
     getListWithoutPagination

@@ -4,8 +4,8 @@ const { NewsService } = require('../services');
 const CONSTANT = require('../config/constant');
 
 const create = catchAsync(async (req, res) => {
-    const industry = await NewsService.create(req.body);
-    res.send(industry);
+    const data = await NewsService.create(req.body);
+    res.send(data);
 });
 
 const getLists = catchAsync(async (req, res) => {
@@ -15,16 +15,24 @@ const getLists = catchAsync(async (req, res) => {
 });
 
 const getById = catchAsync(async (req, res) => {
-    const industry = await NewsService.getById(req.params.id);
+    const data = await NewsService.getById(req.params.id);
     if (!industry) {
         res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
     }
     res.send({ data: industry, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
 });
 
+const getByNewsId = catchAsync(async (req, res) => {
+    const data = await NewsService.getByNewsId(req.body.news_id);
+    if (!data) {
+        res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
+    }
+    res.send({ data: data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
+});
+
 const updateById = catchAsync(async (req, res) => {
-    const industry = await NewsService.updateById(req.params.id, req.body);
-    res.send(industry);
+    const data = await NewsService.updateById(req.params.id, req.body);
+    res.send(data);
 });
 
 const deleteById = catchAsync(async (req, res) => {
@@ -41,11 +49,18 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getNewsBySeriesId = catchAsync(async (req, res) => {
+    const result = await NewsService.getNewsBySeriesId(req.body?.series_id);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
 module.exports = {
     create,
     getLists,
     getById,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getNewsBySeriesId,
+    getByNewsId
 };

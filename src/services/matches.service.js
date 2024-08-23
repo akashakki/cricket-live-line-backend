@@ -1,6 +1,7 @@
 const { MatchesModel } = require('../models');
 const CONSTANT = require('../config/constant');
-const { options } = require('joi');
+// const { options } = require('joi');
+const moment = require('moment');
 
 /**
  * Create a Record
@@ -142,11 +143,6 @@ const queriesForHomeList = async (options) => {
     }
 };
 
-
-
-
-
-
 /**
  * Query for Record
  * @param {Object} options - Query options
@@ -256,6 +252,64 @@ const getListWithoutPagination = async (options) => {
     return Industry;
 };
 
+const getRecentMatchesBySeriesId = async (series_id) => {
+    const today = moment().startOf('day'); // Get today's date
+
+    var condition = { $and: [{ match_status: "Finished" }] };
+
+    // Check if series_id is valid
+    if (series_id && series_id !== 'undefined') {
+        condition.$and.push({
+            $or: [{
+                series_id: Number(series_id)
+            }]
+        });
+    }
+
+    // Fetch all matches and filter them in JavaScript as MongoDB's string comparison may not work properly with date formats.
+    let matches = await MatchesModel.find(condition);
+
+    // Filter matches that have a `date_wise` or `match_date` before today's date
+    matches = matches.filter(match => {
+        const matchDateWise = moment(match.date_wise, 'DD MMM YYYY, dddd');
+        const matchDate = moment(match.match_date, 'DD-MMM');
+
+        return matchDateWise.isBefore(today) || matchDate.isBefore(today);
+    });
+
+
+    return matches;
+};
+
+const getUpcomingMatchesBySeriesId = async (series_id) => {
+    const today = moment().startOf('day'); // Get today's date
+
+    // Base condition: filter for upcoming matches
+    var condition = { $and: [{ match_status: "Upcoming" }] };
+
+    // Check if series_id is valid
+    if (series_id && series_id !== 'undefined') {
+        condition.$and.push({
+            series_id: Number(series_id)
+        });
+    }
+
+    // Fetch matches from MongoDB without date comparison initially
+    let matches = await MatchesModel.find(condition);
+
+    // Now filter out the upcoming matches using JavaScript's `moment`
+    matches = matches.filter(match => {
+        const matchDateWise = moment(match.date_wise, 'DD MMM YYYY, dddd');
+        const matchDate = moment(match.match_date, 'DD-MMM');
+
+        // Only keep matches that are today or after today
+        return matchDateWise.isSameOrAfter(today) || matchDate.isSameOrAfter(today);
+    });
+
+    return matches;
+};
+
+
 module.exports = {
     create,
     queriesForHomeList,
@@ -263,5 +317,7 @@ module.exports = {
     getById,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getRecentMatchesBySeriesId,
+    getUpcomingMatchesBySeriesId
 };
