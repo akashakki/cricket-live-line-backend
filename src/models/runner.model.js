@@ -121,18 +121,18 @@ const otherMarketSchema = new mongoose.Schema({
     vxyz: String
 });
 
-const userSportSettingsSchema = new mongoose.Schema({
-    sport_id: Number,
-    name: String,
-    is_manual: String,
-    is_show_last_result: String,
-    is_show_tv: String,
-    is_live_sport: String,
-    score: String,
-    graphic: String,
-    one_click_stack: String,
-    match_stack: String
-});
+// const userSportSettingsSchema = new mongoose.Schema({
+//     sport_id: Number,
+//     name: String,
+//     is_manual: String,
+//     is_show_last_result: String,
+//     is_show_tv: String,
+//     is_live_sport: String,
+//     score: String,
+//     graphic: String,
+//     one_click_stack: String,
+//     match_stack: String
+// });
 
 const matchSchema = new mongoose.Schema({
     matchId: String,
@@ -140,7 +140,7 @@ const matchSchema = new mongoose.Schema({
     OtherMarketList: [otherMarketSchema],
     BookerMakerMarket: matchDetailsSchema,
     bm: [mongoose.Schema.Types.Mixed],
-    UserSportSettings: [userSportSettingsSchema],
+    // UserSportSettings: [userSportSettingsSchema],
     createdAt: { type: Date, default: Date.now }
 });
 
