@@ -136,7 +136,7 @@ const matchSchema = new mongoose.Schema({
     matchId: String,
     MatchDetails: matchDetailsSchema,
     OtherMarketList: [otherMarketSchema],
-    BookerMakerMarket: [mongoose.Schema.Types.Mixed],
+    BookerMakerMarket: matchDetailsSchema,
     bm: [mongoose.Schema.Types.Mixed],
     UserSportSettings: [userSportSettingsSchema],
     createdAt: { type: Date, default: Date.now }
