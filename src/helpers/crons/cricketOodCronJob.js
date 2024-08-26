@@ -99,6 +99,10 @@ async function fetchSessionDataAndSave(m_id) {
 
         const matchData = response.data?.data;
         console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchSessionDataAndSave ~ m_id:", m_id)
+
+        // Remove all existing records for the match_id
+        await MatchesSessionModel.deleteMany({ match_id: m_id });
+
         for (const sessions of matchData) {
             sessions['match_id'] = m_id;
             await MatchesSessionModel.findOneAndUpdate({ match_id: m_id, SelectionId: sessions?.SelectionId }, sessions, { upsert: true, new: true });
