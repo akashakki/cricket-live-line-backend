@@ -12,6 +12,7 @@ module.exports.ReviewController = require('./review.controller');
 
 module.exports.OodSeriesController = require('./oodSeries.controller');
 
+module.exports.SportsController = require('./sports.controller');
 module.exports.SeriesController = require('./series.controller');
 module.exports.NewsController = require('./news.controller');
 module.exports.PlayerController = require('./player.controller');

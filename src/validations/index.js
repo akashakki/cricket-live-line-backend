@@ -7,6 +7,7 @@ module.exports.contactValidation = require('./contactUs.validation');
 module.exports.faqValidation = require('./faq.validation');
 
 
+module.exports.sportsValidation = require('./sports.validation');
 module.exports.seriesValidation = require('./series.validation');
 module.exports.matchesValidation = require('./matches.validation');
 module.exports.newsValidation = require('./news.validation');

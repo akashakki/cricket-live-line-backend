@@ -1,4 +1,4 @@
-const { TeamsModel } = require('../models');
+const { SportsModel } = require('../models');
 const CONSTANT = require('../config/constant');
 
 /**
@@ -7,13 +7,13 @@ const CONSTANT = require('../config/constant');
  * @returns {Promise<Record>}
  */
 const create = async (requestBody) => {
-    if (requestBody.team_id && await TeamsModel.isFieldValueTaken('team_id', requestBody.team_id)) {
-        return { data: {}, code: CONSTANT.BAD_REQUEST, message: `Team Id ${requestBody.team_id} already exists.` };
+    if (requestBody.sport_id && await SportsModel.isFieldValueTaken('sport_id', requestBody.sport_id)) {
+        return { data: {}, code: CONSTANT.BAD_REQUEST, message: `Sport Id ${requestBody.sport_id} already exists.` };
     }
-    if (requestBody.name && await TeamsModel.isFieldValueTaken('name', requestBody.name)) {
+    if (requestBody.name && await SportsModel.isFieldValueTaken('name', requestBody.name)) {
         return { data: {}, code: CONSTANT.BAD_REQUEST, message: `Name - ${requestBody.name} already exists.` };
     }
-    const data = await TeamsModel.create(requestBody);
+    const data = await SportsModel.create(requestBody);
     return { data: data, code: 200, message: CONSTANT.CREATED };
 };
 
@@ -47,7 +47,7 @@ const queries = async (options) => {
             }]
         })
     }
-    const data = await TeamsModel.paginate(condition, options);
+    const data = await SportsModel.paginate(condition, options);
     return data;
 };
 
@@ -57,22 +57,22 @@ const queries = async (options) => {
  * @returns {Promise<Record>}
  */
 const getById = async (id) => {
-    var data = await TeamsModel.findById(id)
+    var data = await SportsModel.findById(id)
     return data;
 };
 
 /**
- * Update industry by id
+ * Update data by id
  * @param {ObjectId} id
  * @param {Object} updateBody
- * @returns {Promise<industry>}
+ * @returns {Promise<data>}
  */
 const updateById = async (id, updateBody) => {
     const data = await getById(id);
-    if (updateBody.team_id && await TeamsModel.isFieldValueTaken('team_id', updateBody.team_id, id)) {
-        return { data: {}, code: CONSTANT.BAD_REQUEST, message: `Team Id ${updateBody.team_id} already exists.` };
+    if (updateBody.sport_id && await SportsModel.isFieldValueTaken('sport_id', updateBody.sport_id, id)) {
+        return { data: {}, code: CONSTANT.BAD_REQUEST, message: `Sport Id ${updateBody.sport_id} already exists.` };
     }
-    if (updateBody.name && await TeamsModel.isFieldValueTaken('name', updateBody.name, id)) {
+    if (updateBody.name && await SportsModel.isFieldValueTaken('name', updateBody.name, id)) {
         return { data: {}, code: CONSTANT.BAD_REQUEST, message: `Name - ${updateBody.name} already exists.` };
     }
     Object.assign(data, updateBody);
@@ -81,9 +81,9 @@ const updateById = async (id, updateBody) => {
 };
 
 /**
- * Delete industry by id
+ * Delete data by id
  * @param {ObjectId} id
- * @returns {Promise<industry>}
+ * @returns {Promise<data>}
  */
 const deleteById = async (id) => {
     const data = await getById(id);
@@ -116,14 +116,14 @@ const getListWithoutPagination = async (options) => {
             }]
         })
     }
-    let query = TeamsModel.find(condition);
+    let query = SportsModel.find(condition);
 
     if (options.limit) {
         query = query.limit(options.limit);
     }
 
-    const Industry = await query.exec();
-    return Industry;
+    const data = await query.exec();
+    return data;
 };
 
 module.exports = {

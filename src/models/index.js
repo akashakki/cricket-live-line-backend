@@ -13,9 +13,11 @@ module.exports.TransactionModel = require('./transaction.model');
 
 module.exports.OodSeriesModel = require('./oodSeriesList.model');
 
+module.exports.FootballModel = require('./football.model');
 module.exports.MatchesRunnerModel = require('./runner.model');
 module.exports.MatchesSessionModel = require('./oodMatchSession.model');
 
+module.exports.SportsModel = require('./sports.model');
 module.exports.MatchesModel = require('./matches.model');
 module.exports.SeriesModel = require('./series.model');
 module.exports.NewsModel = require('./news.model');

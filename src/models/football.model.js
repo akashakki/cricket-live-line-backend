@@ -4,7 +4,35 @@ var ObjectId = Schema.ObjectId;
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
 
-const OodSeriesSchema = mongoose.Schema({
+const runnerSchema = new mongoose.Schema({
+    selectionId: Number,
+    handicap: Number,
+    status: String,
+    lastPriceTraded: Number,
+    totalMatched: Number,
+    adjustmentFactor: Number,
+    ex: {
+        availableToBack: [
+            {
+                price: Number,
+                size: Number,
+                line: String
+            }
+        ],
+        availableToLay: [
+            {
+                price: Number,
+                size: Number,
+                line: String
+            }
+        ]
+    },
+    selectionName: String,
+    sort_priority: Number,
+    WinAndLoss: Number
+});
+
+const footballMatchSchema = new mongoose.Schema({
     bm: Number,
     SportName: String,
     seriesName: String,
@@ -25,25 +53,22 @@ const OodSeriesSchema = mongoose.Schema({
     matchVolumn: String,
     sport_id: String,
     market_id: String,
-    runner_json: Array,
+    runner_json: [runnerSchema],
     matchType: String, // Inplay or Upcoming
     numWinners: Number,
     numRunners: Number,
     numActiveRunners: Number,
     isBookmaker: Boolean,
-    is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin
-    is_delete: { type: Number, default: 1 }, //0 is delete, 1 is Active this is for Admin
-}, {
-    timestamps: true
+    createdAt: { type: Date, default: Date.now }
 });
 
 
-OodSeriesSchema.set('toObject', { virtuals: true });
-OodSeriesSchema.set('toJSON', { virtuals: true });
+footballMatchSchema.set('toObject', { virtuals: true });
+footballMatchSchema.set('toJSON', { virtuals: true });
 
 // add plugin that converts mongoose to json
-OodSeriesSchema.plugin(toJSON);
-OodSeriesSchema.plugin(mongoosePaginate);
+footballMatchSchema.plugin(toJSON);
+footballMatchSchema.plugin(mongoosePaginate);
 
 /**
  * Check if is taken
@@ -51,7 +76,7 @@ OodSeriesSchema.plugin(mongoosePaginate);
  * @returns {Promise<boolean>}
  */
 // Static method to check if a field value is taken
-OodSeriesSchema.statics.isFieldValueTaken = async function (fieldName, value, excludeId) {
+footballMatchSchema.statics.isFieldValueTaken = async function (fieldName, value, excludeId) {
     const query = { [fieldName]: value };
     if (excludeId) {
         query._id = { $ne: excludeId };
@@ -60,6 +85,6 @@ OodSeriesSchema.statics.isFieldValueTaken = async function (fieldName, value, ex
     return !!data;
 };
 
-const OodSeriesModel = mongoose.model("OodSeries", OodSeriesSchema);
+const FootBallModel = mongoose.model("football", footballMatchSchema);
 
-module.exports = OodSeriesModel;
+module.exports = FootBallModel;

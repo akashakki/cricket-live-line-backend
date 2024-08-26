@@ -15,6 +15,7 @@ const FAQRoute = require('./faq.route');
 
 const OddSeriesRoute = require('./oodSeries.route');
 
+const SportsRoute = require('./sports.route');
 const HomePageRoute = require('./homePage.route');
 const SeriesRoute = require('./series.route');
 const NewsRoute = require('./news.route');
@@ -41,8 +42,9 @@ const defaultRoutes = [
   { path: '/faq', route: FAQRoute },
   
   { path: '/odds-series', route: OddSeriesRoute },
+  { path: '/sports', route: SportsRoute },
 
-
+  
   { path: '/', route: HomePageRoute },
   { path: '/series', route: SeriesRoute },
   { path: '/admin-news', route: NewsRoute },

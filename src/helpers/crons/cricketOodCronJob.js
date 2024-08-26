@@ -126,12 +126,6 @@ async function fetchUpcomingMatches() {
     }
 }
 
-// Schedule the fetchUpcomingMatches function to run every 30 minutes
-cron.schedule('*/30 * * * *', async () => {
-    console.log('Running fetchUpcomingMatches job every 30 minutes...');
-    await fetchUpcomingMatches();
-});
-
 console.log("🚀 ~ file: cricketOodCronJob.js:136 ~ config.env:", config.env)
 if (config.env == "production") {
     // Schedule the cron job to run every 2 hours
@@ -146,9 +140,15 @@ if (config.env == "production") {
         console.log('Running cron job...every second');
         fetchInplayMatches();
     });
+
+    // Schedule the fetchUpcomingMatches function to run every 30 minutes
+    cron.schedule('*/30 * * * *', async () => {
+        console.log('Running fetchUpcomingMatches job every 30 minutes...');
+        await fetchUpcomingMatches();
+    });
 }
 
 // Run once on start
-// setTimeout(() => {
-//     fetchDataWithToken();
-// }, 10000);
+setTimeout(() => {
+    fetchDataWithToken();
+}, 10000);
