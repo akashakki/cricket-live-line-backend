@@ -87,23 +87,23 @@ async function fetchUpcomingMatches() {
 }
 
 
-if (config.env == "production") {
-    // Schedule the cron job to run every 2 hours
-    cron.schedule('0 */2 * * *', () => {
-        console.log('Running cron job...');
-        fetchDataWithToken();
-    });
+// if (config.env == "production") {
+//     // Schedule the cron job to run every 2 hours
+//     cron.schedule('0 */2 * * *', () => {
+//         console.log('Running cron job...');
+//         fetchDataWithToken();
+//     });
 
-    // Cron job to run every half second
-    // cron.schedule('*/0.5 * * * * *', async ()=>{
-    cron.schedule('* * * * * *', async () => {
-        console.log('Running cron job...every second');
-        fetchInplayMatches();
-    });
+//     // Cron job to run every half second
+//     // cron.schedule('*/0.5 * * * * *', async ()=>{
+//     cron.schedule('* * * * * *', async () => {
+//         console.log('Running cron job...every second');
+//         fetchInplayMatches();
+//     });
 
-    // Schedule the fetchUpcomingMatches function to run every 30 minutes
-    cron.schedule('*/30 * * * *', async () => {
-        console.log('Running fetchUpcomingMatches job every 30 minutes...');
-        await fetchUpcomingMatches();
-    });
-}
+//     // Schedule the fetchUpcomingMatches function to run every 30 minutes
+//     cron.schedule('*/30 * * * *', async () => {
+//         console.log('Running fetchUpcomingMatches job every 30 minutes...');
+//         await fetchUpcomingMatches();
+//     });
+// }
