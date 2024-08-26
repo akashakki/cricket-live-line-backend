@@ -27,7 +27,9 @@ const runnerSchema = new mongoose.Schema({
     },
     selectionName: String,
     sort_priority: Number,
-    WinAndLoss: Number
+    WinAndLoss: Number,
+    GameStatus: String,
+    RunnerName: String,
 });
 
 const matchDetailsSchema = new mongoose.Schema({
