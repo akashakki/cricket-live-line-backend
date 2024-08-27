@@ -20,10 +20,10 @@ async function login() {
     return newToken;
 }
 
-async function fetchDataWithToken() {
+async function fetchGamesList() {
     try {
         const requestBody = { "limit": 50, "pageno": 1, "sport_id": 4, "series_id": 0, "type": "home" }
-        console.log("🚀 ~ file: cricketOodCronJob.js:25 ~ fetchDataWithToken ~ requestBody:", requestBody)
+        console.log("🚀 ~ file: cricketOodCronJob.js:25 ~ fetchGamesList ~ requestBody:", requestBody)
         // Get the stored token from the database
         let tokenDoc = await Token.findOne({ type: 'bigbetexchange' });
         let token = tokenDoc ? tokenDoc.token : null;
@@ -39,7 +39,7 @@ async function fetchDataWithToken() {
         if (response.data.message === 'Send valid token!') {
             console.log('Invalid token. Fetching a new one...');
             const newToken = await login();
-            console.log("🚀 ~ file: cricketOodCronJob.js:39 ~ fetchDataWithToken ~ newToken:", newToken)
+            console.log("🚀 ~ file: cricketOodCronJob.js:39 ~ fetchGamesList ~ newToken:", newToken)
             // Retry the API call with the new token
             response = await axios.post(`${API_BASE_URL}/event-game`, requestBody, {
                 headers: {
@@ -50,6 +50,11 @@ async function fetchDataWithToken() {
 
         // Process the data from the API response
         console.log('Data fetched:', response.data?.data);
+
+        // Remove all existing records for the match_id
+        await OodSeriesModel.deleteMany({});
+
+        // Save the data to the database
         for (const InplayMatches of response?.data?.data?.InplayMatches) {
             InplayMatches.matchType = 'Inplay';
             await OodSeriesModel.findOneAndUpdate({ series_id: InplayMatches?.series_id, market_id: InplayMatches?.market_id }, InplayMatches, { upsert: true, new: true });
@@ -135,7 +140,7 @@ if (config.env == "production") {
     // Schedule the cron job to run every 2 hours
     cron.schedule('0 */2 * * *', () => {
         console.log('Running cron job...');
-        fetchDataWithToken();
+        fetchGamesList();
     });
 
     // Cron job to run every half second
@@ -154,5 +159,5 @@ if (config.env == "production") {
 
 // Run once on start
 setTimeout(() => {
-    fetchDataWithToken();
+    fetchGamesList();
 }, 10000);
