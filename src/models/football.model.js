@@ -14,15 +14,27 @@ const runnerSchema = new mongoose.Schema({
     ex: {
         availableToBack: [
             {
-                price: Number,
-                size: Number,
+                price: {
+                    type: Number,
+                    set: v => isNaN(v) ? null : v // Set to null if 'NaN'
+                },
+                size: {
+                    type: Number,
+                    set: v => isNaN(v) ? null : v
+                },
                 line: String
             }
         ],
         availableToLay: [
             {
-                price: Number,
-                size: Number,
+                price: {
+                    type: Number,
+                    set: v => isNaN(v) ? null : v // Set to null if 'NaN'
+                },
+                size: {
+                    type: Number,
+                    set: v => isNaN(v) ? null : v
+                },
                 line: String
             }
         ]
