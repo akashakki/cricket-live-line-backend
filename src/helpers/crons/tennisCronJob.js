@@ -65,7 +65,7 @@ async function fetchEventGames() {
     }
 }
 
-fetchEventGames();
+// fetchEventGames();
 
 // Function to fetch data and save it
 async function fetchMatchDataAndSave(m_id) {

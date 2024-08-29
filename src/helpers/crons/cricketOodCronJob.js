@@ -159,6 +159,6 @@ if (config.env == "production") {
 }
 
 // Run once on start
-// setTimeout(() => {
-//     fetchGamesList();
-// }, 10000);
+setTimeout(() => {
+    fetchGamesList();
+}, 10000);
