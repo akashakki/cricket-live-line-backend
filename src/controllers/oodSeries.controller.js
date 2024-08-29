@@ -9,13 +9,14 @@ const create = catchAsync(async (req, res) => {
 });
 
 const getLists = catchAsync(async (req, res) => {
-    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status', 'series_id']);
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status', 'series_id', 'sport_id']);
     const result = await OodSeriesService.queries(options);
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getSeriesList = catchAsync(async (req, res) => {
-    const data = await OodSeriesService.getSeriesList();
+    let sport_id = req.query?.sport_id ? req.query?.sport_id : 4;
+    const data = await OodSeriesService.getSeriesList(sport_id);
     if (!data) {
         res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
     }

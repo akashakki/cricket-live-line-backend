@@ -60,6 +60,15 @@ const queries = async (options) => {
         });
     }
 
+    //Sport ID
+    if (options.sport_id && options.sport_id != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                sport_id: options.sport_id
+            }]
+        });
+    }
+
     // Retrieve matches with the condition applied
     const InplayMatches = await OodSeriesModel.find({ ...condition, matchType: 'Inplay' });
     const UpCommingMatches = await OodSeriesModel.find({ ...condition, matchType: 'Upcoming' });
@@ -82,11 +91,12 @@ const getById = async (id) => {
  * @param {ObjectId} id
  * @returns {Promise<Record>}
  */
-const getSeriesList = async (id) => {
+const getSeriesList = async (sport_id) => {
     const data = await OodSeriesModel.aggregate([
         {
             $match: {
-                is_delete: 1 // Only fetch records that are not deleted
+                is_delete: 1, // Only fetch records that are not deleted
+                sport_id: sport_id
             }
         },
         {

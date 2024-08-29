@@ -52,7 +52,7 @@ async function fetchGamesList() {
         console.log('Data fetched:', response.data?.data);
 
         // Remove all existing records for the match_id
-        await OodSeriesModel.deleteMany({});
+        await OodSeriesModel.deleteMany({ sport_id: 4, SportName: "Cricket"});
 
         // Save the data to the database
         for (const InplayMatches of response?.data?.data?.InplayMatches) {
@@ -118,7 +118,7 @@ async function fetchSessionDataAndSave(m_id) {
 }
 
 async function fetchInplayMatches() {
-    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Inplay' });
+    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Inplay', sport_id: 4, SportName: 'Cricket' });
     for (const element of fetchInpaySeries) {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
@@ -127,7 +127,7 @@ async function fetchInplayMatches() {
 }
 
 async function fetchUpcomingMatches() {
-    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Upcoming' });
+    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Upcoming', sport_id: 4, SportName: 'Cricket' });
     for (const element of fetchInpaySeries) {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
@@ -138,7 +138,8 @@ async function fetchUpcomingMatches() {
 console.log("🚀 ~ file: cricketOodCronJob.js:136 ~ config.env:", config.env)
 if (config.env == "production") {
     // Schedule the cron job to run every 2 hours
-    cron.schedule('0 */2 * * *', () => {
+    // cron.schedule('0 */2 * * *', () => {
+    cron.schedule('*/30 * * * *', () => {
         console.log('Running cron job...');
         fetchGamesList();
     });
@@ -158,6 +159,6 @@ if (config.env == "production") {
 }
 
 // Run once on start
-setTimeout(() => {
-    fetchGamesList();
-}, 10000);
+// setTimeout(() => {
+//     fetchGamesList();
+// }, 10000);
