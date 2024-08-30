@@ -96,7 +96,7 @@ const getSeriesList = async (sport_id) => {
         {
             $match: {
                 is_delete: 1, // Only fetch records that are not deleted
-                sport_id: sport_id
+                sport_id: sport_id?.toString()
             }
         },
         {
