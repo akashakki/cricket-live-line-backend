@@ -139,7 +139,7 @@ console.log("🚀 ~ file: cricketOodCronJob.js:136 ~ config.env:", config.env)
 if (config.env == "production") {
     // Schedule the cron job to run every 2 hours
     // cron.schedule('0 */2 * * *', () => {
-    cron.schedule('*/30 * * * *', () => {
+    cron.schedule('*/5 * * * *', () => {
         console.log('Running cron job...');
         fetchGamesList();
     });
