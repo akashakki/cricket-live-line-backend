@@ -137,10 +137,9 @@ async function fetchUpcomingMatches() {
 
 console.log("🚀 ~ file: cricketOodCronJob.js:136 ~ config.env:", config.env)
 if (config.env == "production") {
-    // Schedule the cron job to run every 2 hours
-    // cron.schedule('0 */2 * * *', () => {
+    // Schedule the cron job to run every 5 mint
     cron.schedule('*/5 * * * *', () => {
-        console.log('Running cron job...');
+        console.log('Running cron job every 5mint...');
         fetchGamesList();
     });
 
