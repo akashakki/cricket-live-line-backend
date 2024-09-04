@@ -1,5 +1,6 @@
 const cron = require('node-cron');
 const axios = require('axios');
+const cheerio = require('cheerio');
 const config = require('../../config/config');
 const { Token, OodSeriesModel, MatchesRunnerModel, MatchesSessionModel, OddsMatchDetailsModel } = require('../../models'); // Import the token model
 const API_BASE_URL = 'https://bigbetexchange.com/api/v5';
@@ -128,11 +129,12 @@ async function fetchMatchScore(matchId) {
         await OddsMatchDetailsModel.deleteMany({ match_id: matchId });
         let sessions = {};
         // for (const sessions of data) {
-            sessions['match_id'] = matchId;
-            sessions['matchStats'] = data[0]
-            sessions['matchSummary'] = data[1]
-            sessions['matchDetails'] = data[2]
-            await OddsMatchDetailsModel.findOneAndUpdate({ match_id: matchId }, sessions, { upsert: true, new: true });
+        sessions['match_id'] = matchId;
+        sessions['matchStats'] = data[0]
+        sessions['matchSummary'] = data[1]
+        sessions['matchDetails'] = data[2]
+        await OddsMatchDetailsModel.findOneAndUpdate({ match_id: matchId }, sessions, { upsert: true, new: true });
+        fetchAndExtractIframeID(`https://winx777.com/score/sportRadar/?eventId=${matchId}`, matchId);
         // }
     } catch (error) {
         console.error("Error fetching match score:", error);
@@ -157,6 +159,36 @@ async function fetchUpcomingMatches() {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
         fetchSessionDataAndSave(element?.match_id);
+    }
+}
+
+async function fetchAndExtractIframeID(url, matchId) {
+    try {
+        // Fetch HTML content from the provided URL
+        const response = await axios.get(url);
+        const html = response.data;
+
+        // Load HTML into cheerio
+        const $ = cheerio.load(html);
+
+        // Select the iframe element
+        const iframeSrc = $('iframe').attr('src');
+
+        if (iframeSrc) {
+            // Extract the ID from the iframe's src attribute
+            const urlParams = new URLSearchParams(iframeSrc.split('?')[1]);
+            const id = urlParams.get('id');
+            const aC = urlParams.get('aC');
+
+            console.log('Extracted ID:', id, aC);
+            const score_widget_url = `https://www.satsports.net/score_widget/index.html?id=${id}&aC=${aC}`
+            await OddsMatchDetailsModel.findOneAndUpdate({ match_id: matchId }, { score_widget_url: score_widget_url, scorecard_id: id }, { upsert: true, new: true });
+            // return {id, aC};
+        } else {
+            console.log('No iframe found in the HTML.');
+        }
+    } catch (error) {
+        console.error('Error fetching or parsing HTML:', error);
     }
 }
 

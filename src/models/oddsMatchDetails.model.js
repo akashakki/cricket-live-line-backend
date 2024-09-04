@@ -5,55 +5,57 @@ const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
 
 const OddsMatchDetailsSchema = new mongoose.Schema({
-    "match_id": "string", // Unique identifier for the match
+    "match_id": String, // Unique identifier for the match
+    score_widget_url: String,
+    scorecard_id: Number,
     "matchStats": {
-        "p1b": "number", // Example data
-        "p2b": "number",
-        "p1r": "number",
-        "p2r": "number",
-        "w": "number",
-        "s": "number",
-        "lb": "string",
-        "p14": "number",
-        "p24": "number",
-        "rb": "number",
-        "p16": "number",
-        "p26": "number",
-        "cb": "string",
-        "ap": "string",
+        "p1b": Number, // Example data
+        "p2b": Number,
+        "p1r": Number,
+        "p2r": Number,
+        "w": Number,
+        "s": Number,
+        "lb": String,
+        "p14": Number,
+        "p24": Number,
+        "rb": Number,
+        "p16": Number,
+        "p26": Number,
+        "cb": String,
+        "ap": String,
         "recentBalls": [
-            ["string", "string", "string", "string", "string", "string"] // Recent ball data
+            [String, String, String, String, String, String] // Recent ball data
         ]
     },
     "matchSummary": {
-        "lw": "string",
-        "b": "string",
-        "pp": "number",
-        "p1": "string",
-        "p2": "string",
-        "st": "string", // Status, e.g., "SCO"
-        "c": "string"
+        "lw": String,
+        "b": String,
+        "pp": Number,
+        "p1": String,
+        "p2": String,
+        "st": String, // Status, e.g., "SCO"
+        "c": String
     },
     "matchDetails": {
-        "flag1": "string",
-        "flag2": "string",
-        "match_number": "number",
-        "order": "number",
-        "rate": "string",
-        "rate2": "string",
-        "rate_team": "string",
-        "target": "number",
-        "t1": "string", // Team 1
-        "t2": "string", // Team 2
-        "team1": "string",
-        "team2": "string",
-        "title": "string",
-        "score": "string",
-        "score2": "string",
-        "wicket": "string",
-        "wicket2": "string",
-        "ballsdone": "number",
-        "ballsdone2": "number"
+        "flag1": String,
+        "flag2": String,
+        "match_number": Number,
+        "order": Number,
+        "rate": String,
+        "rate2": String,
+        "rate_team": String,
+        "target": Number,
+        "t1": String, // Team 1
+        "t2": String, // Team 2
+        "team1": String,
+        "team2": String,
+        "title": String,
+        "score": String,
+        "score2": String,
+        "wicket": String,
+        "wicket2": String,
+        "ballsdone": Number,
+        "ballsdone2": Number
     }
 }, {
     timestamps: true

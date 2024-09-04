@@ -144,7 +144,7 @@ const getMatchSessionByMatchId = async (id) => {
 const getMatchScoreByMatchId = async (id) => {
     var data = await OddsMatchDetailsModel.findOne({ match_id: id })
     const updateData = data ? [data?.matchStats, data?.matchDetails, data?.matchSummary] : [];
-    return updateData;
+    return {scores: updateData, score_widget_url: data?.score_widget_url, scorecard_id: data?.scorecard_id};
 };
 
 /**
