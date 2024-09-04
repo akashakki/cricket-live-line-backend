@@ -1,4 +1,4 @@
-const { OodSeriesModel, MatchesRunnerModel, MatchesSessionModel } = require('../models');
+const { OodSeriesModel, MatchesRunnerModel, MatchesSessionModel, OddsMatchDetailsModel } = require('../models');
 const CONSTANT = require('../config/constant');
 
 /**
@@ -141,6 +141,12 @@ const getMatchSessionByMatchId = async (id) => {
     return data;
 };
 
+const getMatchScoreByMatchId = async (id) => {
+    var data = await OddsMatchDetailsModel.findOne({ match_id: id })
+    const updateData = data ? [data?.matchStats, data?.matchDetails, data?.matchSummary] : [];
+    return updateData;
+};
+
 /**
  * Update industry by id
  * @param {ObjectId} id
@@ -216,5 +222,6 @@ module.exports = {
     getMatchSessionByMatchId,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getMatchScoreByMatchId
 };

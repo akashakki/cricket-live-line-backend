@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const config = require('../../config/config');
-const { Token, OodSeriesModel, MatchesRunnerModel, MatchesSessionModel } = require('../../models'); // Import the token model
+const { Token, OodSeriesModel, MatchesRunnerModel, MatchesSessionModel, OddsMatchDetailsModel } = require('../../models'); // Import the token model
 const API_BASE_URL = 'https://bigbetexchange.com/api/v5';
 
 async function login() {
@@ -52,7 +52,7 @@ async function fetchGamesList() {
         console.log('Data fetched:', response.data?.data);
 
         // Remove all existing records for the match_id
-        await OodSeriesModel.deleteMany({ sport_id: 4, SportName: "Cricket"});
+        await OodSeriesModel.deleteMany({ sport_id: 4, SportName: "Cricket" });
 
         // Save the data to the database
         for (const InplayMatches of response?.data?.data?.InplayMatches) {
@@ -117,14 +117,40 @@ async function fetchSessionDataAndSave(m_id) {
     }
 }
 
+async function fetchMatchScore(matchId) {
+    const url = `https://score.jeoad.com/api/v1/getScore?matchId=${matchId}`;
+
+    try {
+        const response = await axios.get(url);
+        const data = response.data.data;
+        console.log("🚀 ~ file: cricketOodCronJob.js:126 ~ fetchMatchScore ~ data:", data)
+        // return response.data;
+        // Remove all existing records for the match_id
+        await OddsMatchDetailsModel.deleteMany({ match_id: matchId });
+        let sessions = {};
+        // for (const sessions of data) {
+            sessions['match_id'] = matchId;
+            sessions['matchStats'] = data[0]
+            sessions['matchSummary'] = data[1]
+            sessions['matchDetails'] = data[2]
+            await OddsMatchDetailsModel.findOneAndUpdate({ match_id: matchId }, sessions, { upsert: true, new: true });
+        // }
+    } catch (error) {
+        console.error("Error fetching match score:", error);
+        throw error; // Re-throw the error for further handling if needed
+    }
+}
+
 async function fetchInplayMatches() {
     const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Inplay', sport_id: 4, SportName: 'Cricket' });
     for (const element of fetchInpaySeries) {
         console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
         fetchSessionDataAndSave(element?.match_id);
+        fetchMatchScore(element?.match_id);
     }
 }
+
 
 async function fetchUpcomingMatches() {
     const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Upcoming', sport_id: 4, SportName: 'Cricket' });

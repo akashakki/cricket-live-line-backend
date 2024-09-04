@@ -19,6 +19,10 @@ router
     .get(validateRequest('get'), OodSeriesController.getSessionByMatchId)
 
 router
+    .route('/match-score/:match_id')
+    .get(validateRequest('get'), OodSeriesController.getMatchScoreByMatchId)
+
+router
     .route('/:match_id')
     .get(validateRequest('get'), OodSeriesController.getByMatchId)
 
