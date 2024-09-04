@@ -123,7 +123,6 @@ async function fetchMatchScore(matchId) {
     try {
         const response = await axios.get(url);
         const data = response.data.data;
-        console.log("🚀 ~ file: cricketOodCronJob.js:126 ~ fetchMatchScore ~ data:", data)
         // return response.data;
         // Remove all existing records for the match_id
         await OddsMatchDetailsModel.deleteMany({ match_id: matchId });
