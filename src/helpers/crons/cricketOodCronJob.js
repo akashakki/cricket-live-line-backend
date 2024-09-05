@@ -125,6 +125,7 @@ async function fetchSessionDataAndSave(m_id) {
 }
 
 async function fetchMatchScore(matchId) {
+    console.log("🚀 ~ file: cricketOodCronJob.js:128 ~ fetchMatchScore ~ matchId:", matchId)
     const url = `https://score.jeoad.com/api/v1/getScore?matchId=${matchId}`;
 
     try {
@@ -136,11 +137,13 @@ async function fetchMatchScore(matchId) {
         await OddsMatchDetailsModel.deleteMany({ match_id: matchId });
         let sessions = {};
         // for (const sessions of data) {
-        sessions['match_id'] = matchId;
-        sessions['matchStats'] = data[0]
-        sessions['matchSummary'] = data[1]
-        sessions['matchDetails'] = data[2]
-        await OddsMatchDetailsModel.findOneAndUpdate({ match_id: matchId }, sessions, { upsert: true, new: true });
+        if (data) {
+            sessions['match_id'] = matchId;
+            sessions['matchStats'] = data[0]
+            sessions['matchSummary'] = data[1]
+            sessions['matchDetails'] = data[2]
+            await OddsMatchDetailsModel.findOneAndUpdate({ match_id: matchId }, sessions, { upsert: true, new: true });
+        }
         fetchAndExtractIframeID(`https://winx777.com/score/sportRadar/?eventId=${matchId}`, matchId);
         // }
     } catch (error) {
