@@ -5,6 +5,12 @@ const config = require('../../config/config');
 const { Token, OodSeriesModel, MatchesRunnerModel, MatchesSessionModel, OddsMatchDetailsModel } = require('../../models'); // Import the token model
 const API_BASE_URL = 'https://bigbetexchange.com/api/v5';
 
+// https://lmt.fn.sportradar.com/common/en/gismo/match_timelinedelta/49534405
+// https://lmt.fn.sportradar.com/common/en/cricket/get_event/49534405
+// https://lmt.fn.sportradar.com/common/en/cricket/get_scorecard/49534405
+
+//https://lt-fn-cdn001.akamaized.net/common/en/cricket/get_event/51700281
+
 async function login() {
     // Fetch new token
     const loginResponse = await axios.post(`${API_BASE_URL}/login`, {
@@ -124,6 +130,7 @@ async function fetchMatchScore(matchId) {
     try {
         const response = await axios.get(url);
         const data = response.data.data;
+        console.log("🚀 ~ file: cricketOodCronJob.js:133 ~ fetchMatchScore ~ data:", data)
         // return response.data;
         // Remove all existing records for the match_id
         await OddsMatchDetailsModel.deleteMany({ match_id: matchId });
