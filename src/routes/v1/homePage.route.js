@@ -8,6 +8,8 @@ const router = express.Router();
 
 router.route('/homeList').get(MatchController.getHomeLists)
 
+router.route('/matchInfo').get(MatchController.getMatchInfo)
+
 router.route('/seriesList').get(SeriesController.getSeriesLists)
 router.route('/seriesDetails/:id').get(SeriesController.getBySeriesId)
 
