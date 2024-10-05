@@ -27,7 +27,7 @@ const create = async (requestBody) => {
  * @returns {Promise<QueryResult>}
  */
 const queries = async (options) => {
-    var condition = { $and: [{ isDelete: 1 }] };
+    var condition = { $and: [{ is_delete: 1 }] };
     if (options.searchBy && options.searchBy != 'undefined') {
         var searchBy = {
             $regex: ".*" + options.searchBy + ".*",
@@ -47,6 +47,27 @@ const queries = async (options) => {
             }]
         })
     }
+    
+    if (options.play_role && options.play_role != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                play_role: options.play_role
+            }]
+        })
+    }
+    
+    if (options.nationality && options.nationality != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                player_team_name_short: options.nationality
+            }]
+        })
+    }
+
+    options['sort'] = { createdAt: -1 };
+    if(options?.for == 'user'){
+        options['select'] = 'player_id play_role name player_team_flag player_team_name player_team_name_short birth_place born height image'
+    }
     const data = await PlayerModel.paginate(condition, options);
     return data;
 };
@@ -58,6 +79,11 @@ const queries = async (options) => {
  */
 const getById = async (id) => {
     var data = await PlayerModel.findById(id)
+    return data;
+};
+
+const getByPlyerId = async (player_id) => {
+    var data = await PlayerModel.findOne({player_id: player_id})
     return data;
 };
 
@@ -90,13 +116,13 @@ const deleteById = async (id) => {
     if (!data) {
         return { data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG }
     }
-    data.isDelete = 0;
+    data.is_delete = 0;
     await data.save();
     return { data: data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DELETED }
 };
 
 const getListWithoutPagination = async (options) => {
-    var condition = { $and: [{ isDelete: 1 }] };
+    var condition = { $and: [{ is_delete: 1 }] };
     if (options.searchBy && options.searchBy != 'undefined') {
         var searchBy = {
             $regex: ".*" + options.searchBy + ".*",
@@ -126,11 +152,18 @@ const getListWithoutPagination = async (options) => {
     return Industry;
 };
 
+const getTrendingPlayer = async () => {
+    var data = await PlayerModel.find({is_delete: 1, isTrending: true}).select('player_id play_role name player_team_flag player_team_name player_team_name_short birth_place born height image')
+    return data;
+};
+
 module.exports = {
     create,
     queries,
     getById,
+    getByPlyerId,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getTrendingPlayer
 };

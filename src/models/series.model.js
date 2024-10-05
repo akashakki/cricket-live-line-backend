@@ -3,6 +3,8 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
+var slug = require('mongoose-slug-updater');
+mongoose.plugin(slug);
 
 const SeriesSchema = new mongoose.Schema({
     series_id: { type: Number, required: true, unique: true },
@@ -14,6 +16,7 @@ const SeriesSchema = new mongoose.Schema({
     end_date: { type: Date, required: true },
     image: { type: String, default: '' },
     month_wise: { type: String, default: '' },
+    slug: {type: String, slug: "series"},
     // pointTable: {
     //     data: { type: Array, default: [] }
     // },

@@ -1,6 +1,33 @@
 const { NewsModel } = require('../models');
 const CONSTANT = require('../config/constant');
 
+const monthMap = {
+    'Jan': '01',
+    'Feb': '02',
+    'Mar': '03',
+    'Apr': '04',
+    'May': '05',
+    'Jun': '06',
+    'Jul': '07',
+    'Aug': '08',
+    'Sep': '09',
+    'Oct': '10',
+    'Nov': '11',
+    'Dec': '12'
+};
+
+function convertPubDateToISO(dateStr) {
+    const [day, monthAbbrev, yearTime] = dateStr.split(' ');
+    const [year, time] = yearTime.split(' | ');
+
+    const month = monthMap[monthAbbrev];
+
+    // Return in 'YYYY-MM-DDTHH:MM:SS' format (ISO string)
+    return `${year}-${month}-${day.padStart(2, '0')}T${time}:00`;
+}
+
+
+
 /**
  * Create a Record
  * @param {Object} requestBody
@@ -62,7 +89,7 @@ const getById = async (id) => {
 };
 
 const getByNewsId = async (id) => {
-    var data = await NewsModel.findOne({news_id: id})
+    var data = await NewsModel.findOne({ news_id: id })
     return data;
 };
 
@@ -101,7 +128,9 @@ const deleteById = async (id) => {
 };
 
 const getListWithoutPagination = async (options) => {
-    var condition = { $and: [{ }] };
+    var condition = { $and: [{}] };
+
+    // Search by name (if provided)
     if (options.searchBy && options.searchBy != 'undefined') {
         var searchBy = {
             $regex: ".*" + options.searchBy + ".*",
@@ -112,24 +141,38 @@ const getListWithoutPagination = async (options) => {
             $or: [{
                 name: searchBy
             }]
-        })
+        });
     }
+
+    // Filter by status (if provided)
     if (options.status && options.status != 'undefined') {
         condition.$and.push({
             $or: [{
                 status: options.status
             }]
-        })
+        });
     }
-    let query = NewsModel.find(condition);
 
+    let allNews = await NewsModel.find(condition).exec();
+
+    // Sort based on converted pub_date
+    allNews = allNews.sort((a, b) => {
+        const dateA = new Date(convertPubDateToISO(a.pub_date));
+        const dateB = new Date(convertPubDateToISO(b.pub_date));
+
+        return dateB - dateA; // Sort by date descending (latest first)
+    });
+
+    // Apply limit if provided
     if (options.limit) {
-        query = query.limit(options.limit);
+        allNews = allNews.slice(0, options.limit);
     }
 
-    const Series = await query.exec();
-    return Series;
+    return allNews;
 };
+
+
+
 
 const getNewsBySeriesId = async (series_id) => {
     // Base condition: filter for upcoming matches

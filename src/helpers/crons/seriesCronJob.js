@@ -1,23 +1,76 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const config = require('../../config/config');
+const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/'
 const { SeriesModel, MatchesModel, PlayerModel, VenuesModel, TeamsModel, NewsModel } = require('../../models');
 
 async function fetchSeriesList() {
+    // let allPlayers = []; // Array to store all players
+    let currentPage = 1; // Start from the first page
+    let lastPage = 1; // Initialize last page variable
+
     try {
-        const response = await axios.get('http://24.199.71.166:8700/v2/client/series-list');
-        const seriesList = response.data?.data?.data;
-        if (seriesList && seriesList?.length != 0) {
-            for (let i = 0; i < seriesList?.length; i++) {
-                const series = seriesList[i];
-                // await SeriesModel.create(series);
-                await fetchSeriesDetails(series?.series_id);
+        do {
+            // Fetch the player list for the current page
+            const response = await axios.get(`${heroAPIBaseURL}web/series/seriesList?page=${currentPage}`);
+
+            const seriesList = response.data?.seriesList?.data;
+            // console.log("🚀 ~ file: seriesCronJob.js:18 ~ fetchSeriesList ~ seriesList:", seriesList)
+            lastPage = response.data?.seriesList?.last_page; // Get the last page number from the response
+
+            // console.log("🚀 ~ file: playerCronJob.js:14 ~ fetchseriesList ~ seriesList:", seriesList);
+
+            if (seriesList && seriesList.length > 0) {
+                // allPlayers = allPlayers.concat(seriesList); // Add fetched players to allPlayers array
+
+                // You can also process each player here if needed
+                for (let series of seriesList) {
+                    const updatedObj = {
+                        series_id: series?.series_cid,
+                        series:series?.series_title,
+                        series_type: series?.series_type,
+                        series_date: series?.series_start_date + ' - ' + series?.series_end_date,
+                        total_matches: series?.series_matches,
+                        start_date: series?.series_start_date,
+                        end_date: series?.series_end_date,
+                        image: series?.series_image,
+                        month_wise: series?.series_month_wise
+                    }
+                    await SeriesModel.findOneAndUpdate({ series_id: series.series_cid }, updatedObj, { upsert: true });
+                    // console.log("🚀 ~ file: seriesCronJob.js:26 ~ fetchSeriesList ~ series:", series?.series_venues_detail)
+                    if (series &&series?.series_venues_detail && series?.series_venues_detail?.data) {
+                        for (const venue of series.series_venues_detail?.data) {
+                            await VenuesModel.findOneAndUpdate({ venue_id: venue.venue_id }, venue, { upsert: true });
+                        }
+                    }
+                    // await fetchSeriesDetails(series?.series_cid);
+                }
             }
-        }
+
+            currentPage++; // Increment to the next page
+        } while (currentPage <= lastPage); // Continue until all pages are fetched
+
+        // return allPlayers; // Return the complete list of players
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call 54:', error);
     }
 }
+
+// async function fetchSeriesList() {
+//     try {
+//         const response = await axios.get('http://24.199.71.166:8700/v2/client/series-list');
+//         const seriesList = response.data?.data?.data;
+//         if (seriesList && seriesList?.length != 0) {
+//             for (let i = 0; i < seriesList?.length; i++) {
+//                 const series = seriesList[i];
+//                 // await SeriesModel.create(series);
+//                 await fetchSeriesDetails(series?.series_id);
+//             }
+//         }
+//     } catch (error) {
+//         console.error('Error making API call:', error);
+//     }
+// }
 
 const fetchSeriesDetails = async (series_id) => {
     console.log("🚀 ~ file: SeriesCronJob.js:30 ~ fetchSeriesDetails ~ series_id:", series_id);
@@ -148,3 +201,4 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
     });
     // fetchSeriesList()
 }
+fetchSeriesList()

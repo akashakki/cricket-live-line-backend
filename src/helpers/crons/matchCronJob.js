@@ -5,6 +5,7 @@ const FormData = require('form-data');
 const { MatchesModel, PlayerModel, VenuesModel, TeamsModel } = require('../../models');
 const baseURL = 'https://apicricketchampion.in/apiv4/';
 const token = 'deed03c60ab1c13b1dbef6453421ead6';
+const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/'
 
 async function fetchMatchList() {
     try {
@@ -34,6 +35,8 @@ async function fetchLiveMatchList() {
                 console.log("🚀 ~ file: matchCronJob.js:31 ~ fetchLiveMatchList ~ match:", match?.match_status)
                 // await MatchesModel.create(match);
                 await fetchMatchDetails(match);
+                await fetchMatchScorecard(match);
+                await fetchMatchSquadsByMatchId(match);
             }
         }
     } catch (error) {
@@ -59,6 +62,27 @@ async function fetchLiveMatchList() {
 //         console.error('Error making API call:', error);
 //     }
 // }
+async function fetchMatchDetailsFromHero() {
+    // console.log("🚀 ~ file: matchCronJob.js:63 ~ fetchMatchDetailsFromHero ~ match:", match?.match_id)
+    try {
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity, // Allow large request bodies if needed
+            // url: `${heroAPIBaseURL}web/getmatchlisting/`, // Your API endpoint
+            url: `${heroAPIBaseURL}cron/matchLiveBulkInfo`, // Your API endpoint
+            data: { "match_ids": [6157] } //{ "match_status": "All" } // Send the FormData object as the request body
+        };
+
+        const response = await axios.request(config);
+        console.log("🚀 ~ file: matchCronJob.js:75 ~ fetchMatchDetailsFromHero ~ response:", JSON.stringify(response?.data?.bulk_matches))
+        // const matchData = response.data?.data;
+
+    } catch (error) {
+        console.error('Error making API call:', error);
+    }
+}
+// fetchMatchDetailsFromHero()
+
 async function fetchMatchDetails(match) {
     console.log("🚀 ~ file: matchCronJob.js:30 ~ fetchMatchDetails ~ match_id:", match?.match_id);
     try {
@@ -70,20 +94,20 @@ async function fetchMatchDetails(match) {
             method: 'post',
             maxBodyLength: Infinity, // Allow large request bodies if needed
             url: `${baseURL}matchInfo/${token}`, // Your API endpoint
-            headers: { 
-              ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
+            headers: {
+                ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
             },
             data: formData // Send the FormData object as the request body
-          };
+        };
 
         const response = await axios.request(config);
         const matchData = response.data?.data;
         // matchDetails['match_id'] = match?.match_id;
-          let matchDetails = {
+        let matchDetails = {
             ...match,
             ...matchData
-          }
-          console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails)
+        }
+        console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails?.match_id)
         if (matchDetails) {
             // Remove match_status if it exists
             delete matchDetails.match_status;
@@ -137,21 +161,90 @@ async function fetchMatchDetails(match) {
     }
 }
 
+async function fetchMatchScorecard(match) {
+    console.log("🚀 ~ file: matchCronJob.js:164 ~ fetchMatchScorecard ~ match:", match?.match_id)
+    try {
+        // const response = await axios.get(`${baseURL}matchInfo/${token}`) //'http://24.199.71.166:8700/v2/client/match-info/' + match_id);
+        const formData = new FormData();
+        formData.append('match_id', (match?.match_id).toString()); // Add match_id to formdata
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity, // Allow large request bodies if needed
+            url: `${baseURL}scorecardByMatchId/${token}`, // Your API endpoint
+            headers: {
+                ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
+            },
+            data: formData // Send the FormData object as the request body
+        };
+
+        const response = await axios.request(config);
+        const matchData = response.data?.data;
+        // matchDetails['match_id'] = match?.match_id;
+        let matchDetails = {
+            ...match,
+            ...matchData
+        }
+        console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails?.match_id)
+        if (matchDetails) {
+            await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, matchDetails, { upsert: true, new: true });
+        }
+    } catch (error) {
+        console.error('Error making API call:', error);
+    }
+}
+
+async function fetchMatchSquadsByMatchId(match) {
+    console.log("🚀 ~ file: matchCronJob.js:164 ~ fetchMatchScorecard ~ match:", match?.match_id)
+    try {
+        // const response = await axios.get(`${baseURL}matchInfo/${token}`) //'http://24.199.71.166:8700/v2/client/match-info/' + match_id);
+        const formData = new FormData();
+        formData.append('match_id', (match?.match_id).toString()); // Add match_id to formdata
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity, // Allow large request bodies if needed
+            url: `${baseURL}squadsByMatchId/${token}`, // Your API endpoint
+            headers: {
+                ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
+            },
+            data: formData // Send the FormData object as the request body
+        };
+
+        const response = await axios.request(config);
+        // const matchData = response.data?.data;
+        let squad = {
+            team_a: response.data?.data?.team_a,
+            team_b: response.data?.data?.team_b
+        }
+
+        // console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", JSON.stringify(matchDetails))
+        if (squad) {
+            await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, { $set: { squad: squad } }, { upsert: true, new: true });
+        }
+    } catch (error) {
+        console.error('Error making API call:', error);
+    }
+}
 
 
-// if (config.env == "production") {// Schedule tasks to be run on the server.
+
+console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
+if (config.env == "production") {// Schedule tasks to be run on the server.
     // cron.schedule('0 0 * * *', async () => {
-    //     cron.schedule('* * * * *', async () => {
-    //     console.log('Running a job at 00:00 at midnight');
-    //     fetchMatchList()
-    // });
+    cron.schedule('* * * * *', async () => {
+        console.log('Match Running a job every mint');
+        fetchMatchList()
+        // setInterval(fetchMatchList(), 500);
+    });
 
-    // // cron.schedule('0 */1 * * *', async () => {
-    //     cron.schedule('* * * * *', async () => {
-    //     console.log('Running a job at every hour');
-    //     fetchLiveMatchList()
-    // });
+    // cron.schedule('0 */1 * * *', async () => {
+    cron.schedule('* * * * *', async () => {
+        console.log('Running a job at every hour');
+        // fetchLiveMatchList()
+        setInterval(fetchLiveMatchList(), 500);
+    });
 
     fetchMatchList()
     fetchLiveMatchList()
-// }
+}

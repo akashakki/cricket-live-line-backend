@@ -26,8 +26,10 @@ const create = async (requestBody) => {
 const queriesForHomeList = async (options) => {
     try {
         const currentDate = new Date();
-        const startOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-        const endOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+        const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+        const fourDaysLater = new Date(startOfDay.getTime() + 4 * 24 * 60 * 60 * 1000); // 4 days ahead
+        // const oneDayBefore = new Date(startOfDay.getTime() - 24 * 60 * 60 * 1000); // 1 day before
+        const threeDayBefore = new Date(startOfDay.getTime() - 72 * 60 * 60 * 1000); // 1 day before
 
         const query = [
             // Stage 1: Separate live matches
@@ -37,7 +39,7 @@ const queriesForHomeList = async (options) => {
                 }
             },
             {
-                $sort: { "date_wise": 1 } // Sort live matches by date
+                $sort: { date_time: 1 } // Sort live matches by date
             },
             {
                 $unionWith: {
@@ -49,14 +51,14 @@ const queriesForHomeList = async (options) => {
                                 match_status: "Upcoming",
                                 $expr: {
                                     $and: [
-                                        { $gte: [{ $dateFromString: { dateString: "$date_wise" } }, currentDate] },
-                                        { $lt: [{ $dateFromString: { dateString: "$date_wise" } }, new Date(currentDate.getTime() + 4 * 24 * 60 * 60 * 1000)] }
+                                        { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, startOfDay] },
+                                        { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
                                     ]
                                 }
                             }
                         },
                         {
-                            $sort: { "date_wise": 1 } // Sort upcoming matches by date
+                            $sort: { date_time: 1 } // Sort upcoming matches by date
                         },
                         {
                             $unionWith: {
@@ -68,14 +70,14 @@ const queriesForHomeList = async (options) => {
                                             match_status: "Finished",
                                             $expr: {
                                                 $and: [
-                                                    { $gte: [{ $dateFromString: { dateString: "$date_wise" } }, new Date(currentDate.getTime() - 24 * 60 * 60 * 1000)] },
-                                                    { $lt: [{ $dateFromString: { dateString: "$date_wise" } }, currentDate] }
+                                                    { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDayBefore] },
+                                                    { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
                                                 ]
                                             }
                                         }
                                     },
                                     {
-                                        $sort: { "date_wise": 1 } // Sort finished matches by date
+                                        $sort: { date_time: 1 } // Sort finished matches by date
                                     }
                                 ]
                             }
@@ -84,19 +86,22 @@ const queriesForHomeList = async (options) => {
                 }
             },
             {
-                $sort: { "date_wise": 1 } // Final sort by date
+                $sort: { date_time: 1 } // Final sort by date
             },
             {
                 $limit: 20 // Limit the result to 20 records
             },
             {
                 $project: {
-                    date_wise: 1,
+                    date_time: 1,
                     match_date: 1,
                     _id: 0, // Exclude _id field if not needed
                     "squad": 1,
                     "match_id": 1,
                     "forms": 1,
+                    "fav_team": 1,
+                    "min_rate": 1,
+                    "max_rate": 1,
                     "head_to_head": 1,
                     "is_hundred": 1,
                     "man_of_match": 1,
@@ -139,13 +144,14 @@ const queriesForHomeList = async (options) => {
         ];
 
         const data = await MatchesModel.aggregate(query);
-
         return data;
+
     } catch (error) {
         console.error("Error fetching matches:", error);
         throw new Error("Error fetching match data");
     }
 };
+
 
 /**
  * Query for Record
@@ -188,6 +194,16 @@ const queries = async (options) => {
  */
 const getById = async (id) => {
     var data = await MatchesModel.findById(id)
+    return data;
+};
+
+/**
+ * Get Record by id
+ * @param {ObjectId} id
+ * @returns {Promise<Record>}
+ */
+const getByMatchId = async (id) => {
+    var data = await MatchesModel.findOne({match_id: id})
     return data;
 };
 
@@ -319,6 +335,7 @@ module.exports = {
     queriesForHomeList,
     queries,
     getById,
+    getByMatchId,
     updateById,
     deleteById,
     getListWithoutPagination,

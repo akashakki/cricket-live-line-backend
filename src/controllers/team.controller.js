@@ -2,6 +2,11 @@ const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
 const { TeamService } = require('../services');
 const CONSTANT = require('../config/constant');
+const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/';
+const baseURL = 'https://apicricketchampion.in/apiv4/';
+const token = 'deed03c60ab1c13b1dbef6453421ead6';
+const axios = require('axios');
+const FormData = require('form-data');
 
 const create = catchAsync(async (req, res) => {
     const industry = await TeamService.create(req.body);
@@ -41,11 +46,41 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getTeamRanking = catchAsync(async (req, res) => {
+    const { type } = req.body;
+    const result = await fetchTeamRanking(type);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
+async function fetchTeamRanking(type) {
+    try {
+        const formData = new FormData();
+        formData.append('type', type); // Add match_id to formdata
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity, // Allow large request bodies if needed
+            url: `${baseURL}teamRanking/${token}`, // Your API endpoint
+            headers: {
+                ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
+            },
+            data: formData // Send the FormData object as the request body
+        };
+
+        const response = await axios.request(config);
+        const data = response.data?.data;
+        return data;
+    } catch (error) {
+        console.error('Error making API call:', error);
+    }
+}
+
 module.exports = {
     create,
     getLists,
     getById,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getTeamRanking
 };

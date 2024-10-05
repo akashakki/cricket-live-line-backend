@@ -41,11 +41,23 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getVenuesBySeriesId = catchAsync(async (req, res) => {
+    const { series_id } = req.body;
+    // Logic for fetching match info by match_id
+});
+
+const getVenuesDetailsId = catchAsync(async (req, res) => {
+    const { venue_id } = req.body;
+    // Logic for fetching match info by match_id
+});
+
 module.exports = {
     create,
     getLists,
     getById,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getVenuesBySeriesId,
+    getVenuesDetailsId
 };

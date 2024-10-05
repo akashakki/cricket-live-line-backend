@@ -2,29 +2,45 @@ const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
 const { PlayerService } = require('../services');
 const CONSTANT = require('../config/constant');
+const baseURL = 'https://apicricketchampion.in/apiv4/';
+const token = 'deed03c60ab1c13b1dbef6453421ead6';
+const axios = require('axios');
+const FormData = require('form-data');
 
 const create = catchAsync(async (req, res) => {
-    const industry = await PlayerService.create(req.body);
-    res.send(industry);
+    const data = await PlayerService.create(req.body);
+    res.send(data);
 });
 
 const getLists = catchAsync(async (req, res) => {
-    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status']);
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status', 'nationality', 'play_role']);
     const result = await PlayerService.queries(options);
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getListsForUser = catchAsync(async (req, res) => {
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status', 'nationality', 'play_role']);
+    options['for'] = 'user';
+    const result = await PlayerService.queries(options);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
+const getTrendingPlayerLists = catchAsync(async (req, res) => {
+    const result = await PlayerService.getTrendingPlayer();
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
 const getById = catchAsync(async (req, res) => {
-    const industry = await PlayerService.getById(req.params.id);
-    if (!industry) {
+    const data = await PlayerService.getById(req.params.id);
+    if (!data) {
         res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
     }
-    res.send({ data: industry, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
+    res.send({ data: data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
 });
 
 const updateById = catchAsync(async (req, res) => {
-    const industry = await PlayerService.updateById(req.params.id, req.body);
-    res.send(industry);
+    const data = await PlayerService.updateById(req.params.id, req.body);
+    res.send(data);
 });
 
 const deleteById = catchAsync(async (req, res) => {
@@ -41,11 +57,53 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getPlayerRanking = catchAsync(async (req, res) => {
+    const { type } = req.body;
+    const result = await fetchPlayerRanking(type);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
+const getByPlyerId = catchAsync(async (req, res) => {
+    const { player_id } = req.body;
+    const data = await PlayerService.getByPlyerId(player_id);
+    if (!data) {
+        res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
+    }
+    res.send({ data: data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
+});
+
+async function fetchPlayerRanking(type) {
+    try {
+        const formData = new FormData();
+        formData.append('type', type); // Add match_id to formdata
+
+        let config = {
+            method: 'post',
+            maxBodyLength: Infinity, // Allow large request bodies if needed
+            url: `${baseURL}playerRanking/${token}`, // Your API endpoint
+            headers: {
+                ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
+            },
+            data: formData // Send the FormData object as the request body
+        };
+
+        const response = await axios.request(config);
+        const data = response.data?.data;
+        return data;
+    } catch (error) {
+        console.error('Error making API call:', error);
+    }
+}
+
 module.exports = {
     create,
     getLists,
+    getListsForUser,
     getById,
+    getByPlyerId,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getPlayerRanking,
+    getTrendingPlayerLists
 };

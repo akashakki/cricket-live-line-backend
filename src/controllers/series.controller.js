@@ -54,6 +54,21 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getSquadsBySeriesId = catchAsync(async (req, res) => {
+    const { series_id } = req.body;
+    // Logic for fetching match info by match_id
+});
+
+const getStatsBySeriesId = catchAsync(async (req, res) => {
+    const { series_id } = req.body;
+    // Logic for fetching match info by match_id
+});
+
+const getPointTableBySeriesId = catchAsync(async (req, res) => {
+    const { series_id } = req.body;
+    // Logic for fetching match info by match_id
+});
+
 module.exports = {
     create,
     getSeriesLists,
@@ -62,5 +77,8 @@ module.exports = {
     getBySeriesId,
     updateById,
     deleteById,
-    getListWithoutPagination
+    getListWithoutPagination,
+    getSquadsBySeriesId,
+    getStatsBySeriesId,
+    getPointTableBySeriesId
 };
