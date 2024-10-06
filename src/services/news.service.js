@@ -1,29 +1,24 @@
 const { NewsModel } = require('../models');
 const CONSTANT = require('../config/constant');
 
-const monthMap = {
-    'Jan': '01',
-    'Feb': '02',
-    'Mar': '03',
-    'Apr': '04',
-    'May': '05',
-    'Jun': '06',
-    'Jul': '07',
-    'Aug': '08',
-    'Sep': '09',
-    'Oct': '10',
-    'Nov': '11',
-    'Dec': '12'
-};
+const convertPubDateToISO = (pub_date) => {
+    const months = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+    };
 
-function convertPubDateToISO(dateStr) {
-    const [day, monthAbbrev, yearTime] = dateStr.split(' ');
-    const [year, time] = yearTime.split(' | ');
+    // "06 Oct, 2024 | 04:52 PM" -> ["06", "Oct", "2024", "04:52 PM"]
+    let [datePart, timePart] = pub_date.split('|').map(part => part.trim());
 
-    const month = monthMap[monthAbbrev];
+    let [day, monthAbbr, year] = datePart.split(' '); // ["06", "Oct", "2024"]
+    let month = months[monthAbbr];
 
-    // Return in 'YYYY-MM-DDTHH:MM:SS' format (ISO string)
-    return `${year}-${month}-${day.padStart(2, '0')}T${time}:00`;
+    // Convert "04:52 PM" to 24-hour time "16:52"
+    let time = new Date('1970-01-01T' + timePart).toTimeString().split(' ')[0];
+
+    // Return ISO date string: "2024-10-06T16:52:00Z"
+    return `${year}-${month}-${day}T${time}.000Z`;
 }
 
 
