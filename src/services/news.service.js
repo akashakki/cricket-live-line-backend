@@ -8,18 +8,45 @@ const convertPubDateToISO = (pub_date) => {
         'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
     };
 
-    // "06 Oct, 2024 | 04:52 PM" -> ["06", "Oct", "2024", "04:52 PM"]
-    let [datePart, timePart] = pub_date.split('|').map(part => part.trim());
+    try {
+        // Split the date and time parts: "06 Oct, 2024 | 04:55 PM" -> ["06 Oct, 2024", "04:55 PM"]
+        let [datePart, timePart] = pub_date.split('|').map(part => part.trim());
+        console.log("🚀 ~ file: newsCronJob.js:20 ~ convertToMongoDate ~ datePart, timePart:", datePart, timePart)
 
-    let [day, monthAbbr, year] = datePart.split(' '); // ["06", "Oct", "2024"]
-    let month = months[monthAbbr];
+        // Split date part: "06 Oct, 2024" -> ["06", "Oct,", "2024"]
+        let [day, monthAbbr, year] = datePart.split(' ');
 
-    // Convert "04:52 PM" to 24-hour time "16:52"
-    let time = new Date('1970-01-01T' + timePart).toTimeString().split(' ')[0];
+        // Remove the comma from the month abbreviation
+        monthAbbr = monthAbbr.replace(',', '');
+        console.log("🚀 ~ file: newsCronJob.js:24 ~ convertToMongoDate ~ day, monthAbbr, year:", day, monthAbbr, year)
 
-    // Return ISO date string: "2024-10-06T16:52:00Z"
-    return `${year}-${month}-${day}T${time}.000Z`;
-}
+        // Now lookup the month
+        let month = months[monthAbbr];
+        console.log("🚀 ~ file: newsCronJob.js:24 ~ convertToMongoDate ~ month:", month)
+
+        // Handle AM/PM in time part: "04:55 PM" -> 24-hour format "16:55"
+        let [time, modifier] = timePart.split(' '); // Split time and AM/PM
+        let [hours, minutes] = time.split(':').map(Number);
+
+        // Convert to 24-hour format
+        if (modifier === 'PM' && hours < 12) {
+            hours += 12;
+        } else if (modifier === 'AM' && hours === 12) {
+            hours = 0; // Midnight edge case
+        }
+
+        // Construct the time in 24-hour format
+        let timeIn24Hour = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+
+        // Construct the full date string in the format YYYY-MM-DDTHH:mm:ssZ
+        let isoDateString = `${year}-${month}-${day}T${timeIn24Hour}Z`;
+
+        return isoDateString;
+    } catch (error) {
+        console.error('Error during date conversion:', error);
+        throw error; // Re-throw the error so the calling function can handle it
+    }
+};
 
 
 

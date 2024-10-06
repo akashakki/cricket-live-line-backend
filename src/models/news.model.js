@@ -11,6 +11,7 @@ const NewsSchema = mongoose.Schema({
     description: { type: String },
     image: { type: String },
     pub_date: { type: String },
+    new_date: { type: Date },
     content: { type: [String] },
     is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin
     is_delete: { type: Number, default: 1 }, //0 is delete, 1 is Active this is for Admin

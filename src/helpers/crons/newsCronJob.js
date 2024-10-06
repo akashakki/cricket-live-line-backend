@@ -7,19 +7,77 @@ const baseURL = 'https://apicricketchampion.in/apiv4/';
 const token = 'deed03c60ab1c13b1dbef6453421ead6';
 const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/'
 
+const convertToMongoDate = (pub_date) => {
+    const months = {
+        'Jan': '01', 'Feb': '02', 'Mar': '03', 'Apr': '04',
+        'May': '05', 'Jun': '06', 'Jul': '07', 'Aug': '08',
+        'Sep': '09', 'Oct': '10', 'Nov': '11', 'Dec': '12'
+    };
+
+    try {
+        // Split the date and time parts: "06 Oct, 2024 | 04:55 PM" -> ["06 Oct, 2024", "04:55 PM"]
+        let [datePart, timePart] = pub_date.split('|').map(part => part.trim());
+        console.log("🚀 ~ file: newsCronJob.js:20 ~ convertToMongoDate ~ datePart, timePart:", datePart, timePart)
+
+        // Split date part: "06 Oct, 2024" -> ["06", "Oct,", "2024"]
+        let [day, monthAbbr, year] = datePart.split(' ');
+
+        // Remove the comma from the month abbreviation
+        monthAbbr = monthAbbr.replace(',', '');
+        console.log("🚀 ~ file: newsCronJob.js:24 ~ convertToMongoDate ~ day, monthAbbr, year:", day, monthAbbr, year)
+
+        // Now lookup the month
+        let month = months[monthAbbr];
+        console.log("🚀 ~ file: newsCronJob.js:24 ~ convertToMongoDate ~ month:", month)
+
+        // Handle AM/PM in time part: "04:55 PM" -> 24-hour format "16:55"
+        let [time, modifier] = timePart.split(' '); // Split time and AM/PM
+        let [hours, minutes] = time.split(':').map(Number);
+
+        // Convert to 24-hour format
+        if (modifier === 'PM' && hours < 12) {
+            hours += 12;
+        } else if (modifier === 'AM' && hours === 12) {
+            hours = 0; // Midnight edge case
+        }
+
+        // Construct the time in 24-hour format
+        let timeIn24Hour = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
+
+        // Construct the full date string in the format YYYY-MM-DDTHH:mm:ssZ
+        let isoDateString = `${year}-${month}-${day}T${timeIn24Hour}Z`;
+
+        console.log("🚀 ~ file: newsCronJob.js:42 ~ convertToMongoDate ~ isoDateString:", isoDateString)
+        // Convert to JavaScript Date object and return
+        let dateObject = new Date(isoDateString);
+        console.log("🚀 ~ file: newsCronJob.js:44 ~ convertToMongoDate ~ dateObject:", dateObject)
+
+        // Check if the date is valid
+        if (isNaN(dateObject.getTime())) {
+            throw new Error(`Invalid date conversion for pub_date: ${pub_date}`);
+        }
+
+        return dateObject;
+    } catch (error) {
+        console.error('Error during date conversion:', error);
+        throw error; // Re-throw the error so the calling function can handle it
+    }
+};
+
 
 async function fetchNewsList() {
     try {
-            // Fetch the player list for the current page
-            const response = await axios.get(`${baseURL}news/${token}`) //'http://24.199.71.166:8700/v2/client/match-live-list');
-            const newsList = response.data?.data;
+        // Fetch the player list for the current page
+        const response = await axios.get(`${baseURL}news/${token}`) //'http://24.199.71.166:8700/v2/client/match-live-list');
+        const newsList = response.data?.data;
 
-            if (newsList && newsList.length > 0) {
-                // You can also process each player here if needed
-                for (let news of newsList) {
-                    await NewsModel.findOneAndUpdate({ news_id: news?.news_id }, news, { upsert: true });
-                }
+        if (newsList && newsList.length > 0) {
+            // You can also process each player here if needed
+            for (let news of newsList) {
+                news['new_date'] = convertToMongoDate(news?.pub_date)
+                await NewsModel.findOneAndUpdate({ news_id: news?.news_id }, news, { upsert: true });
             }
+        }
 
         console.log("Total players fetched:", newsList.length);
         // return allPlayers; // Return the complete list of players
