@@ -182,21 +182,33 @@ async function fetchUpcomingMatches() {
 console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
 if (config.env == "production") {// Schedule tasks to be run on the server.
     // cron.schedule('0 0 * * *', async () => {
-    cron.schedule('* * * * *', async () => {
-        console.log('Match Running a job every mint');
-        fetchMatchList()
-        // setInterval(fetchMatchList(), 500);
-    });
+    // cron.schedule('* * * * *', async () => {
+    //     console.log('Match Running a job every mint');
+    //     fetchMatchList()
+    //     // setInterval(fetchMatchList(), 500);
+    // });
 
-    // cron.schedule('0 */1 * * *', async () => {
-    cron.schedule('* * * * *', async () => {
-        console.log('Running a job at every hour');
-        // fetchLiveMatchList()
-        setInterval(fetchLiveMatchList(), 500);
-    });
+    // // cron.schedule('0 */1 * * *', async () => {
+    // cron.schedule('* * * * *', async () => {
+    //     console.log('Running a job at every hour');
+    //     // fetchLiveMatchList()
+    //     setInterval(fetchLiveMatchList(), 500);
+    // });
 
-    // Schedule task to run every 4 hours
-    cron.schedule('0 */4 * * *', () => {
+    // Runs fetchMatchList every second
+    setInterval(() => {
+        console.log('Match Running a job every second');
+        fetchMatchList();
+    }, 10000); // 1000 milliseconds = 1 second
+
+    // Runs fetchLiveMatchList every second
+    setInterval(() => {
+        console.log('Running fetchLiveMatchList every second');
+        fetchLiveMatchList();
+    }, 10000); // 1000 milliseconds = 1 second
+
+    // Schedule task to run every 30 minutes
+    cron.schedule('*/30 * * * *', () => {
         console.log('Fetching upcoming matches...');
         fetchUpcomingMatches();
     });
