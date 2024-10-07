@@ -89,7 +89,7 @@ const queriesForHomeList = async (options) => {
                 $sort: { date_time: 1 } // Final sort by date
             },
             {
-                $limit: 20 // Limit the result to 20 records
+                $limit: 30 // Limit the result to 30 records
             },
             {
                 $project: {
