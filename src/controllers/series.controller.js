@@ -1,6 +1,6 @@
 const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
-const { SeriesService } = require('../services');
+const { SeriesService, GlobalService } = require('../services');
 const CONSTANT = require('../config/constant');
 
 const create = catchAsync(async (req, res) => {
@@ -69,6 +69,13 @@ const getPointTableBySeriesId = catchAsync(async (req, res) => {
     // Logic for fetching match info by match_id
 });
 
+const getSeriesFinishedMatches = catchAsync(async (req, res) => {
+    const { series_id } = req.body;
+    const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "series_cid": series_id?.toString() }, 'web/series/seriesFinishedMatches', 'post');
+    // console.log("🚀 ~ file: series.controller.js:75 ~ getSeriesFinishedMatches ~ response:", response)
+    res.send({ data: response?.resData, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
 module.exports = {
     create,
     getSeriesLists,
@@ -80,5 +87,6 @@ module.exports = {
     getListWithoutPagination,
     getSquadsBySeriesId,
     getStatsBySeriesId,
-    getPointTableBySeriesId
+    getPointTableBySeriesId,
+    getSeriesFinishedMatches
 };

@@ -49,12 +49,14 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 });
 
 const getRecentMatchesBySeriesId = catchAsync(async (req, res) => {
-    const result = await MatchService.getRecentMatchesBySeriesId(req.body.series_id);
+    // const result = await MatchService.getRecentMatchesBySeriesId(req.body.series_id);
+    const result = await GlobalService.globalFunctionFetchDataFromAPI('series_id', req.body.series_id, 'recentMatchesBySeriesId', 'post');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 })
 
 const getUpcomingMatchesBySeriesId = catchAsync(async (req, res) => {
-    const result = await MatchService.getUpcomingMatchesBySeriesId(req.body.series_id);
+    // const result = await MatchService.getUpcomingMatchesBySeriesId(req.body.series_id);
+    const result = await GlobalService.globalFunctionFetchDataFromAPI('series_id', req.body.series_id, 'upcomingMatchesBySeriesId', 'post');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 })
 
