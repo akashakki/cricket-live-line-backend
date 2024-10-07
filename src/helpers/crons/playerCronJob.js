@@ -1,11 +1,7 @@
 const cron = require('node-cron');
-const axios = require('axios');
 const config = require('../../config/config');
-const FormData = require('form-data');
-const { PlayerModel, VenuesModel, TeamsModel } = require('../../models');
-const baseURL = 'https://apicricketchampion.in/apiv4/';
-const token = 'deed03c60ab1c13b1dbef6453421ead6';
-const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/'
+const { PlayerModel } = require('../../models');
+const { GlobalService } = require('../../services');
 
 
 async function fetchPlayerList() {
@@ -16,9 +12,9 @@ async function fetchPlayerList() {
     try {
         do {
             // Fetch the player list for the current page
-            const response = await axios.get(`${heroAPIBaseURL}web/playersList?page=${currentPage}&nationality=&gender=&role=&international=0&active=0`);
+            const response = await GlobalService.globalFunctionFetchDataFromHeroGETMethod(`web/playersList?page=${currentPage}`)
 
-            const playerList = response.data?.playerData?.data;
+            const playerList = response?.playerData?.data;
             lastPage = response.data?.playerData?.last_page; // Get the last page number from the response
 
             // console.log("🚀 ~ file: playerCronJob.js:14 ~ fetchPlayerList ~ playerList:", playerList);
@@ -56,8 +52,9 @@ async function fetchPlayerList() {
 
 async function fetchTrendingPlayersList() {
     try {
-        const response = await axios.get(`${heroAPIBaseURL}web/trendingPlayers/all`); //'http://24.199.71.166:8700/v2/client/match-list'
-        const playerList = response.data?.playerData;
+        const response = await GlobalService.globalFunctionFetchDataFromHeroGETMethod(`web/trendingPlayers/all`)
+
+        const playerList = response?.playerData;
         // console.log("🚀 ~ file: playerCronJob.js:14 ~ fetchPlayerList ~ playerList:", playerList)
         if (playerList && playerList?.length != 0) {
             // await fetchMatchDetails(playerList[0]?.match_id);
@@ -79,23 +76,10 @@ async function fetchTrendingPlayersList() {
 async function fetchPlayerDetailsByPlayerId(player_id) {
     console.log("🚀 ~ file: playerCronJob.js:75 ~ fetchPlayerDetailsByPlayerId ~ player_id:", player_id)
     try {
-        const formData = new FormData();
-        formData.append('player_id', (player_id).toString()); // Add match_id to formdata
+        const playerData = await GlobalService.globalFunctionFetchDataFromAPI('player_id', (player_id).toString(), 'playerInfo', 'post');
 
-        let config = {
-            method: 'post',
-            maxBodyLength: Infinity, // Allow large request bodies if needed
-            url: `${baseURL}playerInfo/${token}`, // Your API endpoint
-            headers: {
-                ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
-            },
-            data: formData // Send the FormData object as the request body
-        };
-
-        const response = await axios.request(config);
-        const playerData = response.data?.data;
         // console.log("🚀 ~ file: playerCronJob.js:92 ~ fetchPlayerDetailsByPlayerId ~ playerData:", playerData)
-        // console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", JSON.stringify(matchDetails))
+        
         if (playerData) {
             const updatedObj = {
                 player_id: playerData?.player?.player_id,

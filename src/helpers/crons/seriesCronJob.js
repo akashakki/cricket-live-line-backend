@@ -199,6 +199,6 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
         console.log('Running a job at 00:00 at midnight');
         fetchSeriesList()
     });
-    // fetchSeriesList()
+    fetchSeriesList()
 }
-fetchSeriesList()
+// fetchSeriesList()

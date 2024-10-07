@@ -1,16 +1,11 @@
 const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
-const { TeamService } = require('../services');
+const { TeamService, GlobalService } = require('../services');
 const CONSTANT = require('../config/constant');
-const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/';
-const baseURL = 'https://apicricketchampion.in/apiv4/';
-const token = 'deed03c60ab1c13b1dbef6453421ead6';
-const axios = require('axios');
-const FormData = require('form-data');
 
 const create = catchAsync(async (req, res) => {
-    const industry = await TeamService.create(req.body);
-    res.send(industry);
+    const data = await TeamService.create(req.body);
+    res.send(data);
 });
 
 const getLists = catchAsync(async (req, res) => {
@@ -20,16 +15,16 @@ const getLists = catchAsync(async (req, res) => {
 });
 
 const getById = catchAsync(async (req, res) => {
-    const industry = await TeamService.getById(req.params.id);
-    if (!industry) {
+    const data = await TeamService.getById(req.params.id);
+    if (!data) {
         res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });
     }
-    res.send({ data: industry, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
+    res.send({ data: data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
 });
 
 const updateById = catchAsync(async (req, res) => {
-    const industry = await TeamService.updateById(req.params.id, req.body);
-    res.send(industry);
+    const data = await TeamService.updateById(req.params.id, req.body);
+    res.send(data);
 });
 
 const deleteById = catchAsync(async (req, res) => {
@@ -48,32 +43,33 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 
 const getTeamRanking = catchAsync(async (req, res) => {
     const { type } = req.body;
-    const result = await fetchTeamRanking(type);
-    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    // const result = await fetchTeamRanking(type);
+    const apiResponse = await GlobalService.globalFunctionFetchDataFromAPI('type', type, 'teamRanking', 'post');
+    res.send({ data: apiResponse, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
-async function fetchTeamRanking(type) {
-    try {
-        const formData = new FormData();
-        formData.append('type', type); // Add match_id to formdata
+// async function fetchTeamRanking(type) {
+//     try {
+//         const formData = new FormData();
+//         formData.append('type', type); // Add match_id to formdata
 
-        let config = {
-            method: 'post',
-            maxBodyLength: Infinity, // Allow large request bodies if needed
-            url: `${baseURL}teamRanking/${token}`, // Your API endpoint
-            headers: {
-                ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
-            },
-            data: formData // Send the FormData object as the request body
-        };
+//         let config = {
+//             method: 'post',
+//             maxBodyLength: Infinity, // Allow large request bodies if needed
+//             url: `${baseURL}teamRanking/${token}`, // Your API endpoint
+//             headers: {
+//                 ...formData.getHeaders() // Ensure correct headers for FormData, including Content-Type
+//             },
+//             data: formData // Send the FormData object as the request body
+//         };
 
-        const response = await axios.request(config);
-        const data = response.data?.data;
-        return data;
-    } catch (error) {
-        console.error('Error making API call:', error);
-    }
-}
+//         const response = await axios.request(config);
+//         const data = response.data?.data;
+//         return data;
+//     } catch (error) {
+//         console.error('Error making API call:', error);
+//     }
+// }
 
 module.exports = {
     create,

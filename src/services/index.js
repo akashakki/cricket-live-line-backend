@@ -11,6 +11,9 @@ module.exports.FAQService = require('./faq.service');
 module.exports.ReviewService = require('./review.service');
 
 
+module.exports.GlobalService = require('./global.service');
+
+
 module.exports.OodSeriesService = require('./oodSeries.service');
 
 

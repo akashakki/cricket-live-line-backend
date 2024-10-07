@@ -76,5 +76,8 @@ module.exports = {
     clientId: envVars.CLIENT_ID,
     clientSecret: envVars.CLIENT_SECRET,
     redirectUrl: envVars.REDIRECT_URL
-  }
+  },
+  CRICKET_CHAMPION_API_URL: envVars.CRICKET_CHAMPION_API_URL,
+  CRICKET_CHAMPION_TOKEN: envVars.CRICKET_CHAMPION_TOKEN,
+  HERO_API_BASE_URL: envVars.HERO_API_BASE_URL,
 };

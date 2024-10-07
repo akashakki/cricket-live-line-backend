@@ -1,6 +1,6 @@
 const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
-const { MatchService } = require('../services');
+const { MatchService, GlobalService } = require('../services');
 const CONSTANT = require('../config/constant');
 const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/';
 const axios = require('axios');
@@ -81,9 +81,9 @@ const getBallByBallLiveMatch = catchAsync(async (req, res) => {
 
 const getManOfTheMatch = catchAsync(async (req, res) => {
     const { match_id } = req.body;
-    const result = await MatchService.getByMatchId(match_id);
+    const apiResponse = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'manOfTheMatch', 'post');
     // Logic for fetching match info by match_id
-    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    res.send({ data: apiResponse, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 

@@ -3,9 +3,7 @@ const axios = require('axios');
 const config = require('../../config/config');
 const FormData = require('form-data');
 const { NewsModel } = require('../../models');
-const baseURL = 'https://apicricketchampion.in/apiv4/';
-const token = 'deed03c60ab1c13b1dbef6453421ead6';
-const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/'
+const { GlobalService } = require('../../services');
 
 const convertToMongoDate = (pub_date) => {
     const months = {
@@ -68,8 +66,8 @@ const convertToMongoDate = (pub_date) => {
 async function fetchNewsList() {
     try {
         // Fetch the player list for the current page
-        const response = await axios.get(`${baseURL}news/${token}`) //'http://24.199.71.166:8700/v2/client/match-live-list');
-        const newsList = response.data?.data;
+
+        const newsList = await GlobalService.globalFunctionFetchDataFromAPIGETMethod('news');
 
         if (newsList && newsList.length > 0) {
             // You can also process each player here if needed
@@ -93,6 +91,5 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
         fetchNewsList();
     });
 
-    fetchNewsList()
-    // fetchTrendingPlayersList();
+    fetchNewsList();
 }

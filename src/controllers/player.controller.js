@@ -1,11 +1,7 @@
 const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
-const { PlayerService } = require('../services');
+const { PlayerService, GlobalService } = require('../services');
 const CONSTANT = require('../config/constant');
-const baseURL = 'https://apicricketchampion.in/apiv4/';
-const token = 'deed03c60ab1c13b1dbef6453421ead6';
-const axios = require('axios');
-const FormData = require('form-data');
 
 const create = catchAsync(async (req, res) => {
     const data = await PlayerService.create(req.body);
@@ -59,8 +55,8 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 
 const getPlayerRanking = catchAsync(async (req, res) => {
     const { type } = req.body;
-    const result = await fetchPlayerRanking(type);
-    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    const apiResponse = await GlobalService.globalFunctionFetchDataFromAPI('type', type, 'playerRanking', 'post');
+    res.send({ data: apiResponse, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getByPlyerId = catchAsync(async (req, res) => {
