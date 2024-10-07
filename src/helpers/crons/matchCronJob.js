@@ -1,8 +1,26 @@
 const cron = require('node-cron');
 const axios = require('axios');
+const moment = require('moment');
 const config = require('../../config/config');
 const { MatchesModel, PlayerModel, VenuesModel, TeamsModel } = require('../../models');
 const { GlobalService } = require('../../services');
+
+
+async function generateDateTime(match_date, date_wise, match_time) {
+    // Extract the year from the "date_wise" field
+    const year = date_wise.match(/\d{4}/)[0];  // Extracts the 4-digit year, "2024"
+
+    // Combine "match_date" and "year" into a full date
+    const fullDate = `${match_date}-${year}`;  // "12-Oct-2024"
+
+    // Combine the full date and "match_time"
+    const dateTimeString = `${fullDate} ${match_time}`;  // "12-Oct-2024 03:30 PM"
+
+    // Use moment.js to format it into "YYYY-MM-DD HH:mm:ss"
+    const dateTime = moment(dateTimeString, 'DD-MMM-YYYY hh:mm A').format('YYYY-MM-DD HH:mm:ss');
+    console.log("🚀 ~ file: matchCronJob.js:21 ~ generateDateTime ~ dateTime:", JSON.stringify(dateTime))
+    return dateTime;
+}
 
 async function fetchMatchList() {
     try {
@@ -68,55 +86,62 @@ async function fetchLiveMatchList() {
 async function fetchMatchDetails(match) {
     console.log("🚀 ~ file: matchCronJob.js:30 ~ fetchMatchDetails ~ match_id:", match?.match_id);
     try {
-        const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'matchInfo', 'post'); //response.data?.data;
-        let matchDetails = {
-            ...match,
-            ...matchData
-        }
-        console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails?.match_id)
-        if (matchDetails) {
-            // Remove match_status if it exists
-            delete matchDetails.match_status;
-
-            // Save venue details
-            const venueDetails = {
-                venue_id: matchDetails.venue_id,
-                venue: matchDetails.venue,
-                place: matchDetails.place,
-                pace_spin: matchDetails.pace_spin,
-                ...matchDetails.venue_weather
-            };
-            await VenuesModel.findOneAndUpdate({ venue_id: matchDetails.venue_id }, venueDetails, { upsert: true });
-
-            // Save team details
-            const teamADetails = {
-                team_id: matchDetails.team_a_id,
-                team_name: matchDetails.team_a,
-                team_short: matchDetails.team_a_short,
-                team_img: matchDetails.team_a_img,
-            };
-            const teamBDetails = {
-                team_id: matchDetails.team_b_id,
-                team_name: matchDetails.team_b,
-                team_short: matchDetails.team_b_short,
-                team_img: matchDetails.team_b_img,
-            };
-            await TeamsModel.findOneAndUpdate({ team_id: matchDetails.team_a_id }, teamADetails, { upsert: true });
-            await TeamsModel.findOneAndUpdate({ team_id: matchDetails.team_b_id }, teamBDetails, { upsert: true });
-
-            // Save player details
-            const players = [
-                ...(matchDetails.squad?.team_a?.player || []),
-                ...(matchDetails.squad?.team_b?.player || [])
-            ];
-
-            for (const player of players) {
-                await PlayerModel.findOneAndUpdate({ player_id: player.player_id }, player, { upsert: true });
+        if (match && match?.match_id) {
+            const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'matchInfo', 'post'); //response.data?.data;
+            let matchDetails = {
+                ...match,
+                ...matchData
             }
+            console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails?.match_id)
+            if (matchDetails) {
+                // Remove match_status if it exists
+                delete matchDetails.match_status;
 
-            matchDetails['match_status'] = match?.match_status;
-            matchDetails['date_time'] = match?.match_status;
-            await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, matchDetails, { upsert: true, new: true });
+                // Save venue details
+                const venueDetails = {
+                    venue_id: matchDetails.venue_id,
+                    venue: matchDetails.venue,
+                    place: matchDetails.place,
+                    pace_spin: matchDetails.pace_spin,
+                    ...matchDetails.venue_weather
+                };
+                await VenuesModel.findOneAndUpdate({ venue_id: matchDetails.venue_id }, venueDetails, { upsert: true });
+
+                // Save team details
+                const teamADetails = {
+                    team_id: matchDetails.team_a_id,
+                    team_name: matchDetails.team_a,
+                    team_short: matchDetails.team_a_short,
+                    team_img: matchDetails.team_a_img,
+                };
+                const teamBDetails = {
+                    team_id: matchDetails.team_b_id,
+                    team_name: matchDetails.team_b,
+                    team_short: matchDetails.team_b_short,
+                    team_img: matchDetails.team_b_img,
+                };
+                await TeamsModel.findOneAndUpdate({ team_id: matchDetails.team_a_id }, teamADetails, { upsert: true });
+                await TeamsModel.findOneAndUpdate({ team_id: matchDetails.team_b_id }, teamBDetails, { upsert: true });
+
+                // Save player details
+                const players = [
+                    ...(matchDetails.squad?.team_a?.player || []),
+                    ...(matchDetails.squad?.team_b?.player || [])
+                ];
+
+                for (const player of players) {
+                    await PlayerModel.findOneAndUpdate({ player_id: player.player_id }, player, { upsert: true });
+                }
+
+                matchDetails['match_status'] = match?.match_status;
+                if (match?.match_date && match?.date_wise && match?.match_time) {
+                    matchDetails['date_time'] = await generateDateTime(match?.match_date, match?.date_wise, match?.match_time);
+                }
+                // console.log("🚀 ~ file: matchCronJob.js:137 ~ fetchMatchDetails ~ matchDetails:", matchDetails)
+                if (matchDetails) {
+                    await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, matchDetails, { upsert: true, new: true });
+                }
+            }
         }
     } catch (error) {
         console.error('Error making API call:', error);
@@ -162,7 +187,7 @@ async function fetchMatchSquadsByMatchId(match) {
 async function fetchUpcomingMatches() {
     try {
         const matchList = await GlobalService.globalFunctionFetchDataFromAPIGETMethod('upcomingMatches'); //response.data?.data;
-        console.log("🚀 ~ file: matchCronJob.js:169 ~ fetchUpcomingMatches ~ matchList:", matchList)
+        // console.log("🚀 ~ file: matchCronJob.js:169 ~ fetchUpcomingMatches ~ matchList:", matchList)
         if (matchList && matchList?.length != 0) {
             await fetchMatchDetails(matchList[0]?.match_id);
             for (let i = 0; i < matchList?.length; i++) {
@@ -224,6 +249,6 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
     fetchLiveMatchList();
 }
 
-// fetchUpcomingMatches();
+fetchUpcomingMatches();
 // fetchMatchList()
 // fetchLiveMatchList()
