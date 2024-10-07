@@ -20,6 +20,9 @@ module.exports.OddsMatchDetailsModel = require('./oddsMatchDetails.model');
 
 module.exports.SportsModel = require('./sports.model');
 module.exports.MatchesModel = require('./matches.model');
+module.exports.MatchCommentaryModel = require('./matchCommentary.model');
+module.exports.MatchSquadModel = require('./matchSquad.model');
+module.exports.MatchBallByBallModel = require('./matchBallByBall.model');
 module.exports.SeriesModel = require('./series.model');
 module.exports.NewsModel = require('./news.model');
 module.exports.PlayerModel = require('./player.model');

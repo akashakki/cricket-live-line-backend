@@ -11,18 +11,18 @@ const convertPubDateToISO = (pub_date) => {
     try {
         // Split the date and time parts: "06 Oct, 2024 | 04:55 PM" -> ["06 Oct, 2024", "04:55 PM"]
         let [datePart, timePart] = pub_date.split('|').map(part => part.trim());
-        console.log("🚀 ~ file: newsCronJob.js:20 ~ convertToMongoDate ~ datePart, timePart:", datePart, timePart)
+        // console.log("🚀 ~ file: newsCronJob.js:20 ~ convertToMongoDate ~ datePart, timePart:", datePart, timePart)
 
         // Split date part: "06 Oct, 2024" -> ["06", "Oct,", "2024"]
         let [day, monthAbbr, year] = datePart.split(' ');
 
         // Remove the comma from the month abbreviation
         monthAbbr = monthAbbr.replace(',', '');
-        console.log("🚀 ~ file: newsCronJob.js:24 ~ convertToMongoDate ~ day, monthAbbr, year:", day, monthAbbr, year)
+        // console.log("🚀 ~ file: newsCronJob.js:24 ~ convertToMongoDate ~ day, monthAbbr, year:", day, monthAbbr, year)
 
         // Now lookup the month
         let month = months[monthAbbr];
-        console.log("🚀 ~ file: newsCronJob.js:24 ~ convertToMongoDate ~ month:", month)
+        // console.log("🚀 ~ file: newsCronJob.js:24 ~ convertToMongoDate ~ month:", month)
 
         // Handle AM/PM in time part: "04:55 PM" -> 24-hour format "16:55"
         let [time, modifier] = timePart.split(' '); // Split time and AM/PM

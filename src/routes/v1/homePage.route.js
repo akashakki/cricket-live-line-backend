@@ -18,6 +18,7 @@ router.route('/scorecardByMatchId').post(upload.any(), MatchController.getScorec
 router.route('/squadsByMatchId').post(upload.any(), MatchController.getSquadsByMatchId);
 router.route('/upcomingMatches').get(MatchController.getUpcomingMatches);
 router.route('/liveMatchList').get(MatchController.getLiveMatchList);
+router.route('/matchLiveBulkInfo').post(MatchController.getMatchLiveBulkInfo);
 
 // Series-related routes
 router.route('/seriesList').get(SeriesController.getSeriesLists);

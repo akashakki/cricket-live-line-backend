@@ -51,8 +51,27 @@ const globalFunctionFetchDataFromHeroGETMethod = async (endpoint) => {
     }
 }
 
+const globalFunctionFetchDataFromHeroPostMethod = async (value, endpoint, method) => {
+    console.log("🚀 ~ file: global.service.js:55 ~ globalFunctionFetchDataFromHeroPostMethod ~ value:", value)
+    try {
+        let config = {
+            method: method,
+            maxBodyLength: Infinity, // Allow large request bodies if needed
+            // url: `${heroAPIBaseURL}web/getmatchlisting/`, // Your API endpoint
+            url: `${heroAPIBaseURL}${endpoint}`, // Your API endpoint
+            data: value //{ "match_status": "All" } // Send the FormData object as the request body
+        };
+
+        const response = await axios.request(config);
+        return response?.data;
+    } catch (error) {
+        console.error('Error making API call:', error);
+    }
+}
+
 module.exports = {
     globalFunctionFetchDataFromAPI,
     globalFunctionFetchDataFromAPIGETMethod,
-    globalFunctionFetchDataFromHeroGETMethod
+    globalFunctionFetchDataFromHeroGETMethod,
+    globalFunctionFetchDataFromHeroPostMethod
 };

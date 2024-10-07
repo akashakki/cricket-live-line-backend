@@ -2,8 +2,8 @@ const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
 const { MatchService, GlobalService } = require('../services');
 const CONSTANT = require('../config/constant');
-const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/';
-const axios = require('axios');
+// const heroAPIBaseURL = 'https://app.heroliveline.com/csadmin/api/';
+// const axios = require('axios');
 
 const create = catchAsync(async (req, res) => {
     const industry = await MatchService.create(req.body);
@@ -111,44 +111,33 @@ const getSquadsByMatchId = catchAsync(async (req, res) => {
 const getUpcomingMatches = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await MatchService.getByMatchId(match_id);
-    // Logic for fetching match info by match_id
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getLiveMatchList = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await MatchService.getByMatchId(match_id);
-    // Logic for fetching match info by match_id
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getMatchBallByBallOddHistory = catchAsync(async (req, res) => {
     const { match_id } = req.body;
-    console.log("🚀 ~ file: matches.controller.js:127 ~ getMatchBallByBallOddHistory ~ match_id:", match_id)
     const hero_match_id = await fetchMatchDetailsFromHero(match_id);
-    console.log("🚀 ~ file: matches.controller.js:129 ~ getMatchBallByBallOddHistory ~ hero_match_id:", hero_match_id)
     const result = await fetchBallByBallMatchDetailsFromHero(hero_match_id);
-    console.log("🚀 ~ file: matches.controller.js:128 ~ getMatchBallByBallOddHistory ~ result:", result)
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
-// const getUpcomingMatches = catchAsync(async (req, res) => {
-//     const { match_id } = req.body;
-//     // Logic for fetching match info by match_id
-// });
+const getMatchLiveBulkInfo = catchAsync(async (req, res) => {
+    const { match_ids } = req.body;
+    const result = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({match_ids}, 'cron/matchLiveBulkInfo', 'post');
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    // Logic for fetching match info by match_id
+});
 
 async function fetchMatchDetailsFromHero(match_id) {
     try {
-        let config = {
-            method: 'post',
-            maxBodyLength: Infinity, // Allow large request bodies if needed
-            // url: `${heroAPIBaseURL}web/getmatchlisting/`, // Your API endpoint
-            url: `${heroAPIBaseURL}web/getmatchlisting`, // Your API endpoint
-            data: { "match_status": 'All' } //{ "match_status": "All" } // Send the FormData object as the request body
-        };
-
-        const response = await axios.request(config);
-        const matchData = response.data?.matchData;
+        const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_status": 'All' }, 'web/getmatchlisting', 'post');
+        const matchData = response?.matchData;
         let hero_match_id = match_id;
         for (let i = 0; i < matchData.length; i++) {
             const element = matchData[i];
@@ -166,18 +155,8 @@ async function fetchMatchDetailsFromHero(match_id) {
 
 async function fetchBallByBallMatchDetailsFromHero(match_id) {
     try {
-        let config = {
-            method: 'post',
-            maxBodyLength: Infinity, // Allow large request bodies if needed
-            // url: `${heroAPIBaseURL}web/getmatchlisting/`, // Your API endpoint
-            url: `${heroAPIBaseURL}web/match/matchBallByBall`, // Your API endpoint
-            data: { "match_id": match_id } //{ "match_status": "All" } // Send the FormData object as the request body
-        };
-
-        const response = await axios.request(config);
-        // console.log("🚀 ~ file: matchCronJob.js:75 ~ fetchMatchDetailsFromHero ~ response:", JSON.stringify(response?.data?.matchOddHistoryData))
-        // const matchData = response.data?.data;
-        return response?.data?.matchOddHistoryData
+        const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_id": match_id }, 'web/match/matchBallByBall', 'post');
+        return response?.matchOddHistoryData
 
     } catch (error) {
         console.error('Error making API call:', error);
@@ -202,5 +181,6 @@ module.exports = {
     getSquadsByMatchId,
     getUpcomingMatches,
     getLiveMatchList,
-    getMatchBallByBallOddHistory
+    getMatchBallByBallOddHistory,
+    getMatchLiveBulkInfo
 };
