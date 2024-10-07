@@ -68,7 +68,7 @@ async function fetchLiveMatchList() {
 async function fetchMatchDetails(match) {
     console.log("🚀 ~ file: matchCronJob.js:30 ~ fetchMatchDetails ~ match_id:", match?.match_id);
     try {
-        const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'playerRanking', 'post'); //response.data?.data;
+        const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'matchInfo', 'post'); //response.data?.data;
         let matchDetails = {
             ...match,
             ...matchData
@@ -115,6 +115,7 @@ async function fetchMatchDetails(match) {
             }
 
             matchDetails['match_status'] = match?.match_status;
+            matchDetails['date_time'] = match?.match_status;
             await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, matchDetails, { upsert: true, new: true });
         }
     } catch (error) {
