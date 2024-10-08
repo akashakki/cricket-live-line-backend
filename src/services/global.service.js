@@ -36,7 +36,8 @@ const globalFunctionFetchDataFromAPI = async (key, value, endpoint, method) => {
         const data = response.data?.data;
         return data;
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call:', error?.response?.statusText);
+        return [];
     }
 }
 

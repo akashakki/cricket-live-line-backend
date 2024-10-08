@@ -55,8 +55,15 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 });
 
 const getSquadsBySeriesId = catchAsync(async (req, res) => {
+    let response = [];
     const { series_id } = req.body;
-    const response = await GlobalService.globalFunctionFetchDataFromAPI('series_id', series_id, 'squadsBySeriesId', 'post');
+    response = await GlobalService.globalFunctionFetchDataFromAPI('series_id', series_id, 'squadsBySeriesId', 'post');
+    if (response?.length == 0) {
+        const data = await SeriesService.getBySeriesId(series_id);
+        const updated_series_id = data?.series?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const result = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "series_id": updated_series_id }, 'web/series/seriesDetail', 'post');
+        response = result?.seriesDetail?.series_players?.data;
+    }
     res.send({ data: response, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
