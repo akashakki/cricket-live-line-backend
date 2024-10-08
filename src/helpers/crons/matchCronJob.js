@@ -208,14 +208,14 @@ async function fetchUpcomingMatches() {
 console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
 if (config.env == "production") {// Schedule tasks to be run on the server.
     // cron.schedule('0 0 * * *', async () => {
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('*/30 * * * *', async () => {
         console.log('Match Running a job every mint');
         fetchMatchList()
         // setInterval(fetchMatchList(), 500);
     });
 
     // cron.schedule('0 */1 * * *', async () => {
-    cron.schedule('* * * * *', async () => {
+    cron.schedule('*/5 * * * *', async () => {
         console.log('Running a job at every hour');
         fetchLiveMatchList()
         // setInterval(fetchLiveMatchList(), 500);
