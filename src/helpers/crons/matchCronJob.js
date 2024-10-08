@@ -215,7 +215,7 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
     });
 
     // cron.schedule('0 */1 * * *', async () => {
-    cron.schedule('*/5 * * * *', async () => {
+    cron.schedule('*/1 * * * *', async () => {
         console.log('Running a job at every hour');
         fetchLiveMatchList()
         // setInterval(fetchLiveMatchList(), 500);
