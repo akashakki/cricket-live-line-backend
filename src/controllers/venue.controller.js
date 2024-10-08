@@ -1,6 +1,6 @@
 const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
-const { VenueService } = require('../services');
+const { VenueService, GlobalService } = require('../services');
 const CONSTANT = require('../config/constant');
 
 const create = catchAsync(async (req, res) => {
@@ -43,7 +43,8 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 
 const getVenuesBySeriesId = catchAsync(async (req, res) => {
     const { series_id } = req.body;
-    // Logic for fetching match info by match_id
+    const result = await GlobalService.globalFunctionFetchDataFromAPI('series_id', series_id, 'venuesBySeriesId', 'post');
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getVenuesDetailsId = catchAsync(async (req, res) => {

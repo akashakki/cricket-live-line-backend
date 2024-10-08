@@ -56,17 +56,25 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 
 const getSquadsBySeriesId = catchAsync(async (req, res) => {
     const { series_id } = req.body;
-    // Logic for fetching match info by match_id
+    const response = await GlobalService.globalFunctionFetchDataFromAPI('series_id', series_id, 'squadsBySeriesId', 'post');
+    res.send({ data: response, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getStatsBySeriesId = catchAsync(async (req, res) => {
-    const { series_id } = req.body;
-    // Logic for fetching match info by match_id
+    const { series_id, type, sub_type } = req.body;
+    const params = {
+        series_id,
+        type,
+        sub_type
+    }
+    const response = await GlobalService.globalFunctionFetchDataFromAPI('multiple', params, 'seriesStatsBySeriesId', 'post');
+    res.send({ data: response, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getPointTableBySeriesId = catchAsync(async (req, res) => {
     const { series_id } = req.body;
-    // Logic for fetching match info by match_id
+    const response = await GlobalService.globalFunctionFetchDataFromAPI('series_id', series_id, 'pointsTable', 'post');
+    res.send({ data: response, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getSeriesFinishedMatches = catchAsync(async (req, res) => {

@@ -1,6 +1,6 @@
 const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
-const { NewsService } = require('../services');
+const { NewsService, GlobalService } = require('../services');
 const CONSTANT = require('../config/constant');
 
 const create = catchAsync(async (req, res) => {
@@ -50,7 +50,8 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 });
 
 const getNewsBySeriesId = catchAsync(async (req, res) => {
-    const result = await NewsService.getNewsBySeriesId(req.body?.series_id);
+    // const result = await NewsService.getNewsBySeriesId(req.body?.series_id);
+    const result = await GlobalService.globalFunctionFetchDataFromAPI('series_id', req.body?.series_id, 'newsBySeriesId', 'post');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 

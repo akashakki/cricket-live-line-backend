@@ -29,7 +29,7 @@ router.route('/squadsBySeriesId').post(upload.any(), SeriesController.getSquadsB
 router.route('/seriesStatsBySeriesId').post(upload.any(), SeriesController.getStatsBySeriesId);
 router.route('/pointsTable').post(upload.any(), SeriesController.getPointTableBySeriesId);
 router.route('/seriesFinishedMatches').post(upload.any(), SeriesController.getSeriesFinishedMatches);
-router.route('/venuesBySeriesId').post(VenueController.getVenuesBySeriesId);
+router.route('/venuesBySeriesId').post(upload.any(), VenueController.getVenuesBySeriesId);
 router.route('/venuesDetail').post(VenueController.getVenuesDetailsId);
 
 

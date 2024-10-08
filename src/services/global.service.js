@@ -11,7 +11,16 @@ const heroAPIBaseURL = CONFIG?.HERO_API_BASE_URL//'https://app.heroliveline.com/
 const globalFunctionFetchDataFromAPI = async (key, value, endpoint, method) => {
     try {
         const formData = new FormData();
-        formData.append(key, value); // Add match_id to formdata
+        if (key == 'multiple') {
+            const params = value;
+            for (const key in params) {
+                if (params.hasOwnProperty(key)) {
+                    formData.append(key, params[key]);
+                }
+            }
+        } else {
+            formData.append(key, value); // Add match_id to formdata
+        }
 
         let config = {
             method,
