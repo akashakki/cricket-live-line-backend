@@ -171,6 +171,12 @@ const getMatchCommentary = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getliveMatch = catchAsync(async (req, res) => {
+    const { match_id } = req.body;
+    const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'liveMatch', 'post');
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
 module.exports = {
     create,
     getHomeLists,
@@ -185,6 +191,7 @@ module.exports = {
     getLiveMatch,
     getBallByBallLiveMatch,
     getMatchCommentary,
+    getliveMatch,
     getManOfTheMatch,
     getScorecardByMatchId,
     getSquadsByMatchId,
