@@ -189,7 +189,7 @@ module.exports = {
     getRecentMatchesBySeriesId,
     getUpcomingMatchesBySeriesId,
     getMatchInfo,
-    getLiveMatch,
+    // getLiveMatch,
     getBallByBallLiveMatch,
     getMatchCommentary,
     getliveMatch,
