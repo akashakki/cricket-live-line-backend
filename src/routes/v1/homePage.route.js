@@ -10,7 +10,6 @@ const router = express.Router();
 // Match-related routes
 router.route('/homeList').get(MatchController.getHomeLists);
 router.route('/matchInfo').post(upload.any(), MatchController.getMatchInfo);
-router.route('/liveMatch').post(upload.any(), MatchController.getLiveMatch);
 router.route('/matchBallByBall').post(upload.any(), MatchController.getMatchBallByBallOddHistory);
 // router.route('/commentary').post(upload.any(), MatchController.getBallByBallLiveMatch);
 router.route('/liveMatch').post(upload.any(), MatchController.getliveMatch);

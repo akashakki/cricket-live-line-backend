@@ -67,12 +67,12 @@ const getMatchInfo = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
-const getLiveMatch = catchAsync(async (req, res) => {
-    const { match_id } = req.body;
-    const result = await MatchService.getByMatchId(match_id);
-    // Logic for fetching match info by match_id
-    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
-});
+// const getLiveMatch = catchAsync(async (req, res) => {
+//     const { match_id } = req.body;
+//     const result = await MatchService.getByMatchId(match_id);
+//     // Logic for fetching match info by match_id
+//     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+// });
 
 const getBallByBallLiveMatch = catchAsync(async (req, res) => {
     const { match_id } = req.body;
@@ -174,7 +174,8 @@ const getMatchCommentary = catchAsync(async (req, res) => {
 const getliveMatch = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'liveMatch', 'post');
-    res.send({ data: result?.data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    console.log("🚀 ~ file: matches.controller.js:177 ~ getliveMatch ~ result:", result)
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 module.exports = {
