@@ -174,7 +174,7 @@ const getMatchCommentary = catchAsync(async (req, res) => {
 const getliveMatch = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'liveMatch', 'post');
-    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    res.send({ data: result?.data, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 module.exports = {
