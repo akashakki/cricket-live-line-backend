@@ -131,7 +131,7 @@ const getMatchBallByBallOddHistory = catchAsync(async (req, res) => {
 
 const getMatchLiveBulkInfo = catchAsync(async (req, res) => {
     const { match_ids } = req.body;
-    const result = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({match_ids}, 'cron/matchLiveBulkInfo', 'post');
+    const result = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ match_ids }, 'cron/matchLiveBulkInfo', 'post');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
     // Logic for fetching match info by match_id
 });
@@ -174,7 +174,10 @@ const getMatchCommentary = catchAsync(async (req, res) => {
 const getliveMatch = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'liveMatch', 'post');
-    console.log("🚀 ~ file: matches.controller.js:177 ~ getliveMatch ~ result:", result)
+    // console.log("🚀 ~ file: matches.controller.js:177 ~ getliveMatch ~ result:", result)
+    if (result?.result && result?.result?.includes("won")) {
+        MatchService.updateByMatchId(match_id, { match_status: 'Finished', result: result?.result });
+    }
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 

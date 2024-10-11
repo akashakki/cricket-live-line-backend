@@ -203,7 +203,7 @@ const getById = async (id) => {
  * @returns {Promise<Record>}
  */
 const getByMatchId = async (id) => {
-    var data = await MatchesModel.findOne({match_id: id})
+    var data = await MatchesModel.findOne({ match_id: id })
     return data;
 };
 
@@ -330,6 +330,13 @@ const getUpcomingMatchesBySeriesId = async (series_id) => {
 };
 
 
+const updateByMatchId = async (id, updateBody) => {
+    const data = await MatchesModel.findOne({ match_id: id });
+    Object.assign(data, updateBody);
+    await data.save();
+};
+
+
 module.exports = {
     create,
     queriesForHomeList,
@@ -337,6 +344,7 @@ module.exports = {
     getById,
     getByMatchId,
     updateById,
+    updateByMatchId,
     deleteById,
     getListWithoutPagination,
     getRecentMatchesBySeriesId,
