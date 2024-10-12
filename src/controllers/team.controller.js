@@ -42,9 +42,22 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 });
 
 const getTeamRanking = catchAsync(async (req, res) => {
-    const { type } = req.body;
+    const { type, teamType } = req.body;
+    let apiResponse = [];
     // const result = await fetchTeamRanking(type);
-    const apiResponse = await GlobalService.globalFunctionFetchDataFromAPI('type', type, 'teamRanking', 'post');
+    if (teamType == 'men') {
+        apiResponse = await GlobalService.globalFunctionFetchDataFromAPI('type', type, 'teamRanking', 'post');
+    } else {
+        let result = await GlobalService.globalFunctionFetchDataFromHeroGETMethod(`web/rankingData/${type}/2`);
+        const newArray = result?.data?.map(item => ({
+            rank: Number(item.pt_rank), // Convert to number if needed
+            team: item.pt_team,
+            image: item.pt_image,
+            rating: Number(item.pt_rating), // Convert to number if needed
+            point: Number(item.pt_point) // Convert to number if needed
+          }));
+          apiResponse = newArray
+    }
     res.send({ data: apiResponse, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
