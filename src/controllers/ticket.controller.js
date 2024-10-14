@@ -14,7 +14,7 @@ const createTicket = catchAsync(async (req, res) => {
 const updateStatus = catchAsync(async (req, res) => {
     // console.log("req body: " + req.params.id);
     const { ticketId } = req.query;
-    console.log("ticketId: " + ticketId);
+    // console.log("ticketId: " + ticketId);
     const updateResult = await ticketService.changeTicketStatus(ticketId, req.body);
 
     res.status(httpStatus.OK).send(updateResult);

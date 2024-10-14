@@ -20,7 +20,7 @@ async function login() {
 
     // Save new token to DB
     const newToken = loginResponse.data?.data?.token;
-    console.log("🚀 ~ file: cricketOodCronJob.js:32 ~ login ~ newToken:", newToken)
+    // console.log("🚀 ~ file: cricketOodCronJob.js:32 ~ login ~ newToken:", newToken)
     if (newToken) {
         await Token.findOneAndUpdate({ type: 'bigbetexchange' }, { token: newToken }, { upsert: true });
     }
@@ -30,7 +30,7 @@ async function login() {
 async function fetchGamesList() {
     try {
         const requestBody = { "limit": 50, "pageno": 1, "sport_id": 4, "series_id": 0, "type": "home" }
-        console.log("🚀 ~ file: cricketOodCronJob.js:25 ~ fetchGamesList ~ requestBody:", requestBody)
+        // console.log("🚀 ~ file: cricketOodCronJob.js:25 ~ fetchGamesList ~ requestBody:", requestBody)
         // Get the stored token from the database
         let tokenDoc = await Token.findOne({ type: 'bigbetexchange' });
         let token = tokenDoc ? tokenDoc.token : null;
@@ -46,7 +46,7 @@ async function fetchGamesList() {
         if (response.data.message === 'Send valid token!') {
             console.log('Invalid token. Fetching a new one...');
             const newToken = await login();
-            console.log("🚀 ~ file: cricketOodCronJob.js:39 ~ fetchGamesList ~ newToken:", newToken)
+            // console.log("🚀 ~ file: cricketOodCronJob.js:39 ~ fetchGamesList ~ newToken:", newToken)
             // Retry the API call with the new token
             response = await axios.post(`${API_BASE_URL}/event-game`, requestBody, {
                 headers: {
@@ -92,7 +92,7 @@ async function fetchMatchDataAndSave(m_id, s_id) {
         });
 
         const matchData = response.data?.data;
-        console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchMatchDataAndSave ~ matchData:", matchData?.MatchDetails?.match_id)
+        // console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchMatchDataAndSave ~ matchData:", matchData?.MatchDetails?.match_id)
         await MatchesRunnerModel.findOneAndUpdate({ matchId: matchData?.MatchDetails?.match_id }, matchData, { upsert: true, new: true });
     } catch (error) {
         console.error('Error fetching or saving data:', error);
@@ -110,7 +110,7 @@ async function fetchSessionDataAndSave(m_id) {
         });
 
         const matchData = response.data?.data;
-        console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchSessionDataAndSave ~ m_id:", m_id)
+        // console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchSessionDataAndSave ~ m_id:", m_id)
 
         // Remove all existing records for the match_id
         await MatchesSessionModel.deleteMany({ match_id: m_id });
@@ -125,7 +125,7 @@ async function fetchSessionDataAndSave(m_id) {
 }
 
 async function fetchMatchScore(matchId) {
-    console.log("🚀 ~ file: cricketOodCronJob.js:128 ~ fetchMatchScore ~ matchId:", matchId)
+    // console.log("🚀 ~ file: cricketOodCronJob.js:128 ~ fetchMatchScore ~ matchId:", matchId)
     const url = `https://score.jeoad.com/api/v1/getScore?matchId=${matchId}`;
 
     try {
@@ -189,7 +189,7 @@ async function fetchAndExtractIframeID(url, matchId) {
             const id = urlParams.get('id');
             const aC = urlParams.get('aC');
 
-            console.log('Extracted ID:', id, aC);
+            // console.log('Extracted ID:', id, aC);
             const score_widget_url = `https://www.satsports.net/score_widget/index.html?id=${id}&aC=${aC}`
             await OddsMatchDetailsModel.findOneAndUpdate({ match_id: matchId }, { score_widget_url: score_widget_url, scorecard_id: id }, { upsert: true, new: true });
             // return {id, aC};
@@ -201,7 +201,7 @@ async function fetchAndExtractIframeID(url, matchId) {
     }
 }
 
-console.log("🚀 ~ file: cricketOodCronJob.js:136 ~ config.env:", config.env)
+// console.log("🚀 ~ file: cricketOodCronJob.js:136 ~ config.env:", config.env)
 if (config.env == "production") {
     // Schedule the cron job to run every 5 mint
     cron.schedule('*/5 * * * *', () => {

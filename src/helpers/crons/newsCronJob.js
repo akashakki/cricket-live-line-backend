@@ -45,10 +45,10 @@ const convertToMongoDate = (pub_date) => {
         // Construct the full date string in the format YYYY-MM-DDTHH:mm:ssZ
         let isoDateString = `${year}-${month}-${day}T${timeIn24Hour}Z`;
 
-        console.log("🚀 ~ file: newsCronJob.js:42 ~ convertToMongoDate ~ isoDateString:", isoDateString)
+        // console.log("🚀 ~ file: newsCronJob.js:42 ~ convertToMongoDate ~ isoDateString:", isoDateString)
         // Convert to JavaScript Date object and return
         let dateObject = new Date(isoDateString);
-        console.log("🚀 ~ file: newsCronJob.js:44 ~ convertToMongoDate ~ dateObject:", dateObject)
+        // console.log("🚀 ~ file: newsCronJob.js:44 ~ convertToMongoDate ~ dateObject:", dateObject)
 
         // Check if the date is valid
         if (isNaN(dateObject.getTime())) {
@@ -77,14 +77,14 @@ async function fetchNewsList() {
             }
         }
 
-        console.log("Total players fetched:", newsList.length);
+        // console.log("Total players fetched:", newsList.length);
         // return allPlayers; // Return the complete list of players
     } catch (error) {
         console.error('Error making API call 52:', error);
     }
 }
 
-console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
+// console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
 if (config.env == "production") {// Schedule tasks to be run on the server.
     cron.schedule('0 * * * *', async () => {
         console.log('News Cron Running a job every hours');

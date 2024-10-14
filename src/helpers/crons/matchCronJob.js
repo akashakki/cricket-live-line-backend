@@ -18,7 +18,7 @@ async function generateDateTime(match_date, date_wise, match_time) {
 
     // Use moment.js to format it into "YYYY-MM-DD HH:mm:ss"
     const dateTime = moment(dateTimeString, 'DD-MMM-YYYY hh:mm A').format('YYYY-MM-DD HH:mm:ss');
-    console.log("🚀 ~ file: matchCronJob.js:21 ~ generateDateTime ~ dateTime:", JSON.stringify(dateTime))
+    // console.log("🚀 ~ file: matchCronJob.js:21 ~ generateDateTime ~ dateTime:", JSON.stringify(dateTime))
     return dateTime;
 }
 
@@ -50,7 +50,7 @@ async function fetchLiveMatchList() {
             // await fetchMatchDetails(matchList[0]?.match_id);
             for (let i = 0; i < matchList?.length; i++) {
                 const match = matchList[i];
-                console.log("🚀 ~ file: matchCronJob.js:31 ~ fetchLiveMatchList ~ match:", match?.match_status)
+                // console.log("🚀 ~ file: matchCronJob.js:31 ~ fetchLiveMatchList ~ match:", match?.match_status)
                 // await MatchesModel.create(match);
                 await fetchMatchDetails(match);
                 await fetchMatchScorecard(match);
@@ -84,7 +84,7 @@ async function fetchLiveMatchList() {
 // fetchMatchDetailsFromHero()
 
 async function fetchMatchDetails(match) {
-    console.log("🚀 ~ file: matchCronJob.js:30 ~ fetchMatchDetails ~ match_id:", match?.match_id);
+    // console.log("🚀 ~ file: matchCronJob.js:30 ~ fetchMatchDetails ~ match_id:", match?.match_id);
     try {
         if (match && match?.match_id) {
             const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'matchInfo', 'post'); //response.data?.data;
@@ -92,7 +92,7 @@ async function fetchMatchDetails(match) {
                 ...match,
                 ...matchData
             }
-            console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails?.match_id)
+            // console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails?.match_id)
             if (matchDetails) {
                 // Remove match_status if it exists
                 delete matchDetails.match_status;
@@ -149,7 +149,7 @@ async function fetchMatchDetails(match) {
 }
 
 async function fetchMatchScorecard(match) {
-    console.log("🚀 ~ file: matchCronJob.js:164 ~ fetchMatchScorecard ~ match:", match?.match_id)
+    // console.log("🚀 ~ file: matchCronJob.js:164 ~ fetchMatchScorecard ~ match:", match?.match_id)
     try {
 
         const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'scorecardByMatchId', 'post'); //response.data?.data;
@@ -192,7 +192,7 @@ async function fetchUpcomingMatches() {
             await fetchMatchDetails(matchList[0]?.match_id);
             for (let i = 0; i < matchList?.length; i++) {
                 const match = matchList[i];
-                console.log("🚀 ~ file: matchCronJob.js:31 ~ fetchLiveMatchList ~ match:", match?.match_status)
+                // console.log("🚀 ~ file: matchCronJob.js:31 ~ fetchLiveMatchList ~ match:", match?.match_status)
                 // await MatchesModel.create(match);
                 await fetchMatchDetails(match);
                 await fetchMatchScorecard(match);

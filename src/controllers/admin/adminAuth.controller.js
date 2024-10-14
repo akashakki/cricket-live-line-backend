@@ -30,7 +30,7 @@ const refreshTokens = catchAsync(async (req, res) => {
 });
 
 const forgotPassword = catchAsync(async (req, res) => {
-    console.log('req.body.email----forgot', req.body.email)
+    // console.log('req.body.email----forgot', req.body.email)
     const admin = await adminAuthService.validateUserWithEmail(req.body.email);
     if (admin) {
         var resetPasswordToken = await tokenService.generateResetPasswordToken(admin);
@@ -48,7 +48,7 @@ const resetPassword = catchAsync(async (req, res) => {
 
 const changePassword = catchAsync(async (req, res) => {
     var result;
-    console.log('req.user===', req.user)
+    // console.log('req.user===', req.user)
     if (req.user && req.user.type != 'superadmin') {
         var userDetails = await adminStaffService.getAdminStaffUserById(req.user._id);
         if (!userDetails || !(await userDetails.isPasswordMatch(req.body.currentPassword))) {

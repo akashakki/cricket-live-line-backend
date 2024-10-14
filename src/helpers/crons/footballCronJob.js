@@ -70,7 +70,7 @@ async function fetchMatchDataAndSave(m_id) {
         const response = await axios.post(`${API_BASE_URL}/exchange/odds/sma-event/1/${m_id}`);
 
         const matchData = response.data?.result;
-        console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchMatchDataAndSave ~ matchData:", matchData)
+        // console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchMatchDataAndSave ~ matchData:", matchData)
         // await FootballModel.findOneAndUpdate({ matchId: matchData?.MatchDetails?.match_id }, matchData, { upsert: true, new: true });
     } catch (error) {
         console.error('Error fetching or saving data:', error);

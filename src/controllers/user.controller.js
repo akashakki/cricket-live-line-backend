@@ -99,7 +99,7 @@ const getLinkedInToken = catchAsync(async (req, res) => {
         const tokenResponse = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', params);
         const accessToken = tokenResponse.data.access_token;
         const profile = await getUserProfile(accessToken);
-        console.log("🚀 ~ file: user.controller.js:105 ~ getLinkedInToken ~ profile:", profile)
+        // console.log("🚀 ~ file: user.controller.js:105 ~ getLinkedInToken ~ profile:", profile)
 
         const checkRecords = await UserService.getUserByEmail(profile?.email);
         if (checkRecords) {

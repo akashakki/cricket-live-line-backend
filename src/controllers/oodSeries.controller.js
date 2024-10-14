@@ -16,7 +16,7 @@ const getLists = catchAsync(async (req, res) => {
 
 const getSeriesList = catchAsync(async (req, res) => {
     let sport_id = req.query?.sport_id ? req.query?.sport_id : 4;
-    console.log("🚀 ~ file: oodSeries.controller.js:19 ~ getSeriesList ~ sport_id:", sport_id)
+    // console.log("🚀 ~ file: oodSeries.controller.js:19 ~ getSeriesList ~ sport_id:", sport_id)
     const data = await OodSeriesService.getSeriesList(sport_id);
     if (!data) {
         res.send({ data: {}, code: CONSTANT.NOT_FOUND, message: CONSTANT.NOT_FOUND_MSG });

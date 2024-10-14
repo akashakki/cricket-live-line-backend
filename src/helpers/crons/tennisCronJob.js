@@ -57,7 +57,7 @@ async function fetchEventGames() {
 
         for (const sessions of matchData) {
             const obj = await makeResponseObject(sessions);
-            console.log("🚀 ~ file: tennisCronJob.js:59 ~ fetchEventGames ~ obj:", obj?.name)
+            // console.log("🚀 ~ file: tennisCronJob.js:59 ~ fetchEventGames ~ obj:", obj?.name)
             await OodSeriesModel.findOneAndUpdate({ match_id: obj?.match_id }, obj, { upsert: true, new: true });
         }
     } catch (error) {
@@ -73,7 +73,7 @@ async function fetchMatchDataAndSave(m_id) {
         const response = await axios.post(`${API_BASE_URL}/exchange/odds/sma-event/2/${m_id}`);
 
         const matchData = response.data?.result;
-        console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchMatchDataAndSave ~ matchData:", matchData)
+        // console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchMatchDataAndSave ~ matchData:", matchData)
         // await FootballModel.findOneAndUpdate({ matchId: matchData?.MatchDetails?.match_id }, matchData, { upsert: true, new: true });
     } catch (error) {
         console.error('Error fetching or saving data:', error);

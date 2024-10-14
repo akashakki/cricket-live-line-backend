@@ -4,7 +4,7 @@ const config = require('./config/config');
 const logger = require('./config/logger');
 
 let server;
-console.log('config.env===>>', config.env, config.mongoose)
+// console.log('config.env===>>', config.env, config.mongoose)
 let db_url;
 let port;
 if (config.env == "production") {

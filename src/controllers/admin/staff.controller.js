@@ -54,7 +54,7 @@ const updateProfile = catchAsync(async (req, res) => {
             req.body.profilePhoto = (profilePhoto.data && profilePhoto.data.Key) ? profilePhoto.data.Key : ''
         }
     }
-    console.log('req.user---', req.user)
+    // console.log('req.user---', req.user)
     if (req.user && req.user.type == 'superadmin') {
         result = await adminAuthService.updateAdminById(req.user._id, req.body);
     } else {

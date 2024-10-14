@@ -73,7 +73,7 @@ async function fetchSeriesList() {
 // }
 
 const fetchSeriesDetails = async (series_id) => {
-    console.log("🚀 ~ file: SeriesCronJob.js:30 ~ fetchSeriesDetails ~ series_id:", series_id);
+    // console.log("🚀 ~ file: SeriesCronJob.js:30 ~ fetchSeriesDetails ~ series_id:", series_id);
     try {
         const response = await axios.get('http://24.199.71.166:8700/v2/client/series-info/' + series_id);
         const seriesDetails = response.data?.data;

@@ -136,7 +136,7 @@ async function fetchMatchDetailsFromHero(match_id, status) {
         let hero_match_id = match_id;
         for (let i = 0; i < matchData.length; i++) {
             const element = matchData[i];
-            console.log("🚀 ~ file: matches.controller.js:155 ~ fetchMatchDetailsFromHero ~ element?.match_api_id:", element?.match_api_id)
+            // console.log("🚀 ~ file: matches.controller.js:155 ~ fetchMatchDetailsFromHero ~ element?.match_api_id:", element?.match_api_id)
             if (element?.match_api_id?.toString() == match_id?.toString()) {
                 hero_match_id = element?.match_id
             }

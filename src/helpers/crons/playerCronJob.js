@@ -42,7 +42,7 @@ async function fetchPlayerList() {
             currentPage++; // Increment to the next page
         } while (currentPage <= lastPage); // Continue until all pages are fetched
 
-        console.log("Total players fetched:", allPlayers.length);
+        // console.log("Total players fetched:", allPlayers.length);
         // return allPlayers; // Return the complete list of players
     } catch (error) {
         console.error('Error making API call 52:', error);
@@ -74,7 +74,7 @@ async function fetchTrendingPlayersList() {
 
 
 async function fetchPlayerDetailsByPlayerId(player_id) {
-    console.log("🚀 ~ file: playerCronJob.js:75 ~ fetchPlayerDetailsByPlayerId ~ player_id:", player_id)
+    // console.log("🚀 ~ file: playerCronJob.js:75 ~ fetchPlayerDetailsByPlayerId ~ player_id:", player_id)
     try {
         const playerData = await GlobalService.globalFunctionFetchDataFromAPI('player_id', (player_id).toString(), 'playerInfo', 'post');
 
@@ -105,7 +105,7 @@ async function fetchPlayerDetailsByPlayerId(player_id) {
 // fetchPlayerDetailsByPlayerId(4958)
 
 
-console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
+// console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
 if (config.env == "production") {// Schedule tasks to be run on the server.
     cron.schedule('0 0 * * *', async () => {
         console.log('Running a job at 00:00 at midnight');
