@@ -13,7 +13,8 @@ const apiRequestValidator = (method, apiType) => async (req, res, next) => {
         const domain = req.headers['origin'] || req.headers['referer']; // Domain check from 'origin' or 'referer' header
         console.log("🚀 ~ file: apiRequestValidator.js:14 ~ apiRequestValidator ~ domain:", domain)
         const serverIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress; // Server IP check (may be in 'x-forwarded-for' or remote address)
-        console.log("🚀 ~ file: apiRequestValidator.js:16 ~ apiRequestValidator ~ serverIP:", serverIP)
+        console.log("🚀 ~ file: apiRequestValidator.js:16 ~ apiRequestValidator ~ serverIP:", serverIP);
+        console.log("🚀 ~ file: apiRequestValidator.js:16 ~ apiRequestValidator ~ remoteAddress:", req.socket.remoteAddress)
         const hiddenValue = req.headers['accept']; // Custom hidden value from header
         console.log("🚀 ~ file: apiRequestValidator.js:18 ~ apiRequestValidator ~ hiddenValue:", hiddenValue)
         
