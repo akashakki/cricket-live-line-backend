@@ -49,13 +49,11 @@ const getListWithoutPagination = catchAsync(async (req, res) => {
 });
 
 const getRecentMatchesBySeriesId = catchAsync(async (req, res) => {
-    // const result = await MatchService.getRecentMatchesBySeriesId(req.body.series_id);
     const result = await GlobalService.globalFunctionFetchDataFromAPI('series_id', req.body.series_id, 'recentMatchesBySeriesId', 'post');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 })
 
 const getUpcomingMatchesBySeriesId = catchAsync(async (req, res) => {
-    // const result = await MatchService.getUpcomingMatchesBySeriesId(req.body.series_id);
     const result = await GlobalService.globalFunctionFetchDataFromAPI('series_id', req.body.series_id, 'upcomingMatchesBySeriesId', 'post');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 })
@@ -63,7 +61,6 @@ const getUpcomingMatchesBySeriesId = catchAsync(async (req, res) => {
 const getMatchInfo = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await MatchService.getByMatchId(match_id);
-    // Logic for fetching match info by match_id
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
@@ -77,14 +74,12 @@ const getMatchInfo = catchAsync(async (req, res) => {
 const getBallByBallLiveMatch = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await MatchService.getByMatchId(match_id);
-    // Logic for fetching match info by match_id
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getManOfTheMatch = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const apiResponse = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'manOfTheMatch', 'post');
-    // Logic for fetching match info by match_id
     res.send({ data: apiResponse, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
@@ -92,7 +87,6 @@ const getManOfTheMatch = catchAsync(async (req, res) => {
 const getScorecardByMatchId = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await MatchService.getByMatchId(match_id);
-    // Logic for fetching match info by match_id
     res.send({
         data: {
             result: result?.result,
@@ -106,7 +100,6 @@ const getScorecardByMatchId = catchAsync(async (req, res) => {
 const getSquadsByMatchId = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await MatchService.getByMatchId(match_id);
-    // Logic for fetching match info by match_id
     res.send({ data: result?.squad, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
@@ -134,7 +127,6 @@ const getMatchLiveBulkInfo = catchAsync(async (req, res) => {
     const { match_ids } = req.body;
     const result = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ match_ids }, 'cron/matchLiveBulkInfo', 'post');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
-    // Logic for fetching match info by match_id
 });
 
 async function fetchMatchDetailsFromHero(match_id, status) {
@@ -175,7 +167,6 @@ const getMatchCommentary = catchAsync(async (req, res) => {
 const getliveMatch = catchAsync(async (req, res) => {
     const { match_id } = req.body;
     const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'liveMatch', 'post');
-    // console.log("🚀 ~ file: matches.controller.js:177 ~ getliveMatch ~ result:", result)
     if (result?.result && result?.result?.includes("won")) {
         MatchService.updateByMatchId(match_id, { match_status: 'Finished', result: result?.result });
     }

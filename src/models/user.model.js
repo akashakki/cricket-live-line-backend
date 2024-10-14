@@ -25,6 +25,11 @@ const userSchema = new mongoose.Schema(
     apiKeySecret: String,
     isStatus: { type: Number, default: 1 }, // 0 is Inactive, 1 is Active
     isDelete: { type: Number, default: 1 }, // 0 is delete, 1 is Active
+    
+    // Additional Fields
+    ipAddress: [{ type: String }], // To store the user's IP address
+    domains: [{ type: String }], // To store allowed domains for the user
+    hiddenValue: String, // To store a hidden value if necessary
 
     // Reference to Subscription
     subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'subscription' }

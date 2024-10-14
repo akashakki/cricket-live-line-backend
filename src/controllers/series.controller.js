@@ -91,6 +91,12 @@ const getSeriesFinishedMatches = catchAsync(async (req, res) => {
     res.send({ data: response?.resData, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getFixturesMatchesSeriesWise = catchAsync(async (req, res) => {
+    const result = await SeriesService.getSeriesList()
+    const response = await GlobalService.globalFunctionFetchDataFromAPI('multiple', params, 'seriesStatsBySeriesId', 'post');
+    res.send({ data: response?.resData, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
 module.exports = {
     create,
     getSeriesLists,
@@ -103,5 +109,6 @@ module.exports = {
     getSquadsBySeriesId,
     getStatsBySeriesId,
     getPointTableBySeriesId,
-    getSeriesFinishedMatches
+    getSeriesFinishedMatches,
+    getFixturesMatchesSeriesWise
 };
