@@ -83,7 +83,7 @@ async function fetchMatchDataAndSave(m_id) {
 async function fetchInplayMatches() {
     const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Inplay', sport_id: 2, SportName: 'Tennis' });
     for (const element of fetchInpaySeries) {
-        console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
+        // console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id)
         // fetchSessionDataAndSave(element?.match_id);
     }
@@ -92,7 +92,7 @@ async function fetchInplayMatches() {
 async function fetchUpcomingMatches() {
     const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Upcoming', sport_id: 2, SportName: 'Tennis' });
     for (const element of fetchInpaySeries) {
-        console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
+        // console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id)
         // fetchSessionDataAndSave(element?.match_id);
     }
