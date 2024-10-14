@@ -19,7 +19,7 @@ const apiRequestValidator = (method, apiType) => async (req, res, next) => {
         console.log("🚀 ~ file: apiRequestValidator.js:18 ~ apiRequestValidator ~ hiddenValue:", hiddenValue)
         
         // Check if all required values are provided
-        if (apiKey && apiKeySecret && token && domain && serverIP && hiddenValue) {
+        if (apiKey && apiKeySecret && token && domain && hiddenValue) {
             
             // Fetch user details from the database with API key and secret
             const userDetails = await UserModel.findOne({ apiKeySecret, apiKey });
@@ -35,11 +35,11 @@ const apiRequestValidator = (method, apiType) => async (req, res, next) => {
             // Perform additional validation (e.g., token, domain, IP, hidden value)
             const isTokenValid = validateToken(token);
             const isDomainValid = validateDomain(domain, userDetails);
-            const isIPValid = validateIP(serverIP, userDetails);
+            // const isIPValid = validateIP(serverIP, userDetails);
             const isHiddenValueValid = validateHiddenValue(hiddenValue, userDetails);
 
             // If any validation fails, return generic unauthorized response
-            if (!isTokenValid || !isDomainValid || !isIPValid || !isHiddenValueValid) {
+            if (!isTokenValid || !isDomainValid || !isHiddenValueValid) {
                 return res.status(401).send({ 
                     code: CONSTANT.UNAUTHORIZED, 
                     message: 'Unauthorized access' // Generic unauthorized message
