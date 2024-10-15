@@ -5,3 +5,4 @@ module.exports.reCaptchaTokenVerify = require('./verifyCaptchaToken');
 module.exports.validateEmail = require('./verifyEmail');
 module.exports.validateRequest = require('./verifyRequest');
 module.exports.validateApiRequest = require('./apiRequestValidator');
+module.exports.trackApiUsage = require('./apiUsage');

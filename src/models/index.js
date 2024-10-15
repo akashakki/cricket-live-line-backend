@@ -1,4 +1,5 @@
 module.exports.DisposableEmailModel = require('./disposableEmailDomains.model');
+module.exports.ApiUsageModel = require('./apiUsage.model');
 module.exports.AdminModel = require('./admin.model');
 module.exports.AdminRoles = require('./adminRoles.model');
 module.exports.ContactUsModel = require('./contactUs.model');

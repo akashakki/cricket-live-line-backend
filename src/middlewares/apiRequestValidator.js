@@ -10,13 +10,11 @@ const apiRequestValidator = (method, apiType) => async (req, res, next) => {
         const apiKey = req.headers['key'] || req.query['key'];
         const apiKeySecret = req.headers['secret'] || req.query['secret'];
         const token = req.headers['token']; // Assuming token is passed in headers
-        const domain = req.headers['origin'] || req.headers['referer']; // Domain check from 'origin' or 'referer' header
-        console.log("🚀 ~ file: apiRequestValidator.js:14 ~ apiRequestValidator ~ domain:", domain)
+        const domain = req.headers['referer']; // Domain check from 'origin' or 'referer' header
         const serverIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress; // Server IP check (may be in 'x-forwarded-for' or remote address)
-        console.log("🚀 ~ file: apiRequestValidator.js:16 ~ apiRequestValidator ~ serverIP:", serverIP);
-        console.log("🚀 ~ file: apiRequestValidator.js:16 ~ apiRequestValidator ~ remoteAddress:", req.socket.remoteAddress)
+        // console.log("🚀 ~ file: apiRequestValidator.js:16 ~ apiRequestValidator ~ serverIP:", serverIP);
         const hiddenValue = req.headers['accept']; // Custom hidden value from header
-        console.log("🚀 ~ file: apiRequestValidator.js:18 ~ apiRequestValidator ~ hiddenValue:", hiddenValue)
+        // console.log("🚀 ~ file: apiRequestValidator.js:18 ~ apiRequestValidator ~ hiddenValue:", hiddenValue)
         
         // Check if all required values are provided
         if (apiKey && apiKeySecret && token && domain && hiddenValue) {

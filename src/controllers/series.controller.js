@@ -1,6 +1,6 @@
 const pick = require('../utils/pick');
 const catchAsync = require('../utils/catchAsync');
-const { SeriesService, GlobalService } = require('../services');
+const { SeriesService, GlobalService, MatchService } = require('../services');
 const CONSTANT = require('../config/constant');
 
 const create = catchAsync(async (req, res) => {
@@ -92,10 +92,29 @@ const getSeriesFinishedMatches = catchAsync(async (req, res) => {
 });
 
 const getFixturesMatchesSeriesWise = catchAsync(async (req, res) => {
-    const result = await SeriesService.getSeriesList()
-    const response = await GlobalService.globalFunctionFetchDataFromAPI('multiple', params, 'seriesStatsBySeriesId', 'post');
-    res.send({ data: response?.resData, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    const result = await SeriesService.getSeriesListDateWise({date: Number(req?.query?.currentDate)}); // Fetch the series list
+
+    // Use Promise.all to handle asynchronous operations inside the loop
+    const fixturesData = await Promise.all(result.map(async (element) => {
+        // Fetch all upcoming matches by series_id
+        // const matchResult = await GlobalService.globalFunctionFetchDataFromAPI('series_id', element.series_id, 'upcomingMatchesBySeriesId', 'post');
+        const matchResult = await MatchService.getAllUpcomingMatchesBySeriesId(element.series_id);
+
+        // Return the structure you need for each series
+        return {
+            series: element?.series,
+            slug: element?.slug,
+            series_id: element?.series_id,
+            image: element?.image,
+            total_matches: element?.total_matches,
+            upcoming_matches: matchResult
+        };
+    }));
+
+    // Send the final result
+    res.send({ data: fixturesData, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
+
 
 module.exports = {
     create,

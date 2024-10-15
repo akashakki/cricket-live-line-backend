@@ -1,5 +1,6 @@
 const { SeriesModel } = require('../models');
 const CONSTANT = require('../config/constant');
+const moment = require('moment');
 
 /**
  * Create a Record
@@ -21,6 +22,45 @@ const getSeriesList = async () => {
     var data = await SeriesModel.find({})
     return data;
 };
+
+
+const getSeriesListDateWise = async (requestBody) => {
+    let startDate, endDate;
+
+    // Check if a date is provided in the requestBody
+    if (requestBody && requestBody.date) {
+        // Parse the provided date and subtract 5 days
+        const providedDate = moment(new Date(requestBody.date));
+
+        startDate = providedDate.subtract(5, 'days').startOf('day').toDate(); // 5 days before the provided date
+        endDate = providedDate.endOf('month').toDate(); // End of the month
+
+    } else {
+        // No date provided, use the current month
+        startDate = moment().startOf('month').toDate(); // Start of the current month
+        endDate = moment().endOf('month').toDate(); // End of the current month
+    }
+
+    // Fetch series that fall within the date range
+    let data = await SeriesModel.find({
+        start_date: { $gte: startDate },
+        end_date: { $lte: endDate }
+    });
+
+    // If no data is found, extend the end date by 15 more days
+    if (data.length === 0) {
+        endDate = moment(endDate).add(15, 'days').toDate(); // Add 15 days to the original end date
+
+        // Query again with the extended date range
+        data = await SeriesModel.find({
+            start_date: { $gte: startDate },
+            end_date: { $lte: endDate }
+        });
+    }
+
+    return data;
+};
+
 
 /**
  * Query for Record
@@ -111,6 +151,7 @@ const deleteById = async (id) => {
 };
 
 const getListWithoutPagination = async (options) => {
+    console.log("🚀 ~ file: series.service.js:143 ~ getListWithoutPagination ~ options:", options)
     var condition = { $and: [{ isDelete: 1 }] };
     if (options.searchBy && options.searchBy != 'undefined') {
         var searchBy = {
@@ -145,6 +186,7 @@ module.exports = {
     create,
     queries,
     getSeriesList,
+    getSeriesListDateWise,
     getById,
     getBySeriesId,
     updateById,

@@ -329,6 +329,23 @@ const getUpcomingMatchesBySeriesId = async (series_id) => {
     return matches;
 };
 
+const getAllUpcomingMatchesBySeriesId = async (series_id) => {
+    // Base condition: filter for upcoming matches
+    var condition = { $and: [{ match_status: "Upcoming" }] };
+
+    // Check if series_id is valid
+    if (series_id && series_id !== 'undefined') {
+        condition.$and.push({
+            series_id: Number(series_id)
+        });
+    }
+
+    // Fetch matches from MongoDB without date comparison initially
+    let matches = await MatchesModel.find(condition);
+
+    return matches;
+};
+
 
 const updateByMatchId = async (id, updateBody) => {
     const data = await MatchesModel.findOne({ match_id: id });
@@ -348,5 +365,6 @@ module.exports = {
     deleteById,
     getListWithoutPagination,
     getRecentMatchesBySeriesId,
-    getUpcomingMatchesBySeriesId
+    getUpcomingMatchesBySeriesId,
+    getAllUpcomingMatchesBySeriesId
 };
