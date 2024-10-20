@@ -3,6 +3,8 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
+var slug = require('mongoose-slug-updater');
+mongoose.plugin(slug);
 
 const CareerStatsSchema = new mongoose.Schema({
   match_type: { type: String, required: true },
@@ -44,6 +46,7 @@ const PlayerSchema = mongoose.Schema({
   player_id: { type: String, required: true },
   hero_player_id: { type: String },
   name: { type: String, required: true },
+  slug: {type: String, slug: "name"},
   play_role: { type: String },
   image: { type: String },
   style_bating: { type: String },

@@ -3,10 +3,13 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
+var slug = require('mongoose-slug-updater');
+mongoose.plugin(slug);
 
 const TeamsSchema = mongoose.Schema({
     team_id: { type: Number, required: true, unique: true },
     team_name: String,
+    slug: {type: String, slug: "team_name"},
     team_short: String,
     team_img: String,
     is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin

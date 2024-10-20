@@ -63,7 +63,7 @@ const convertToMongoDate = (pub_date) => {
 };
 
 
-async function fetchNewsList() {
+async function fetchNewsListFromCricketchampion() {
     try {
         // Fetch the player list for the current page
 
@@ -88,8 +88,8 @@ async function fetchNewsList() {
 if (config.env == "production") {// Schedule tasks to be run on the server.
     cron.schedule('0 * * * *', async () => {
         console.log('News Cron Running a job every hours');
-        fetchNewsList();
+        fetchNewsListFromCricketchampion();
     });
 
-    fetchNewsList();
+    fetchNewsListFromCricketchampion();
 }

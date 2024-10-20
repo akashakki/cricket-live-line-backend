@@ -3,11 +3,14 @@ var Schema = mongoose.Schema;
 var ObjectId = Schema.ObjectId;
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
+var slug = require('mongoose-slug-updater');
+mongoose.plugin(slug);
 
 const NewsSchema = mongoose.Schema({
     news_id: { type: Number, required: true },
     series_id: Number,
     title: { type: String },
+    slug: {type: String, slug: "title"},
     description: { type: String },
     image: { type: String },
     pub_date: { type: String },
