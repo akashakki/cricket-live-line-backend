@@ -80,7 +80,7 @@ async function fetchNewsListFromCricketchampion() {
         // console.log("Total players fetched:", newsList.length);
         // return allPlayers; // Return the complete list of players
     } catch (error) {
-        console.error('Error making API call 52:', error);
+        console.error('Error making API call 83:', error);
     }
 }
 

@@ -144,7 +144,7 @@ async function fetchMatchDetailsFromHero(match_id, status) {
         return hero_match_id
 
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call Match to Hero 147:', error);
     }
 }
 
@@ -154,7 +154,7 @@ async function fetchBallByBallMatchDetailsFromHero(match_id) {
         return response?.matchOddHistoryData
 
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call Match to Hero:', error);
     }
 }
 

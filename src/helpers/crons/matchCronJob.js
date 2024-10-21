@@ -38,7 +38,7 @@ async function fetchMatchList() {
             }
         }
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call match Odds 41:', error);
     }
 }
 
@@ -58,7 +58,7 @@ async function fetchLiveMatchList() {
             }
         }
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call match Odds 61:', error);
     }
 }
 
@@ -78,7 +78,7 @@ async function fetchLiveMatchList() {
 //         // const matchData = response.data?.data;
 
 //     } catch (error) {
-//         console.error('Error making API call:', error);
+//         console.error('Error making API call match Odds:', error);
 //     }
 // }
 // fetchMatchDetailsFromHero()
@@ -144,7 +144,7 @@ async function fetchMatchDetails(match) {
             }
         }
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call match Odds 147:', error);
     }
 }
 
@@ -162,7 +162,7 @@ async function fetchMatchScorecard(match) {
             await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, matchDetails, { upsert: true, new: true });
         }
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call match Odds165:', error);
     }
 }
 
@@ -180,7 +180,7 @@ async function fetchMatchSquadsByMatchId(match) {
             await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, { $set: { squad: squad } }, { upsert: true, new: true });
         }
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call match Odds 183:', error);
     }
 }
 

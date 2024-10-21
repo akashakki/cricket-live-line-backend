@@ -52,7 +52,7 @@ async function fetchSeriesList() {
 
         // return allPlayers; // Return the complete list of players
     } catch (error) {
-        console.error('Error making API call 54:', error);
+        console.error('Error making API call 55:', error);
     }
 }
 
@@ -188,7 +188,7 @@ const fetchSeriesDetails = async (series_id) => {
             await SeriesModel.findOneAndUpdate({ series_id: series_id }, seriesDetails, { upsert: true, new: true });
         }
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call series Cron 191:', error);
     }
 };
 

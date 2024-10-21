@@ -36,7 +36,7 @@ const globalFunctionFetchDataFromAPI = async (key, value, endpoint, method) => {
         const data = response.data?.data;
         return data;
     } catch (error) {
-        console.error('Error making API call:', error?.response?.statusText);
+        console.error('Error making API call Global Service 39:', error?.response?.statusText);
         return [];
     }
 }
@@ -47,7 +47,7 @@ const globalFunctionFetchDataFromAPIGETMethod = async (endpoint) => {
         const data = response.data?.data;
         return data;
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call Global Service 50:', error);
     }
 }
 
@@ -57,7 +57,7 @@ const globalFunctionFetchDataFromHeroGETMethod = async (endpoint) => {
         const data = response.data;
         return data;
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call Global Service 60:', error);
     }
 }
 
@@ -75,7 +75,7 @@ const globalFunctionFetchDataFromHeroPostMethod = async (value, endpoint, method
         const response = await axios.request(config);
         return response?.data;
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call Global Service 78:', error);
     }
 }
 

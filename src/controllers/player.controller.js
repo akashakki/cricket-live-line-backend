@@ -87,7 +87,7 @@ async function fetchPlayerRanking(type) {
         const data = response.data?.data;
         return data;
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call plyers controller:', error);
     }
 }
 

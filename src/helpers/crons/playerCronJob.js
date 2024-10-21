@@ -45,7 +45,7 @@ async function fetchPlayerList() {
         // console.log("Total players fetched:", allPlayers.length);
         // return allPlayers; // Return the complete list of players
     } catch (error) {
-        console.error('Error making API call 52:', error);
+        console.error('Error making API call 48:', error);
     }
 }
 
@@ -67,7 +67,7 @@ async function fetchTrendingPlayersList() {
             }
         }
     } catch (error) {
-        console.error('Error making API call:', error);
+        console.error('Error making API call player cron 70:', error);
     }
 }
 
@@ -98,7 +98,7 @@ async function fetchPlayerDetailsByPlayerId(player_id) {
             await PlayerModel.findOneAndUpdate({ player_id: player_id }, updatedObj, { upsert: true, new: true });
         }
     } catch (error) {
-        console.error('Error making API call 113:', error);
+        console.error('Error making API call 101:', error);
     }
 }
 
