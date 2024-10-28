@@ -23,9 +23,9 @@ const userSchema = new mongoose.Schema(
     lastLogin: { type: Date, default: null },
     apiKey: String,
     apiKeySecret: String,
+
     isStatus: { type: Number, default: 1 }, // 0 is Inactive, 1 is Active
     isDelete: { type: Number, default: 1 }, // 0 is delete, 1 is Active
-    
     // Additional Fields
     ipAddress: [{ type: String }], // To store the user's IP address
     domains: [{ type: String }], // To store allowed domains for the user

@@ -21,6 +21,7 @@ module.exports.OddsMatchDetailsModel = require('./oddsMatchDetails.model');
 
 module.exports.SportsModel = require('./sports.model');
 module.exports.MatchesModel = require('./matches.model');
+module.exports.PollsModel = require('./polls.model');
 module.exports.MatchCommentaryModel = require('./matchCommentary.model');
 module.exports.MatchSquadModel = require('./matchSquad.model');
 module.exports.MatchBallByBallModel = require('./matchBallByBall.model');
