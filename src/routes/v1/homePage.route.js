@@ -33,7 +33,7 @@ router.route('/pointsTable').post(validateApiRequest(), trackApiUsage, upload.an
 router.route('/seriesFinishedMatches').post(validateApiRequest(), trackApiUsage, upload.any(), SeriesController.getSeriesFinishedMatches);
 router.route('/getFixtures').get(validateApiRequest(), trackApiUsage, SeriesController.getFixturesMatchesSeriesWise);
 router.route('/venuesBySeriesId').post(validateApiRequest(), trackApiUsage, upload.any(), VenueController.getVenuesBySeriesId);
-router.route('/venuesDetail').post(validateApiRequest(), trackApiUsage, VenueController.getVenuesDetailsId);
+router.route('/venuesDetail').post(validateApiRequest(), trackApiUsage, upload.any(), VenueController.getVenuesDetailsId);
 
 
 // News-related routes

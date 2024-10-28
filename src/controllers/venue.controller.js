@@ -49,7 +49,6 @@ const getVenuesBySeriesId = catchAsync(async (req, res) => {
 
 const getVenuesDetailsId = catchAsync(async (req, res) => {
     const { venue_id } = req.body;
-    // Logic for fetching match info by match_id
     const result = await GlobalService.globalFunctionFetchDataFromAPI('venue_id', venue_id, 'venuesDetail', 'post');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
