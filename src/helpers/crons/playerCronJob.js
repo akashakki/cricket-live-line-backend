@@ -59,11 +59,9 @@ async function fetchTrendingPlayersList() {
         if (playerList && playerList?.length != 0) {
             // await fetchMatchDetails(playerList[0]?.match_id);
             for (let i = 0; i < playerList?.length; i++) {
-                const player = playerList[i];
-                const updatedObj = {
-                    isTrending: true
-                }
-                await PlayerModel.findOneAndUpdate({ player_id: player.player_player_api_id }, updatedObj, { upsert: true });
+                let player = playerList[i];
+                player['isTrending'] = true
+                await PlayerModel.findOneAndUpdate({ player_id: player.player_player_api_id }, player, { upsert: true });
             }
         }
     } catch (error) {
@@ -79,7 +77,7 @@ async function fetchPlayerDetailsByPlayerId(player_id) {
         const playerData = await GlobalService.globalFunctionFetchDataFromAPI('player_id', (player_id).toString(), 'playerInfo', 'post');
 
         // console.log("🚀 ~ file: playerCronJob.js:92 ~ fetchPlayerDetailsByPlayerId ~ playerData:", playerData)
-        
+
         if (playerData) {
             const updatedObj = {
                 player_id: playerData?.player?.player_id,
