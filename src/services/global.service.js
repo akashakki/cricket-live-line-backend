@@ -62,7 +62,7 @@ const globalFunctionFetchDataFromHeroGETMethod = async (endpoint) => {
 }
 
 const globalFunctionFetchDataFromHeroPostMethod = async (value, endpoint, method) => {
-    console.log("🚀 ~ file: global.service.js:55 ~ globalFunctionFetchDataFromHeroPostMethod ~ value:", value)
+    // console.log("🚀 ~ file: global.service.js:55 ~ globalFunctionFetchDataFromHeroPostMethod ~ value:", value)
     try {
         let config = {
             method: method,

@@ -204,6 +204,27 @@ async function fetchUpcomingMatches() {
     }
 }
 
+async function fetchFinishedMatches() {
+    try {
+        // const matchList = await GlobalService.globalFunctionFetchDataFromAPIGETMethod('upcomingMatches'); //response.data?.data;
+        const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_status": 'Finished' }, 'web/getmatchlisting', 'post');
+        const matchList = response?.matchData;
+        if (matchList && matchList?.length != 0) {
+            await fetchMatchDetails(matchList[0]?.match_id);
+            for (let i = 0; i < matchList?.length; i++) {
+                let match = matchList[i];
+                match['match_status'] = 'Finished';
+                match['match_id'] =  matchList[i]?.match_api_id;
+                console.log("🚀 ~ file: matchCronJob.js:218 ~ fetchFinishedMatches ~ match:", match)
+                
+                await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, match);
+            }
+        }
+    } catch (error) {
+        console.log("🚀 ~ file: matchCronJob.js:170 ~ fetchUpcomingMatches ~ error:", error)
+    }
+}
+
 
 console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
 if (config.env == "production") {// Schedule tasks to be run on the server.
@@ -241,8 +262,8 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
 
     // Schedule task to run every 10 minutes
     cron.schedule('*/10 * * * *', () => {
-        console.log('Fetching upcoming matches...');
-        fetchLiveAndFinishMatchesFromDB();
+        console.log('Fetching finished matches...');
+        fetchFinishedMatches();
     });
 
     fetchMatchList();
@@ -252,3 +273,4 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
 // fetchUpcomingMatches();
 // fetchMatchList()
 // fetchLiveMatchList()
+fetchFinishedMatches();
