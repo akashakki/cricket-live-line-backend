@@ -42,6 +42,27 @@ async function fetchMatchList() {
     }
 }
 
+async function fetchMatchListFromHero() {
+    try {
+        // const response = await axios.get(`${baseURL}homeList/${token}`); //'http://24.199.71.166:8700/v2/client/match-list'
+        const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_status": 'All' }, 'web/getmatchlisting', 'post');
+        const matchList = response?.matchData;
+        if (matchList && matchList?.length != 0) {
+            // await fetchMatchDetails(matchList[0]?.match_id);
+            for (let i = 0; i < matchList?.length; i++) {
+                // let match = matchList[i];
+                const match = JSON.parse(matchList[i]?.match_api_response);
+                // await MatchesModel.create(match);
+                await fetchMatchDetails(match);
+                await fetchMatchScorecard(match);
+                await fetchMatchSquadsByMatchId(match);
+            }
+        }
+    } catch (error) {
+        console.error('Error making API call match Odds 41:', error);
+    }
+}
+
 async function fetchLiveMatchList() {
     try {
         // const response = await axios.get(`${baseURL}liveMatchList/${token}`) //'http://24.199.71.166:8700/v2/client/match-live-list');
@@ -230,8 +251,9 @@ console.log("🚀 ~ file: matchCronJob.js:165 ~ config.env:", config.env)
 if (config.env == "production") {// Schedule tasks to be run on the server.
     // cron.schedule('0 0 * * *', async () => {
     cron.schedule('*/30 * * * *', async () => {
-        console.log('Match Running a job every mint');
-        fetchMatchList()
+        console.log('Match Running a job every 30 minutes');
+        fetchMatchList();
+        fetchMatchListFromHero();
         // setInterval(fetchMatchList(), 500);
     });
 
@@ -274,3 +296,4 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
 // fetchMatchList()
 // fetchLiveMatchList()
 // fetchFinishedMatches();
+// fetchMatchListFromHero();
