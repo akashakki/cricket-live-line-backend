@@ -72,8 +72,9 @@ async function fetchLiveMatchList() {
         if (matchList && matchList?.length != 0) {
             // await fetchMatchDetails(matchList[0]?.match_id);
             for (let i = 0; i < matchList?.length; i++) {
-                const match = matchList[i];
-                // console.log("🚀 ~ file: matchCronJob.js:31 ~ fetchLiveMatchList ~ match:", match?.match_status)
+                let match = matchList[i];
+                match['match_status'] = 'Live';
+                match['match_id'] = matchList[i]?.match_api_id;
                 // await MatchesModel.create(match);
                 await fetchMatchDetails(match);
                 await fetchMatchScorecard(match);
@@ -296,6 +297,6 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
 
 // fetchUpcomingMatches();
 // fetchMatchList()
-// fetchLiveMatchList()
+fetchLiveMatchList()
 // fetchFinishedMatches();
 // fetchMatchListFromHero();
