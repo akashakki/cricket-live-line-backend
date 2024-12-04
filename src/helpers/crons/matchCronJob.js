@@ -66,7 +66,9 @@ async function fetchMatchListFromHero() {
 async function fetchLiveMatchList() {
     try {
         // const response = await axios.get(`${baseURL}liveMatchList/${token}`) //'http://24.199.71.166:8700/v2/client/match-live-list');
-        const matchList = await GlobalService.globalFunctionFetchDataFromAPIGETMethod('liveMatchList'); //response.data?.data;
+        // const matchList = await GlobalService.globalFunctionFetchDataFromAPIGETMethod('liveMatchList'); //response.data?.data;
+        const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_status": 'All' }, 'web/getmatchlisting', 'post');
+        const matchList = response?.matchData;
         if (matchList && matchList?.length != 0) {
             // await fetchMatchDetails(matchList[0]?.match_id);
             for (let i = 0; i < matchList?.length; i++) {
@@ -235,9 +237,9 @@ async function fetchFinishedMatches() {
             for (let i = 0; i < matchList?.length; i++) {
                 let match = matchList[i];
                 match['match_status'] = 'Finished';
-                match['match_id'] =  matchList[i]?.match_api_id;
+                match['match_id'] = matchList[i]?.match_api_id;
                 console.log("🚀 ~ file: matchCronJob.js:218 ~ fetchFinishedMatches ~ match:", match)
-                
+
                 await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, match);
             }
         }
@@ -259,9 +261,9 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
 
     // cron.schedule('0 */1 * * *', async () => {
     cron.schedule('* * * * *', async () => {
-        console.log('Running a job at every hour');
-        fetchLiveMatchList()
-        // setInterval(fetchLiveMatchList(), 500);
+        console.log('Running a job every minute');
+        fetchLiveMatchList(); // Ensure this is an async function if it involves async operations
+        fetchFinishedMatches();
     });
 
     // // Runs fetchMatchList every second
