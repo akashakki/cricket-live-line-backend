@@ -49,12 +49,12 @@ const queriesForHomeList = async (options) => {
                         {
                             $match: {
                                 match_status: "Upcoming",
-                                // $expr: {
-                                //     $and: [
-                                //         { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, startOfDay] },
-                                //         { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
-                                //     ]
-                                // }
+                                $expr: {
+                                    $and: [
+                                        { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, startOfDay] },
+                                        { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
+                                    ]
+                                }
                             }
                         },
                         {
