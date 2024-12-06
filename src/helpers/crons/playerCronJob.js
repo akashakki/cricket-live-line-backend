@@ -5,25 +5,26 @@ const { GlobalService } = require('../../services');
 
 
 async function fetchPlayerList() {
-    let allPlayers = []; // Array to store all players
     let currentPage = 1; // Start from the first page
     let lastPage = 1; // Initialize last page variable
 
     try {
         do {
             // Fetch the player list for the current page
-            const response = await GlobalService.globalFunctionFetchDataFromHeroGETMethod(`web/playersList?page=${currentPage}`)
+            const response = await GlobalService.globalFunctionFetchDataFromHeroGETMethod(
+                `web/playersList?page=${currentPage}`
+            );
 
             const playerList = response?.playerData?.data;
-            lastPage = response.data?.playerData?.last_page; // Get the last page number from the response
-
-            // console.log("🚀 ~ file: playerCronJob.js:14 ~ fetchPlayerList ~ playerList:", playerList);
+            lastPage = response?.playerData?.last_page || 1; // Get the last page number
 
             if (playerList && playerList.length > 0) {
-                allPlayers = allPlayers.concat(playerList); // Add fetched players to allPlayers array
-
-                // You can also process each player here if needed
                 for (let player of playerList) {
+                    if (!player?.player_player_api_id) {
+                        console.warn('Skipping player due to missing player_id:', player);
+                        continue; // Skip invalid players
+                    }
+
                     const updatedObj = {
                         player_id: player?.player_player_api_id,
                         hero_player_id: player?.player_id,
@@ -33,50 +34,85 @@ async function fetchPlayerList() {
                         player_team_name_short: player?.player_team_name_short,
                         player_team_name: player?.player_team_name,
                         play_role: player?.player_play_role,
+                    };
+
+                    try {
+                        // Update or insert player in the database
+                        await PlayerModel.findOneAndUpdate(
+                            { player_id: player.player_player_api_id },
+                            updatedObj,
+                            { upsert: true, new: true }
+                        );
+                        // Fetch additional details for the player
+                        await fetchPlayerDetailsByPlayerId(player.player_player_api_id);
+                    } catch (error) {
+                        if (error.code === 11000) {
+                            console.error('Duplicate entry detected for player_id:', player.player_player_api_id);
+                        } else {
+                            console.error('Error updating player:', error);
+                        }
                     }
-                    await PlayerModel.findOneAndUpdate({ player_id: player.player_player_api_id }, updatedObj, { upsert: true });
-                    await fetchPlayerDetailsByPlayerId(player.player_player_api_id);
                 }
             }
 
             currentPage++; // Increment to the next page
         } while (currentPage <= lastPage); // Continue until all pages are fetched
 
-        // console.log("Total players fetched:", allPlayers.length);
-        // return allPlayers; // Return the complete list of players
+        console.log('Player list fetching completed.');
     } catch (error) {
-        console.error('Error making API call 48:', error);
+        console.error('Error fetching player list:', error);
     }
 }
-
 
 async function fetchTrendingPlayersList() {
     try {
-        const response = await GlobalService.globalFunctionFetchDataFromHeroGETMethod(`web/trendingPlayers/all`)
-
+        const response = await GlobalService.globalFunctionFetchDataFromHeroGETMethod(`web/trendingPlayers/all`);
         const playerList = response?.playerData;
-        // console.log("🚀 ~ file: playerCronJob.js:14 ~ fetchPlayerList ~ playerList:", playerList)
-        if (playerList && playerList?.length != 0) {
-            // await fetchMatchDetails(playerList[0]?.match_id);
-            for (let i = 0; i < playerList?.length; i++) {
-                let player = playerList[i];
-                player['isTrending'] = true
-                await PlayerModel.findOneAndUpdate({ player_id: player.player_player_api_id }, player, { upsert: true });
+
+        if (playerList && playerList.length > 0) {
+            for (let player of playerList) {
+                if (!player?.player_player_api_id) {
+                    console.warn('Skipping player due to missing player_id:', player);
+                    continue; // Skip invalid players
+                }
+
+                player['isTrending'] = true;
+
+                try {
+                    await PlayerModel.findOneAndUpdate(
+                        { player_id: player.player_player_api_id },
+                        player,
+                        { upsert: true, new: true }
+                    );
+                } catch (error) {
+                    if (error.code === 11000) {
+                        console.error('Duplicate entry detected for player_id:', player.player_player_api_id);
+                    } else {
+                        console.error('Error updating trending player:', error);
+                    }
+                }
             }
         }
+
+        console.log('Trending players list fetching completed.');
     } catch (error) {
-        console.error('Error making API call player cron 70:', error);
+        console.error('Error fetching trending players list:', error);
     }
 }
 
-
-
 async function fetchPlayerDetailsByPlayerId(player_id) {
-    // console.log("🚀 ~ file: playerCronJob.js:75 ~ fetchPlayerDetailsByPlayerId ~ player_id:", player_id)
-    try {
-        const playerData = await GlobalService.globalFunctionFetchDataFromAPI('player_id', (player_id).toString(), 'playerInfo', 'post');
+    if (!player_id) {
+        console.error('Invalid player_id provided:', player_id);
+        return;
+    }
 
-        // console.log("🚀 ~ file: playerCronJob.js:92 ~ fetchPlayerDetailsByPlayerId ~ playerData:", playerData)
+    try {
+        const playerData = await GlobalService.globalFunctionFetchDataFromAPI(
+            'player_id',
+            player_id.toString(),
+            'playerInfo',
+            'post'
+        );
 
         if (playerData) {
             const updatedObj = {
@@ -91,12 +127,21 @@ async function fetchPlayerDetailsByPlayerId(player_id) {
                 birth_place: playerData?.player?.birth_place,
                 description: playerData?.player?.description,
                 batting_career: playerData?.batting_career,
-                bowling_career: playerData?.bowling_career
-            }
-            await PlayerModel.findOneAndUpdate({ player_id: player_id }, updatedObj, { upsert: true, new: true });
+                bowling_career: playerData?.bowling_career,
+            };
+
+            await PlayerModel.findOneAndUpdate(
+                { player_id: player_id },
+                updatedObj,
+                { upsert: true, new: true }
+            );
         }
     } catch (error) {
-        console.error('Error making API call 101:', error);
+        if (error.code === 11000) {
+            console.error('Duplicate entry detected for player_id:', player_id);
+        } else {
+            console.error('Error fetching player details:', error);
+        }
     }
 }
 
@@ -107,10 +152,16 @@ async function fetchPlayerDetailsByPlayerId(player_id) {
 if (config.env == "production") {// Schedule tasks to be run on the server.
     cron.schedule('0 0 * * *', async () => {
         console.log('Running a job at 00:00 at midnight');
-        fetchPlayerList();
-        fetchTrendingPlayersList();
+        await fetchPlayerList();
+        await fetchTrendingPlayersList();
     });
 
-    fetchPlayerList()
-    fetchTrendingPlayersList();
+    (async () => {
+        await fetchPlayerList();
+        await fetchTrendingPlayersList();
+    })();
 }
+// (async () => {
+//     await fetchPlayerList();
+//     await fetchTrendingPlayersList();
+// })();
