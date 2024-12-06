@@ -47,6 +47,7 @@ const PlayerSchema = mongoose.Schema({
   hero_player_id: { type: String },
   name: { type: String, required: true },
   slug: {type: String, slug: "name"},
+  gender: String,
   play_role: { type: String },
   image: { type: String },
   style_bating: { type: String },
