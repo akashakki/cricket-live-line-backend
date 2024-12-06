@@ -212,6 +212,6 @@ async function removeDuplicatePlayers() {
 
 removeDuplicatePlayers();
 
-(async () => {
-    await fetchPlayerList();
-})();
+// (async () => {
+//     await fetchPlayerList();
+// })();
