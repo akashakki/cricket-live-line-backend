@@ -101,6 +101,7 @@ async function fetchTrendingPlayersList() {
 }
 
 async function fetchPlayerDetailsByPlayerId(player_id) {
+    console.log("🚀 ~ file: playerCronJob.js:104 ~ fetchPlayerDetailsByPlayerId ~ player_id:", player_id)
     if (!player_id) {
         console.error('Invalid player_id provided:', player_id);
         return;

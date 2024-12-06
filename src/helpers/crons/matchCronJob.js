@@ -239,7 +239,7 @@ async function fetchFinishedMatches() {
                 let match = matchList[i];
                 match['match_status'] = 'Finished';
                 match['match_id'] = matchList[i]?.match_api_id;
-                console.log("🚀 ~ file: matchCronJob.js:218 ~ fetchFinishedMatches ~ match:", match)
+                // console.log("🚀 ~ file: matchCronJob.js:218 ~ fetchFinishedMatches ~ match:", match)
 
                 await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, match);
             }
