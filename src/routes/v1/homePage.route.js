@@ -12,6 +12,7 @@ const router = express.Router();
 router.route('/homeList').get(validateApiRequest(), trackApiUsage, trackApiUsage, MatchController.getHomeLists);
 router.route('/matchInfo').post(validateApiRequest(), trackApiUsage, trackApiUsage, upload.any(), MatchController.getMatchInfo);
 router.route('/matchBallByBall').post(validateApiRequest(), trackApiUsage, trackApiUsage, upload.any(), MatchController.getMatchBallByBallOddHistory);
+router.route('/matchOddHistoryV1').post(validateApiRequest(), trackApiUsage, trackApiUsage, upload.any(), MatchController.getMatchBallByBallOddHistory);
 // router.route('/commentary').post(upload.any(), MatchController.getBallByBallLiveMatch);
 router.route('/liveMatch').post(validateApiRequest(), trackApiUsage, upload.any(), MatchController.getliveMatch);
 router.route('/commentary').post(validateApiRequest(), trackApiUsage, upload.any(), MatchController.getMatchCommentary);

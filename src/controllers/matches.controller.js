@@ -123,6 +123,17 @@ const getMatchBallByBallOddHistory = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getMatchOddHistoryV1 = catchAsync(async (req, res) => {
+    const { match_id } = req.body;
+    const result = await GlobalService.globalFunctionFetchDataFromAPI(
+        'match_id',
+        match_id,
+        'matchOddHistoryV1',
+        'post'
+    );
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
 const getMatchLiveBulkInfo = catchAsync(async (req, res) => {
     const { match_ids } = req.body;
     const result = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ match_ids }, 'cron/matchLiveBulkInfo', 'post');
@@ -186,6 +197,7 @@ module.exports = {
     getMatchInfo,
     // getLiveMatch,
     getBallByBallLiveMatch,
+    getMatchOddHistoryV1,
     getMatchCommentary,
     getliveMatch,
     getManOfTheMatch,
