@@ -7,7 +7,7 @@ const getIPLOverview = async () => {
         const overview = await IPLOverviewModel.findOne();
 
         // Fetch Top Picks: 6 players with highest SoldPrice and auctionStatus 'Sold'
-        const topsPicks = await IPLAuctionPlayerModel.find({ auctionStatus: {$in: ['Sold', 'Retained']} })
+        const topsPicks = await IPLAuctionPlayerModel.find({ auctionStatus: 'Sold' })
             .sort({ soldPrice: -1 })
             .limit(6);
 
