@@ -1,9 +1,6 @@
 const { IPLAuctionPlayerModel, IPLTeamsModel, IPLOverviewModel } = require('../models');
 const CONSTANT = require('../config/constant');
 
-const { IPLAuctionPlayerModel, IPLTeamsModel, IPLOverviewModel } = require('../models');
-const CONSTANT = require('../config/constant');
-
 const getIPLOverview = async () => {
     try {
         // Fetch IPL overview data
