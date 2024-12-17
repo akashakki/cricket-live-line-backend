@@ -4,37 +4,57 @@ const CONSTANT = require('../config/constant');
 const getIPLOverview = async () => {
     try {
         // Fetch IPL overview data
-        const overview = await IPLOverviewModel.findOne();
+        const overview = await IPLOverviewModel.findOne().lean(); // Use lean for better performance
+        if (!overview) throw new Error("No IPL overview data found");
+
         const apiResponse = JSON.parse(overview.apiResponse);
-        let allRounderPlayerIds = apiResponse.aTopAllRounderData.map(item => item._id);
-        let allBettersPlayerIds = apiResponse.aTopBatterData.map(item => item._id);
-        let allBowlPlayerIds = apiResponse.aTopBowlerData.map(item => item._id);
 
-        // Fetch Top Picks: 6 players with highest SoldPrice and auctionStatus 'Sold'
-        const topsPicks = await IPLAuctionPlayerModel.find({ auctionStatus: 'Sold', isCappedPlayer: true })
-            .sort({ soldPrice: -1 })
-            .limit(6);
+        // Extract player IDs from API response
+        const allRounderPlayerIds = apiResponse.aTopAllRounderData.map(item => item._id);
+        const allBattersPlayerIds = apiResponse.aTopBatterData.map(item => item._id);
+        const allBowlerPlayerIds = apiResponse.aTopBowlerData.map(item => item._id);
 
-        // Fetch Top All-Rounders: 6 players with highest soldPrice, auctionStatus 'Sold', and playingRole 'all'
-        const TopAllRounderData = await IPLAuctionPlayerModel.find({
-            auctionStatus: { $in: ['Sold', 'Retained'] }, isCappedPlayer: true,
-            playingRole: 'all', apiPlayerId: { $in: allRounderPlayerIds }
-        }).sort({ soldPrice: -1 })
-            .limit(6);
+        // Define common conditions
+        const commonCondition = { isCappedPlayer: true, auctionStatus: { $in: ['Sold', 'Retained'] } };
 
-        // Fetch Top Batters: 6 players with highest soldPrice, auctionStatus 'Sold', and playingRole 'bat'
-        const TopBatterData = await IPLAuctionPlayerModel.find({
-            auctionStatus: { $in: ['Sold', 'Retained'] }, isCappedPlayer: true, apiPlayerId: { $in: allBettersPlayerIds },
-            playingRole: 'bat'
-        }).sort({ soldPrice: -1 })
-            .limit(6);
+        // Run all database queries concurrently
+        const [topsPicks, TopAllRounderData, TopBatterData, TopBowlerData] = await Promise.all([
+            // Fetch Top Picks: 6 players with highest soldPrice and auctionStatus 'Sold'
+            IPLAuctionPlayerModel.find({ ...commonCondition, auctionStatus: 'Sold' })
+                .sort({ soldPrice: -1 })
+                .limit(6)
+                .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
 
-        // Fetch Top Bowlers: 6 players with highest soldPrice, auctionStatus 'Sold', and playingRole 'bowl'
-        const TopBowlerData = await IPLAuctionPlayerModel.find({
-            auctionStatus: { $in: ['Sold', 'Retained'] }, isCappedPlayer: true, apiPlayerId: { $in: allBowlPlayerIds },
-            playingRole: 'bowl'
-        }).sort({ soldPrice: -1 })
-            .limit(6);
+            // Fetch Top All-Rounders
+            IPLAuctionPlayerModel.find({
+                ...commonCondition,
+                playingRole: 'all',
+                apiPlayerId: { $in: allRounderPlayerIds }
+            })
+                .sort({ soldPrice: -1 })
+                .limit(6)
+                .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+
+            // Fetch Top Batters
+            IPLAuctionPlayerModel.find({
+                ...commonCondition,
+                playingRole: 'bat',
+                apiPlayerId: { $in: allBattersPlayerIds }
+            })
+                .sort({ soldPrice: -1 })
+                .limit(6)
+                .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+
+            // Fetch Top Bowlers
+            IPLAuctionPlayerModel.find({
+                ...commonCondition,
+                playingRole: 'bowl',
+                apiPlayerId: { $in: allBowlerPlayerIds }
+            })
+                .sort({ soldPrice: -1 })
+                .limit(6)
+                .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId')
+        ]);
 
         // Return all the collected data
         return {
