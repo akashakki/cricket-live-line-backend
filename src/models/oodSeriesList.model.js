@@ -31,6 +31,7 @@ const OodSeriesSchema = mongoose.Schema({
     numRunners: Number,
     numActiveRunners: Number,
     isBookmaker: Boolean,
+    matchFrom: String,
     is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin
     is_delete: { type: Number, default: 1 }, //0 is delete, 1 is Active this is for Admin
 }, {

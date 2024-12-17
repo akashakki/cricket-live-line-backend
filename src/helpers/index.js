@@ -1,4 +1,6 @@
-module.exports.CrircketOODsCron = require('./crons/cricketOodCronJob');
+module.exports.CricketOODsCron = require('./crons/cricketOodCronJob');
+module.exports.CricketOODsCronSikander = require('./crons/cricketOodCronJobSikander');
+module.exports.IPLPlayerInformationCronJob = require('./crons/iplPlayerInformationCronJob');
 module.exports.SeriesCron = require('./crons/seriesCronJob');
 module.exports.MatchCron = require('./crons/matchCronJob');
 module.exports.MatchCron = require('./crons/matchPollsCronJob');
@@ -8,4 +10,5 @@ module.exports.FootballCron = require('./crons/footballCronJob');
 module.exports.TennisCron = require('./crons/tennisCronJob');
 module.exports.MailFunction = require('./mailFunctions');
 module.exports.CryptoJS = require('./CryptoJS');
+module.exports.Cloudinary = require('./cloudinary');
 module.exports.CryptoJS = require('./ai');

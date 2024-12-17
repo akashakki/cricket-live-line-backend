@@ -4,6 +4,7 @@ const cheerio = require('cheerio');
 const config = require('../../config/config');
 const { Token, OodSeriesModel, MatchesRunnerModel, MatchesSessionModel, OddsMatchDetailsModel } = require('../../models'); // Import the token model
 const API_BASE_URL = 'https://bigbetexchange.com/api/v5';
+const SIK_API_BASE_URL = 'https://sikander777.com/api/v5';
 
 // https://lmt.fn.sportradar.com/common/en/gismo/match_timelinedelta/49534405
 // https://lmt.fn.sportradar.com/common/en/cricket/get_event/49534405
@@ -29,51 +30,141 @@ async function login() {
 
 async function fetchGamesList() {
     try {
-        const requestBody = { "limit": 50, "pageno": 1, "sport_id": 4, "series_id": 0, "type": "home" }
-        // console.log("🚀 ~ file: cricketOodCronJob.js:25 ~ fetchGamesList ~ requestBody:", requestBody)
+        const requestBody = { 
+            limit: 50, 
+            pageno: 1, 
+            sport_id: 4, 
+            series_id: 0, 
+            type: "home" 
+        };
+
         // Get the stored token from the database
         let tokenDoc = await Token.findOne({ type: 'bigbetexchange' });
         let token = tokenDoc ? tokenDoc.token : null;
 
-        // Make the API request
-        let response = await axios.post(`${API_BASE_URL}/event-game`, requestBody, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-
-        // Check if token is invalid
-        if (response.data.message === 'Send valid token!') {
-            console.log('Invalid token. Fetching a new one...');
-            const newToken = await login();
-            // console.log("🚀 ~ file: cricketOodCronJob.js:39 ~ fetchGamesList ~ newToken:", newToken)
-            // Retry the API call with the new token
-            response = await axios.post(`${API_BASE_URL}/event-game`, requestBody, {
+        // Function to fetch games with a given token
+        const fetchGamesWithToken = async (authToken) => {
+            return axios.post(`${API_BASE_URL}/event-game`, requestBody, {
                 headers: {
-                    Authorization: `Bearer ${newToken}`
+                    Authorization: `Bearer ${authToken}`
                 }
             });
+        };
+
+        let response;
+        try {
+            // Initial API call
+            response = await fetchGamesWithToken(token);
+        } catch (error) {
+            // Check if the error is due to an invalid token
+            if (error?.response?.data?.message === 'Send valid token!') {
+                console.log('Invalid token. Fetching a new one...');
+                const newToken = await login();
+
+                // Update the database with the new token
+                await Token.updateOne({ type: 'bigbetexchange' }, { token: newToken }, { upsert: true });
+
+                // Retry the API call with the new token
+                response = await fetchGamesWithToken(newToken);
+            } else {
+                // Throw if it's a different error
+                throw error;
+            }
         }
 
         // Process the data from the API response
-        console.log('Data fetched:', response.data?.data);
+        // console.log('Data fetched:', response.data?.data);
 
         // Remove all existing records for the match_id
-        await OodSeriesModel.deleteMany({ sport_id: 4, SportName: "Cricket" });
+        await OodSeriesModel.deleteMany({ sport_id: 4, SportName: "Cricket", matchFrom: 'bigbetexchange' });
 
         // Save the data to the database
-        for (const InplayMatches of response?.data?.data?.InplayMatches) {
-            InplayMatches.matchType = 'Inplay';
-            await OodSeriesModel.findOneAndUpdate({ series_id: InplayMatches?.series_id, market_id: InplayMatches?.market_id }, InplayMatches, { upsert: true, new: true });
+        const { InplayMatches = [], UpCommingMatches = [] } = response?.data?.data || {};
+        
+        for (const match of InplayMatches) {
+            match.matchType = 'Inplay';
+            match['matchFrom'] = 'bigbetexchange';
+            await OodSeriesModel.findOneAndUpdate(
+                { series_id: match?.series_id, market_id: match?.market_id },
+                match,
+                { upsert: true, new: true }
+            );
         }
 
-        for (const UpCommingMatches of response?.data?.data?.UpCommingMatches) {
-            UpCommingMatches.matchType = 'Upcoming';
-            await OodSeriesModel.findOneAndUpdate({ series_id: UpCommingMatches?.series_id, market_id: UpCommingMatches?.market_id }, UpCommingMatches, { upsert: true, new: true });
+        for (const match of UpCommingMatches) {
+            match.matchType = 'Upcoming';
+            match['matchFrom'] = 'bigbetexchange';
+            await OodSeriesModel.findOneAndUpdate(
+                { series_id: match?.series_id, market_id: match?.market_id },
+                match,
+                { upsert: true, new: true }
+            );
         }
 
     } catch (error) {
-        console.error('Error during the API call:', error.message);
+        console.error('Error during the API call: Bigbetexchange', error?.response?.data || error.message);
+    }
+}
+
+async function fetchGamesListFromSikander() {
+    try {
+        const requestBody = { 
+            limit: 50, 
+            pageno: 1, 
+            sport_id: "4", 
+            series_id: 0, 
+            type: "home" 
+        };
+
+        // Make the API request
+        let response = await axios.post(`${SIK_API_BASE_URL}/getseiresMatchsList`, requestBody);
+
+        // Process the data from the API response
+        // console.log('Data fetched:: Sikander', response.data?.data);
+
+        // Remove all existing records for the match_id
+        await OodSeriesModel.deleteMany({ sport_id: 4, SportName: "Cricket", matchFrom: 'sikander' });
+
+        // Save only new records to the database
+        const { InplayMatches = [], UpCommingMatches = [] } = response?.data?.data || {};
+
+        for (const match of InplayMatches) {
+            match.matchType = 'Inplay';
+            match['matchFrom'] = 'sikander';
+            match['sport_id'] = 4;
+
+            // Check if the record already exists in the database
+            const existingRecord = await OodSeriesModel.findOne({
+                matchFrom: 'sikander',
+                series_id: match.series_id,
+                market_id: match.market_id
+            });
+
+            // Add only if the record does not exist
+            if (!existingRecord) {
+                await OodSeriesModel.create(match);
+            }
+        }
+
+        for (const match of UpCommingMatches) {
+            match.matchType = 'Upcoming';
+            match['matchFrom'] = 'sikander';
+            match['sport_id'] = 4;
+
+            // Check if the record already exists in the database
+            const existingRecord = await OodSeriesModel.findOne({
+                series_id: match.series_id,
+                market_id: match.market_id
+            });
+
+            // Add only if the record does not exist
+            if (!existingRecord) {
+                await OodSeriesModel.create(match);
+            }
+        }
+
+    } catch (error) {
+        console.error('Error during the API call:Sikander', error.message);
     }
 }
 
@@ -152,7 +243,7 @@ async function fetchMatchScore(matchId) {
 }
 
 async function fetchInplayMatches() {
-    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Inplay', sport_id: 4, SportName: 'Cricket' });
+    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Inplay', sport_id: 4, SportName: 'Cricket', matchFrom: 'bigbetexchange' });
     for (const element of fetchInpaySeries) {
         // console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
@@ -163,7 +254,7 @@ async function fetchInplayMatches() {
 
 
 async function fetchUpcomingMatches() {
-    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Upcoming', sport_id: 4, SportName: 'Cricket' });
+    const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Upcoming', sport_id: 4, SportName: 'Cricket', matchFrom: 'bigbetexchange' });
     for (const element of fetchInpaySeries) {
         // console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
@@ -201,12 +292,24 @@ async function fetchAndExtractIframeID(url, matchId) {
     }
 }
 
+async function fetchGamesListWithSikander() {
+    try {
+        // Fetch games from BigBetExchange
+        await fetchGamesList();
+
+        // After BigBetExchange, fetch games from Sikander
+        // await fetchGamesListFromSikander();
+    } catch (error) {
+        console.error('Error in fetchGamesListWithSikander:', error.message);
+    }
+}
+
 // console.log("🚀 ~ file: cricketOodCronJob.js:136 ~ config.env:", config.env)
 if (config.env == "production") {
     // Schedule the cron job to run every 5 mint
     cron.schedule('*/5 * * * *', () => {
-        console.log('Running cron job every 5mint...');
-        fetchGamesList();
+        console.log('Running fetchGamesListWithSikander every 5 minutes...');
+        fetchGamesListWithSikander();
     });
 
     // Cron job to run every half second
@@ -223,7 +326,4 @@ if (config.env == "production") {
     });
 }
 
-// Run once on start
-// setTimeout(() => {
-//     fetchGamesList();
-// }, 10000);
+fetchGamesListWithSikander();
