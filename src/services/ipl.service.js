@@ -22,8 +22,8 @@ const getIPLOverview = async () => {
             // Fetch Top Picks: 6 players with highest soldPrice and auctionStatus 'Sold'
             IPLAuctionPlayerModel.find({ ...commonCondition, auctionStatus: 'Sold' })
                 .sort({ soldPrice: -1 })
-                .limit(6)
-                .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+                .limit(6),
+                // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
 
             // Fetch Top All-Rounders
             IPLAuctionPlayerModel.find({
@@ -32,8 +32,8 @@ const getIPLOverview = async () => {
                 apiPlayerId: { $in: allRounderPlayerIds }
             })
                 .sort({ soldPrice: -1 })
-                .limit(6)
-                .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+                .limit(6),
+                // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
 
             // Fetch Top Batters
             IPLAuctionPlayerModel.find({
@@ -42,8 +42,8 @@ const getIPLOverview = async () => {
                 apiPlayerId: { $in: allBattersPlayerIds }
             })
                 .sort({ soldPrice: -1 })
-                .limit(6)
-                .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+                .limit(6),
+                // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
 
             // Fetch Top Bowlers
             IPLAuctionPlayerModel.find({
@@ -53,7 +53,7 @@ const getIPLOverview = async () => {
             })
                 .sort({ soldPrice: -1 })
                 .limit(6)
-                .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId')
+                // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId')
         ]);
 
         // Return all the collected data
