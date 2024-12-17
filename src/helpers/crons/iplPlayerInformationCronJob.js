@@ -224,9 +224,9 @@ async function assignPlayersImages() {
         const predefineUrlForCountryImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421743/crichamp/Country_Flag/';
         const predefineUrlForPrimaryTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422215/crichamp/Primary_Team_Image/';
         const playerData = JSON.parse(player?.apiResponse);
-        const uploadPlayerImage = predefineUrlForPlayerImage + playerData?.oPlayer?.oImg?.sUrl?.split("/")[3];
+        const uploadPlayerImage = playerData?.oPlayer?.oImg?.sUrl ? predefineUrlForPlayerImage + playerData?.oPlayer?.oImg?.sUrl?.split("/")[3] : 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734414416/head-placeholder_ltzrxl.png';
         const uploadIPLTeamImage = predefineUrlForTeamImage + playerData?.oTeam?.oImg?.sUrl?.split("/")[2];
-        const uploadPlayerJerseyImage = predefineUrlForPlayerJerseyImage + playerData?.oPrimaryTeam?.oJersey?.sUrl?.split("/")[3];
+        const uploadPlayerJerseyImage = playerData?.oPrimaryTeam?.oJersey?.sUrl ? predefineUrlForPlayerJerseyImage + playerData?.oPrimaryTeam?.oJersey?.sUrl?.split("/")[3] : 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734377837/jersey-placeholder_vcvgy6.png';
         const uploadCountryImage = predefineUrlForCountryImage + playerData?.oCountry?.oImg?.sUrl?.split("/")[2];
         const uploadPrimaryTeamImage = predefineUrlForPrimaryTeamImage + playerData?.oPrimaryTeam?.oImg?.sUrl?.split("/")[2];
         const bids = await syncPlayerBids(player?.apiPlayerId);
