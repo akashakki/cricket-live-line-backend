@@ -203,6 +203,8 @@ async function syncAuctionPlayers() {
 
                         // Create database entry with or without image URLs
                         await IPLAuctionPlayerModel.create(requestBody);
+                    } else {
+                        await IPLAuctionPlayerModel.updateOne({ apiPlayerId: player?._id }, { $set: { teamId: player?.oTeam?._id, playingRole: player?.sPlayingRole, apiResponse: JSON.stringify(player) } });
                     }
                 }
             }
@@ -292,7 +294,7 @@ async function syncPlayerBids(apiPlayerId) {
 //     });
 // }
 
-// syncAuctionPlayers();
+syncAuctionPlayers();
 // assignPlayersImages();
 // Export the scheduling function to be called when the application starts
 module.exports = {

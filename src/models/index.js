@@ -29,6 +29,7 @@ module.exports.SeriesModel = require('./series.model');
 module.exports.NewsModel = require('./news.model');
 module.exports.PlayerModel = require('./player.model');
 module.exports.IPLAuctionPlayerModel = require('./iplAuctionPlayer.model');
+module.exports.IPLOverviewModel = require('./iplOverview.model');
 module.exports.IPLTeamsModel = require('./iplTeams.model');
 module.exports.TeamsModel = require('./team.model');
 module.exports.VenuesModel = require('./venue.model');

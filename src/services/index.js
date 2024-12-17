@@ -25,3 +25,6 @@ module.exports.TeamService = require('./team.service');
 module.exports.VenueService = require('./venue.service');
 module.exports.MatchService = require('./matches.service');
 
+//IPL related services
+module.exports.IPLService = require('./ipl.service');
+

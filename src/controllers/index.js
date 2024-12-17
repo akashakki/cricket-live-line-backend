@@ -19,3 +19,6 @@ module.exports.PlayerController = require('./player.controller');
 module.exports.TeamController = require('./team.controller');
 module.exports.VenueController = require('./venue.controller');
 module.exports.MatchController = require('./matches.controller');
+
+//IPL related controllers
+module.exports.IPLController = require('./ipl.controller');

@@ -4,7 +4,7 @@ const multer = require('multer');
 const { validateApiRequest, trackApiUsage } = require('../../middlewares');
 const upload = multer({ storage: multer.memoryStorage() });
 
-const { MatchController, SeriesController, NewsController, VenueController, PlayerController, TeamController } = require('../../controllers');
+const { MatchController, SeriesController, NewsController, VenueController, PlayerController, TeamController, IPLController } = require('../../controllers');
 
 const router = express.Router();
 
@@ -48,5 +48,12 @@ router.route('/playerInfo').post(validateApiRequest(), trackApiUsage, upload.any
 router.route('/playerList').get(validateApiRequest(), trackApiUsage, PlayerController.getListsForUser);
 router.route('/trendingPlayer').get(validateApiRequest(), trackApiUsage, PlayerController.getTrendingPlayerLists);
 router.route('/teamRanking').post(validateApiRequest(), trackApiUsage, upload.any(), TeamController.getTeamRanking);
+
+//IPL related routes
+router.route('/ipl-auction-overview').get(validateApiRequest(), trackApiUsage, IPLController.getIPLOverview);
+// router.route('/iplTeamList').get(validateApiRequest(), trackApiUsage, TeamController.getIPLTeamList);
+// router.route('/iplTeamDetail').post(validateApiRequest(), trackApiUsage, upload.any(), TeamController.getIPLTeamDetail);
+// router.route('/iplTeamSquads').post(validateApiRequest(), trackApiUsage, upload.any(), TeamController.getIPLTeamSquads);
+// router.route('/iplTeamStats').post(validateApiRequest(), trackApiUsage, upload.any(), TeamController.getIPLTeamStats);
 
 module.exports = router;

@@ -2,7 +2,7 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const Cloudinary = require('../cloudinary');
-const { IPLTeamsModel } = require('../../models');
+const { IPLTeamsModel, IPLOverviewModel } = require('../../models');
 
 
 async function uploadImage(filePath, folderName) {
@@ -37,7 +37,7 @@ async function syncIPLTeams() {
             if (teams.length > 0) {
                 for (const team of teams) {
                     const existingTeam = await IPLTeamsModel.findOne({ apiTeamId: team?._id });
-                    if (!existingTeam) {        
+                    if (!existingTeam) {
                         const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
                         const uploadIPLTeamImage = predefineUrlForTeamImage + team?.oTeam?.oImg?.sUrl?.split("/")[2];
                         const requestBody = {
@@ -103,4 +103,36 @@ async function syncIPLTeams() {
 //     }
 // }
 
-syncIPLTeams()
+async function syncIPLOverview() {
+    try {
+        const response = await axios.get(`https://www.crictracker.com/_next/data/porYleKT6wepO2TJdteZt/en/ipl-auction.json?ref=hm&slug=ipl-auction`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.data && response.data.pageProps && response.data?.pageProps?.category && response.data?.pageProps?.category?.overView) {
+            const overview = response.data?.pageProps?.category?.overView;
+            // return overview;
+            if (overview) {
+                const existingOverview = await IPLOverviewModel.findOne({});
+                if (!existingOverview) {
+                    const requestBody = {
+                        totalMoneySpent: overview?.nTotalMoneySpent,
+                        totalOverseasPlayer: overview?.nTotalOverseasPlayer,
+                        totalRegisteredPlayer: overview?.nTotalRegisteredPlayer,
+                        totalSoldPlayer: overview?.nTotalSoldPlayer,
+                        totalUnSoldPlayer: overview?.nTotalUnSoldPlayer,
+                        totalRTMUsed: overview?.nRTMUsed,
+                        apiResponse: JSON.stringify(overview)
+                    }
+                    await IPLOverviewModel.create(requestBody);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error syncing teams:', error);
+    }
+}
+
+syncIPLOverview();
+syncIPLTeams();

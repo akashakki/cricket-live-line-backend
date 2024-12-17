@@ -47,7 +47,7 @@ const AuctionPlayerSchema = new mongoose.Schema({
     countryName: String,
     countryName_short: String,
     countryFlag: String,
-    play_role: String,
+    playingRole: String,
     apiResponse: String,
     apiPlayerId: String,
     teamsBids: [Bids],
