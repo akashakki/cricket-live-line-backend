@@ -8,28 +8,28 @@ const getIPLOverview = async () => {
 
         // Fetch Top Picks: 6 players with highest SoldPrice and auctionStatus 'Sold'
         const topsPicks = await IPLAuctionPlayerModel.find({ auctionStatus: 'Sold' })
-            .sort({ SoldPrice: -1 })
+            .sort({ soldPrice: -1 })
             .limit(6);
 
-        // Fetch Top All-Rounders: 6 players with highest SoldPrice, auctionStatus 'Sold', and playingRole 'all'
+        // Fetch Top All-Rounders: 6 players with highest soldPrice, auctionStatus 'Sold', and playingRole 'all'
         const TopAllRounderData = await IPLAuctionPlayerModel.find({
             auctionStatus: 'Sold',
             playingRole: 'all'
-        }).sort({ SoldPrice: -1 })
+        }).sort({ soldPrice: -1 })
             .limit(6);
 
-        // Fetch Top Batters: 6 players with highest SoldPrice, auctionStatus 'Sold', and playingRole 'bat'
+        // Fetch Top Batters: 6 players with highest soldPrice, auctionStatus 'Sold', and playingRole 'bat'
         const TopBatterData = await IPLAuctionPlayerModel.find({
             auctionStatus: 'Sold',
             playingRole: 'bat'
-        }).sort({ SoldPrice: -1 })
+        }).sort({ soldPrice: -1 })
             .limit(6);
 
-        // Fetch Top Bowlers: 6 players with highest SoldPrice, auctionStatus 'Sold', and playingRole 'bowl'
+        // Fetch Top Bowlers: 6 players with highest soldPrice, auctionStatus 'Sold', and playingRole 'bowl'
         const TopBowlerData = await IPLAuctionPlayerModel.find({
             auctionStatus: 'Sold',
             playingRole: 'bowl'
-        }).sort({ SoldPrice: -1 })
+        }).sort({ soldPrice: -1 })
             .limit(6);
 
         // Return all the collected data

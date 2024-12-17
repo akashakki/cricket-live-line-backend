@@ -112,6 +112,7 @@ async function syncIPLOverview() {
         });
         if (response.data && response.data.pageProps && response.data?.pageProps?.category && response.data?.pageProps?.category?.overView) {
             const overview = response.data?.pageProps?.category?.overView;
+            console.log("🚀 ~ file: iplTeamCronJob.js:115 ~ syncIPLOverview ~ overview:", overview?.nTotalMoneySpent)
             // return overview;
             if (overview) {
                 const existingOverview = await IPLOverviewModel.findOne({});
@@ -135,4 +136,4 @@ async function syncIPLOverview() {
 }
 
 syncIPLOverview();
-syncIPLTeams();
+// syncIPLTeams();
