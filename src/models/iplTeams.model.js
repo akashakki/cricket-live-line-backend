@@ -25,7 +25,8 @@ const IPLTeamSchema = new mongoose.Schema({
     shortName: String,
     image: String,
     apiResponse: String,
-    apiTeamId: String,
+    teamId: String,
+    apiId: String,
     is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin
     is_delete: { type: Number, default: 1 }, //0 is delete, 1 is Active this is for Admin
 }, {
