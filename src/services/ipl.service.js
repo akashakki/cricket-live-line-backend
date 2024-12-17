@@ -5,7 +5,10 @@ const getIPLOverview = async () => {
     try {
         // Fetch IPL overview data
         const overview = await IPLOverviewModel.findOne();
-
+        const apiResponse = JSON.parse(overview.apiResponse);
+        let allRounderPlayerIds = apiResponse.aTopAllRounderData.map(item => item._id);
+        console.log("🚀 ~ file: ipl.service.js:10 ~ getIPLOverview ~ allRounderPlayerIds:", allRounderPlayerIds);
+        
         // Fetch Top Picks: 6 players with highest SoldPrice and auctionStatus 'Sold'
         const topsPicks = await IPLAuctionPlayerModel.find({ auctionStatus: 'Sold' })
             .sort({ soldPrice: -1 })
