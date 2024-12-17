@@ -215,9 +215,22 @@ async function assignPlayersImages(){
     const players = await IPLAuctionPlayerModel.find();
     for (const player of players) {
         const predefineUrlForPlayerImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734423442/crichamp/Players_Image/';
+        const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
+        const predefineUrlForPlayerJerseyImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421956/crichamp/Team_Jersey_Image/';
+        const predefineUrlForCountryImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421743/crichamp/Country_Flag/';
+        const predefineUrlForPrimaryTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422215/crichamp/Primary_Team_Image/';
         const playerData = JSON.parse(player?.apiResponse);
         const uploadPlayerImage = predefineUrlForPlayerImage + playerData?.oPlayer?.oImg?.sUrl?.split("/")[3];
-        await IPLAuctionPlayerModel.findOneAndUpdate({ _id: player._id }, { image: uploadPlayerImage });
+        const uploadIPLTeamImage = predefineUrlForTeamImage + playerData?.oTeam?.oImg?.sUrl?.split("/")[2];
+        const uploadPlayerJerseyImage = predefineUrlForPlayerJerseyImage + playerData?.oPrimaryTeam?.oJersey?.sUrl?.split("/")[3];
+        const uploadCountryImage = predefineUrlForCountryImage + playerData?.oCountry?.oImg?.sUrl?.split("/")[2];
+        const uploadPrimaryTeamImage = predefineUrlForPrimaryTeamImage + playerData?.oPrimaryTeam?.oImg?.sUrl?.split("/")[2];
+        await IPLAuctionPlayerModel.findOneAndUpdate({ _id: player._id }, { 
+            playerJerseyImage: uploadPlayerJerseyImage,  
+            iplTeamImage: uploadIPLTeamImage, 
+            countryFlag: uploadCountryImage, 
+            primaryTeamFlag: uploadPrimaryTeamImage, 
+            image: uploadPlayerImage });
 
     }
 }
