@@ -56,6 +56,7 @@ async function syncAuctionPlayers() {
                         bCappedPlayer
                         bOverseas
                         oTeam {
+                            _id
                             sAbbr
                             sTitle
                             oImg {
@@ -183,6 +184,7 @@ async function syncAuctionPlayers() {
                             isOverseas: player?.bOverseas,
                             iplTeamName: player?.oTeam?.sTitle,
                             iplTeamImage: uploadIPLTeamImage || '',
+                            teamId: player?.oTeam?._id,
                             iplTeamName_short: player?.oTeam?.sAbbr,
                             auctionStatus: player?.eAuctionStatus == 's' ? 'Sold' : player?.eAuctionStatus == 'us' ? 'Unsold' : 'Retained',
                             primaryTeam: player?.oPrimaryTeam?.sTitle || '',
@@ -291,7 +293,7 @@ async function syncPlayerBids(apiPlayerId) {
 // }
 
 // syncAuctionPlayers();
-assignPlayersImages();
+// assignPlayersImages();
 // Export the scheduling function to be called when the application starts
 module.exports = {
     // scheduleSyncJob,

@@ -33,6 +33,7 @@ const AuctionPlayerSchema = new mongoose.Schema({
     },
     isCappedPlayer: Boolean,
     isOverseas: Boolean,
+    teamId: String,
     iplTeamName: String,
     iplTeamName_short: String,
     iplTeamImage: String,
