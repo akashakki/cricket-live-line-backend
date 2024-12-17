@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const Cloudinary = require('../cloudinary');
-const { IPLAuctionPlayerModel, PlayerModel } = require('../../models');
+const { IPLAuctionPlayerModel } = require('../../models');
 
 async function uploadImage(filePath, folderName) {
     try {
@@ -13,13 +13,14 @@ async function uploadImage(filePath, folderName) {
         };
 
         const response = await Cloudinary?.uploadImage(filePath, options);
-        console.log('Uploaded image details:', response);
+        console.log('Uploaded image details:', response?.secure_url);
+        return response?.secure_url;
     } catch (error) {
         console.error('Upload failed:', error);
     }
 }
 //https://www.crictracker.com/_next/image/?url=https%3A%2F%2Fmedia.crictracker.com%2Fplayer%2Fhead%2F300x300%2Frasikh_salam_ebb74.png&w=120&q=75
-// uploadImage('https://media.crictracker.com/team/thumbUrl/india-4_8cde.png', 'Team_Flag')
+// uploadImage('https://media.crictracker.com/player/head/300x300/shreyas_iyer_59e64.png', 'Players_Image')
 
 /**
  * Fetches and processes auction players from CricTracker
@@ -181,18 +182,18 @@ async function syncAuctionPlayers() {
                             isCappedPlayer: player?.bCappedPlayer,
                             isOverseas: player?.bOverseas,
                             iplTeamName: player?.oTeam?.sTitle,
-                            iplTeamImage: uploadIPLTeamImage?.secure_url || '',
+                            iplTeamImage: uploadIPLTeamImage || '',
                             iplTeamName_short: player?.oTeam?.sAbbr,
                             auctionStatus: player?.eAuctionStatus == 's' ? 'Sold' : player?.eAuctionStatus == 'us' ? 'Unsold' : 'Retained',
                             primaryTeam: player?.oPrimaryTeam?.sTitle || '',
                             primaryTeamName_short: player?.oPrimaryTeam?.sAbbr || '',
-                            primaryTeamFlag: uploadPrimaryTeamImage?.secure_url || '',
+                            primaryTeamFlag: uploadPrimaryTeamImage || '',
                             name: player?.oPlayer?.sFullName,
-                            image: uploadPlayerImage?.secure_url || 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734414416/head-placeholder_ltzrxl.png',
-                            teamJerseyImage: uploadPrimaryTeamJerseyImage?.secure_url || 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734377837/jersey-placeholder_vcvgy6.png',
+                            image: uploadPlayerImage || 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734414416/head-placeholder_ltzrxl.png',
+                            teamJerseyImage: uploadPrimaryTeamJerseyImage || 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734377837/jersey-placeholder_vcvgy6.png',
                             countryName: player?.oCountry?.sTitle,
                             countryName_short: player?.oCountry?.sAbbr,
-                            countryFlag: uploadCountryImage?.secure_url || '',
+                            countryFlag: uploadCountryImage || '',
                             playingRole: player?.sPlayingRole,
                             apiPlayerId: player?._id,
                             apiResponse: JSON.stringify(player)
@@ -210,24 +211,35 @@ async function syncAuctionPlayers() {
     }
 }
 
+async function assignPlayersImages(){
+    const players = await IPLAuctionPlayerModel.find();
+    for (const player of players) {
+        const predefineUrlForPlayerImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734423442/crichamp/Players_Image/';
+        const playerData = JSON.parse(player?.apiResponse);
+        const uploadPlayerImage = predefineUrlForPlayerImage + playerData?.oPlayer?.oImg?.sUrl?.split("/")[3];
+        await IPLAuctionPlayerModel.findOneAndUpdate({ _id: player._id }, { image: uploadPlayerImage });
+
+    }
+}
+
 /**
  * Schedule the sync job to run every night at 2 AM
  */
-function scheduleSyncJob() {
-    // Cron job to run at 2:00 AM every day
-    cron.schedule('0 2 * * *', () => {
-        console.log('Starting nightly auction players sync...');
-        syncAuctionPlayers();
-    }, {
-        scheduled: true,
-        timezone: "Asia/Kolkata" // Adjust timezone as needed
-    });
-}
+// function scheduleSyncJob() {
+//     // Cron job to run at 2:00 AM every day
+//     cron.schedule('0 2 * * *', () => {
+//         console.log('Starting nightly auction players sync...');
+//         syncAuctionPlayers();
+//     }, {
+//         scheduled: true,
+//         timezone: "Asia/Kolkata" // Adjust timezone as needed
+//     });
+// }
 
-syncAuctionPlayers();
-
+// syncAuctionPlayers();
+assignPlayersImages();
 // Export the scheduling function to be called when the application starts
 module.exports = {
-    scheduleSyncJob,
+    // scheduleSyncJob,
     syncAuctionPlayers
 };
