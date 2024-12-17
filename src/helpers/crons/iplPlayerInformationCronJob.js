@@ -232,11 +232,11 @@ async function assignPlayersImages() {
         const bids = await syncPlayerBids(player?.apiPlayerId);
         console.log("🚀 ~ file: iplPlayerInformationCronJob.js:229 ~ assignPlayersImages ~ bids:", bids)
         await IPLAuctionPlayerModel.findOneAndUpdate({ _id: player._id }, {
-            playerJerseyImage: uploadPlayerJerseyImage,
             iplTeamImage: uploadIPLTeamImage,
             countryFlag: uploadCountryImage,
             primaryTeamFlag: uploadPrimaryTeamImage,
             image: uploadPlayerImage,
+            teamJerseyImage: uploadPlayerJerseyImage,
             teamsBids: bids
         });
 
@@ -295,7 +295,7 @@ async function syncPlayerBids(apiPlayerId) {
 // }
 
 // syncAuctionPlayers();
-// assignPlayersImages();
+assignPlayersImages();
 // Export the scheduling function to be called when the application starts
 module.exports = {
     // scheduleSyncJob,
