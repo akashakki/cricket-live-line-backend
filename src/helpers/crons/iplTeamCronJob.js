@@ -37,12 +37,19 @@ async function syncIPLTeams() {
             if (teams.length > 0) {
                 for (const team of teams) {
                     const existingTeam = await IPLTeamsModel.findOne({ apiTeamId: team?._id });
-                    if (!existingTeam) {
+                    if (!existingTeam) {        
+                        const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
+                        const uploadIPLTeamImage = predefineUrlForTeamImage + team?.oTeam?.oImg?.sUrl?.split("/")[2];
                         const requestBody = {
+                            totalSpend: team?.nTotalSpent,
+                            purseLeft: team?.nPurseLeft,
+                            playerCount: team?.nPlayerCount,
+                            overseaPlayerCount: team?.nOverseaPlayerCount,
+                            colorCode: team?.sColorCode,
                             apiTeamId: team?._id,
-                            name: team?.oTeam?.sTitle,
+                            name: team?.oTeam?.sAltName,
                             shortName: team?.oTeam?.sAbbr,
-                            image: team?.oTeam?.oImg?.sUrl,
+                            image: uploadIPLTeamImage,
                             apiResponse: JSON.stringify(team)
                         };
 
@@ -51,10 +58,48 @@ async function syncIPLTeams() {
                     }
                 }
             }
+            console.log(`Synced ${teams.length} teams successfully`);
         }
     } catch (error) {
-        console.error('Error syncing auction players:', error);
+        console.error('Error syncing teams:', error);
     }
 }
 
-// syncIPLTeams()
+// async function syncTeamDetails(slug) {
+//     try {
+//         const response = await axios.get(`https://www.crictracker.com/_next/data/g2XS67JPUUk2arjd9gpx6/en/ipl-auction/teams/${slug}.json?slug=ipl-auction&slug=teams&slug=${slug}`, {
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             }
+//         });
+
+//         // console.log("🚀 ~ file: iplTeamCronJob.js:32 ~ syncIPLTeams ~ response.data:", response.data?.pageProps?.category?.actionTeamData?.listAuctionTeamFront)
+//         if (response.data && response.data.pageProps && response.data?.pageProps?.category && response.data?.pageProps?.category?.teamDetail && response.data?.pageProps?.category?.teamDetail?.aBid) {
+//             const bids = response.data?.pageProps?.category?.teamDetail?.aBid;
+//             // console.log("🚀 ~ file: iplTeamCronJob.js:35 ~ syncIPLbids ~ bids:", bids[1])
+//             let updatedBids = [];
+//             if (bids.length > 0) {
+//                 for (const team of bids) {
+//                     const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
+//                     const uploadIPLTeamImage = predefineUrlForTeamImage + team?.oTeam?.oImg?.sUrl?.split("/")[2];
+//                     const teamsBids = {
+//                         soldPrice: team?.nSoldPrice,
+//                         bidPrice: team?.nBidPrice,
+//                         sold: team?.bSold,
+//                         bRTM: team?.bRTM,
+//                         iplTeamImage: uploadIPLTeamImage,
+//                         iplTeamName: team?.oTeam?.sTitle,
+//                         apiBidTeamId: team?._id,
+//                         apiResponse: JSON.stringify(team)
+//                     };
+//                     updatedBids.push(teamsBids);
+//                 }
+//             }
+//             return updatedBids;
+//         }
+//     } catch (error) {
+//         console.error('Error syncing teams:', error);
+//     }
+// }
+
+syncIPLTeams()

@@ -130,7 +130,7 @@ async function syncAuctionPlayers() {
                         let uploadPlayerImage = '';
 
                         // Upload images and handle failures
-                        if(player?.oCountry?.oImg?.sUrl){
+                        if (player?.oCountry?.oImg?.sUrl) {
                             try {
                                 uploadCountryImage = await uploadImage('https://media.crictracker.com/' + player?.oCountry?.oImg?.sUrl, 'Country_Flag');
                             } catch (err) {
@@ -139,7 +139,7 @@ async function syncAuctionPlayers() {
                             }
                         }
 
-                        if(player?.oTeam?.oImg?.sUrl){
+                        if (player?.oTeam?.oImg?.sUrl) {
                             try {
                                 uploadIPLTeamImage = await uploadImage('https://media.crictracker.com/' + player?.oTeam?.oImg?.sUrl, 'IPL_Team_Flag');
                             } catch (err) {
@@ -148,7 +148,7 @@ async function syncAuctionPlayers() {
                             }
                         }
 
-                        if(player?.oPlayer && player?.oPlayer?.oImg && player?.oPlayer?.oImg?.sUrl){
+                        if (player?.oPlayer && player?.oPlayer?.oImg && player?.oPlayer?.oImg?.sUrl) {
                             try {
                                 uploadPlayerImage = await uploadImage('https://media.crictracker.com/' + player?.oPlayer?.oImg?.sUrl, 'Players_Image');
                             } catch (err) {
@@ -211,7 +211,7 @@ async function syncAuctionPlayers() {
     }
 }
 
-async function assignPlayersImages(){
+async function assignPlayersImages() {
     const players = await IPLAuctionPlayerModel.find();
     for (const player of players) {
         const predefineUrlForPlayerImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734423442/crichamp/Players_Image/';
@@ -225,13 +225,54 @@ async function assignPlayersImages(){
         const uploadPlayerJerseyImage = predefineUrlForPlayerJerseyImage + playerData?.oPrimaryTeam?.oJersey?.sUrl?.split("/")[3];
         const uploadCountryImage = predefineUrlForCountryImage + playerData?.oCountry?.oImg?.sUrl?.split("/")[2];
         const uploadPrimaryTeamImage = predefineUrlForPrimaryTeamImage + playerData?.oPrimaryTeam?.oImg?.sUrl?.split("/")[2];
-        await IPLAuctionPlayerModel.findOneAndUpdate({ _id: player._id }, { 
-            playerJerseyImage: uploadPlayerJerseyImage,  
-            iplTeamImage: uploadIPLTeamImage, 
-            countryFlag: uploadCountryImage, 
-            primaryTeamFlag: uploadPrimaryTeamImage, 
-            image: uploadPlayerImage });
+        const bids = await syncPlayerBids(player?.apiPlayerId);
+        console.log("🚀 ~ file: iplPlayerInformationCronJob.js:229 ~ assignPlayersImages ~ bids:", bids)
+        await IPLAuctionPlayerModel.findOneAndUpdate({ _id: player._id }, {
+            playerJerseyImage: uploadPlayerJerseyImage,
+            iplTeamImage: uploadIPLTeamImage,
+            countryFlag: uploadCountryImage,
+            primaryTeamFlag: uploadPrimaryTeamImage,
+            image: uploadPlayerImage,
+            teamsBids: bids
+        });
 
+    }
+}
+
+async function syncPlayerBids(apiPlayerId) {
+    try {
+        const response = await axios.get(`https://www.crictracker.com/_next/data/g2XS67JPUUk2arjd9gpx6/en/ipl-auction/auction-player-${apiPlayerId}.json?slug=ipl-auction&slug=auction-player-${apiPlayerId}`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // console.log("🚀 ~ file: iplTeamCronJob.js:32 ~ syncIPLTeams ~ response.data:", response.data?.pageProps?.category?.actionTeamData?.listAuctionTeamFront)
+        if (response.data && response.data.pageProps && response.data?.pageProps?.category && response.data?.pageProps?.category?.playerData && response.data?.pageProps?.category?.playerData?.aBid) {
+            const bids = response.data?.pageProps?.category?.playerData?.aBid;
+            // console.log("🚀 ~ file: iplTeamCronJob.js:35 ~ syncIPLbids ~ bids:", bids[1])
+            let updatedBids = [];
+            if (bids.length > 0) {
+                for (const team of bids) {
+                    const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
+                    const uploadIPLTeamImage = predefineUrlForTeamImage + team?.oTeam?.oImg?.sUrl?.split("/")[2];
+                    const teamsBids = {
+                        soldPrice: team?.nSoldPrice,
+                        bidPrice: team?.nBidPrice,
+                        sold: team?.bSold,
+                        bRTM: team?.bRTM,
+                        iplTeamImage: uploadIPLTeamImage,
+                        iplTeamName: team?.oTeam?.sTitle,
+                        apiBidTeamId: team?._id,
+                        apiResponse: JSON.stringify(team)
+                    };
+                    updatedBids.push(teamsBids);
+                }
+            }
+            return updatedBids;
+        }
+    } catch (error) {
+        console.error('Error syncing teams:', error);
     }
 }
 

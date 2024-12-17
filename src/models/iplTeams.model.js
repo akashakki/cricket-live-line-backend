@@ -9,7 +9,6 @@ mongoose.plugin(slug);
 
 // Define the schema
 const IPLTeamSchema = new mongoose.Schema({
-    slug: { type: String, slug: "name" },
     totalSpend: {
         type: Number,
         default: null
@@ -22,6 +21,7 @@ const IPLTeamSchema = new mongoose.Schema({
     overseaPlayerCount: Number,
     colorCode: String,
     name: String,
+    slug: { type: String, slug: "name" },
     shortName: String,
     image: String,
     apiResponse: String,

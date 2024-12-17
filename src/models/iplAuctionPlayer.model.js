@@ -7,6 +7,18 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 var slug = require('mongoose-slug-updater');
 mongoose.plugin(slug);
 
+const Bids = new mongoose.Schema({
+    soldPrice: Number,
+    bidPrice: Number,
+    sold: Boolean,
+    bRTM: Boolean,
+    iplTeamName_short: String,
+    iplTeamName: String,
+    iplTeamImage: String,
+    apiBidTeamId: String,
+    apiResponse: String,
+}, { _id: false });
+
 // Define the schema
 const AuctionPlayerSchema = new mongoose.Schema({
     player_id: String,
@@ -37,6 +49,7 @@ const AuctionPlayerSchema = new mongoose.Schema({
     play_role: String,
     apiResponse: String,
     apiPlayerId: String,
+    teamsBids: [Bids],
     is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin
     is_delete: { type: Number, default: 1 }, //0 is delete, 1 is Active this is for Admin
 }, {
