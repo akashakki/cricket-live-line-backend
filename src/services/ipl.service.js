@@ -139,7 +139,7 @@ const getTeams = async () => {
 };
 
 const getTeamDetails = async (slug) => {
-    const data = await IPLTeamsModel.findOne({ is_delete: 1, slug: slug }).lean();
+    const data = await IPLTeamsModel.findOne({ is_delete: 1, slug: slug }).select('name shortName purseLeft playerCount overseaPlayerCount slug totalSpend teamId colorCode image').lean();
     return data;
 };
 
