@@ -186,7 +186,7 @@ async function syncAuctionPlayers() {
                             iplTeamImage: uploadIPLTeamImage || '',
                             teamId: player?.oTeam?._id,
                             iplTeamName_short: player?.oTeam?.sAbbr,
-                            auctionStatus: player?.eAuctionStatus == 's' ? 'Sold' : player?.eAuctionStatus == 'us' ? 'Unsold' : 'Retained',
+                            auctionStatus: player?.eAuctionStatus == 's' ? 'Sold' : player?.eAuctionStatus == 'us' ? 'Unsold' : player?.eAuctionStatus == 'r' ? 'Retained' : 'RTM',
                             primaryTeam: player?.oPrimaryTeam?.sTitle || '',
                             primaryTeamName_short: player?.oPrimaryTeam?.sAbbr || '',
                             primaryTeamFlag: uploadPrimaryTeamImage || '',

@@ -10,7 +10,7 @@ const getIPLOverview = catchAsync(async (req, res) => {
 });
 
 const getLists = catchAsync(async (req, res) => {
-    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status', 'isCappedPlayer', 'team', 'country', 'role']);
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status', 'auctionStatus', 'isCappedPlayer', 'team', 'country', 'role']);
     const result = await IPLService.queries(options);
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });

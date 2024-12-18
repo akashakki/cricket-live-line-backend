@@ -92,6 +92,14 @@ const queries = async (options) => {
             }]
         })
     }
+    
+    if (options.auctionStatus && options.auctionStatus != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                auctionStatus: options.auctionStatus
+            }]
+        })
+    }
     if (options.isCappedPlayer && options.isCappedPlayer != 'undefined') {
         condition.$and.push({
             $or: [{
