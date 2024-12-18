@@ -134,7 +134,7 @@ const queries = async (options) => {
 
 
 const getTeams = async () => {
-    const data = await IPLTeamsModel.find({ is_delete: 1 }).lean();
+    const data = await IPLTeamsModel.find({ is_delete: 1 }).select('name shortName purseLeft playerCount overseaPlayerCount slug totalSpend teamId colorCode image').lean();
     return data;
 };
 
