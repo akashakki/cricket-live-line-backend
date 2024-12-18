@@ -21,13 +21,18 @@ const getIPLTeamList = catchAsync(async (req, res) => {
 });
 
 const getIPLTeamDetail = catchAsync(async (req, res) => {
-    const result = await IPLService.getTeamDetail(req.params.slug);
+    const result = await IPLService.getTeamDetails(req.params.slug);
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
 });
 
+const getIPLplayerDetails = catchAsync(async (req, res) => {
+    const result = await IPLService.getPlayerDetails(req.params.slug);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
+})
 module.exports = {
     getIPLOverview,
     getLists,
     getIPLTeamList,
-    getIPLTeamDetail
+    getIPLTeamDetail,
+    getIPLplayerDetails
 };

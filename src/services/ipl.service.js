@@ -1,6 +1,8 @@
 const { IPLAuctionPlayerModel, IPLTeamsModel, IPLOverviewModel } = require('../models');
 const CONSTANT = require('../config/constant');
 
+let selectedPlayerFields = 'apiPlayerId auctionStatus isCappedPlayer basePrice countryFlag countryName countryName_short image iplTeamImage iplTeamName iplTeamName_short isCappedPlayer isOverseas name playingRole primaryTeamFlag primaryTeamName_short slug soldPrice teamId teamJerseyImage';
+
 const getIPLOverview = async () => {
     try {
         // Fetch IPL overview data
@@ -22,8 +24,8 @@ const getIPLOverview = async () => {
             // Fetch Top Picks: 6 players with highest soldPrice and auctionStatus 'Sold'
             IPLAuctionPlayerModel.find({ ...commonCondition, auctionStatus: 'Sold' })
                 .sort({ soldPrice: -1 })
-                .limit(6),
-            // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+                .limit(6)
+                .select(selectedPlayerFields),
 
             // Fetch Top All-Rounders
             IPLAuctionPlayerModel.find({
@@ -32,8 +34,8 @@ const getIPLOverview = async () => {
                 apiPlayerId: { $in: allRounderPlayerIds }
             })
                 .sort({ soldPrice: -1 })
-                .limit(6),
-            // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+                .limit(6)
+                .select(selectedPlayerFields),
 
             // Fetch Top Batters
             IPLAuctionPlayerModel.find({
@@ -42,8 +44,8 @@ const getIPLOverview = async () => {
                 apiPlayerId: { $in: allBattersPlayerIds }
             })
                 .sort({ soldPrice: -1 })
-                .limit(6),
-            // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+                .limit(6)
+                .select(selectedPlayerFields),
 
             // Fetch Top Bowlers
             IPLAuctionPlayerModel.find({
@@ -53,7 +55,7 @@ const getIPLOverview = async () => {
             })
                 .sort({ soldPrice: -1 })
                 .limit(6)
-            // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId')
+                .select(selectedPlayerFields),
         ]);
 
         // Return all the collected data
@@ -92,7 +94,7 @@ const queries = async (options) => {
             }]
         })
     }
-    
+
     if (options.auctionStatus && options.auctionStatus != 'undefined') {
         condition.$and.push({
             $or: [{
@@ -128,7 +130,13 @@ const queries = async (options) => {
             }]
         })
     }
+    options['select'] = selectedPlayerFields;
     const data = await IPLAuctionPlayerModel.paginate(condition, options);
+    return data;
+};
+
+const getPlayerDetails = async (slug) => {
+    const data = await IPLAuctionPlayerModel.findOne({ is_delete: 1, slug }).lean();
     return data;
 };
 
@@ -139,7 +147,7 @@ const getTeams = async () => {
 };
 
 const getTeamDetails = async (slug) => {
-    const data = await IPLTeamsModel.findOne({ is_delete: 1, slug: slug }).select('name shortName purseLeft playerCount overseaPlayerCount slug totalSpend teamId colorCode image').lean();
+    const data = await IPLTeamsModel.findOne({ is_delete: 1, slug: slug }).select(selectedPlayerFields + ' teamsBids').lean();
     return data;
 };
 
@@ -147,5 +155,6 @@ module.exports = {
     getIPLOverview,
     queries,
     getTeams,
-    getTeamDetails
+    getTeamDetails,
+    getPlayerDetails
 };
