@@ -23,7 +23,7 @@ const getIPLOverview = async () => {
             IPLAuctionPlayerModel.find({ ...commonCondition, auctionStatus: 'Sold' })
                 .sort({ soldPrice: -1 })
                 .limit(6),
-                // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+            // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
 
             // Fetch Top All-Rounders
             IPLAuctionPlayerModel.find({
@@ -33,7 +33,7 @@ const getIPLOverview = async () => {
             })
                 .sort({ soldPrice: -1 })
                 .limit(6),
-                // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+            // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
 
             // Fetch Top Batters
             IPLAuctionPlayerModel.find({
@@ -43,7 +43,7 @@ const getIPLOverview = async () => {
             })
                 .sort({ soldPrice: -1 })
                 .limit(6),
-                // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
+            // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId'),
 
             // Fetch Top Bowlers
             IPLAuctionPlayerModel.find({
@@ -53,7 +53,7 @@ const getIPLOverview = async () => {
             })
                 .sort({ soldPrice: -1 })
                 .limit(6)
-                // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId')
+            // .select('name image soldPrice playingRole iplTeamImage iplTeamName_short countryName countryFlag apiPlayerId')
         ]);
 
         // Return all the collected data
@@ -70,6 +70,74 @@ const getIPLOverview = async () => {
     }
 };
 
+
+const queries = async (options) => {
+    var condition = { $and: [{ is_delete: 1 }] };
+    if (options.searchBy && options.searchBy != 'undefined') {
+        var searchBy = {
+            $regex: ".*" + options.searchBy + ".*",
+            $options: "si"
+        }
+
+        condition.$and.push({
+            $or: [{
+                name: searchBy
+            }]
+        })
+    }
+    if (options.status && options.status != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                status: options.status
+            }]
+        })
+    }
+    if (options.isCappedPlayer && options.isCappedPlayer != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                isCappedPlayer: options.isCappedPlayer
+            }]
+        })
+    }
+    if (options.team && options.team != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                iplTeamName_short: options.team
+            }]
+        })
+    }
+    if (options.country && options.country != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                countryName_short: options.country
+            }]
+        })
+    }
+    if (options.role && options.role != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                playingRole: options.role
+            }]
+        })
+    }
+    const data = await IPLAuctionPlayerModel.paginate(condition, options);
+    return data;
+};
+
+
+const getTeams = async () => {
+    const data = await IPLTeamsModel.find({ is_delete: 1 }).lean();
+    return data;
+};
+
+const getTeamDetails = async (slug) => {
+    const data = await IPLTeamsModel.findOne({ is_delete: 1, slug: slug }).lean();
+    return data;
+};
+
 module.exports = {
     getIPLOverview,
+    queries,
+    getTeams,
+    getTeamDetails
 };

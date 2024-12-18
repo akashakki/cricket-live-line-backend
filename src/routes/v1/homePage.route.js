@@ -51,8 +51,9 @@ router.route('/teamRanking').post(validateApiRequest(), trackApiUsage, upload.an
 
 //IPL related routes
 router.route('/ipl-auction-overview').get(validateApiRequest(), trackApiUsage, IPLController.getIPLOverview);
-// router.route('/iplTeamList').get(validateApiRequest(), trackApiUsage, TeamController.getIPLTeamList);
-// router.route('/iplTeamDetail').post(validateApiRequest(), trackApiUsage, upload.any(), TeamController.getIPLTeamDetail);
+router.route('/ipl-auction-players').get(validateApiRequest(), trackApiUsage, IPLController.getLists);
+router.route('/iplTeamList').get(validateApiRequest(), trackApiUsage, IPLController.getIPLTeamList);
+router.route('/iplTeamDetail/:slug').get(validateApiRequest(), trackApiUsage, IPLController.getIPLTeamDetail);
 // router.route('/iplTeamSquads').post(validateApiRequest(), trackApiUsage, upload.any(), TeamController.getIPLTeamSquads);
 // router.route('/iplTeamStats').post(validateApiRequest(), trackApiUsage, upload.any(), TeamController.getIPLTeamStats);
 

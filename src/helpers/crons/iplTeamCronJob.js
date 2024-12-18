@@ -135,5 +135,5 @@ async function syncIPLOverview() {
     }
 }
 
-syncIPLOverview();
+// syncIPLOverview();
 // syncIPLTeams();
