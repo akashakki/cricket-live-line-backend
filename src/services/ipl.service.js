@@ -25,7 +25,7 @@ const getIPLOverview = async () => {
             IPLAuctionPlayerModel.find({ ...commonCondition, auctionStatus: 'Sold' })
                 .sort({ soldPrice: -1 })
                 .limit(6)
-                .select(selectedPlayerFields),
+            .select(selectedPlayerFields),
 
             // Fetch Top All-Rounders
             IPLAuctionPlayerModel.find({
@@ -94,7 +94,7 @@ const queries = async (options) => {
             }]
         })
     }
-
+    
     if (options.auctionStatus && options.auctionStatus != 'undefined') {
         condition.$and.push({
             $or: [{
@@ -136,7 +136,7 @@ const queries = async (options) => {
 };
 
 const getPlayerDetails = async (slug) => {
-    const data = await IPLAuctionPlayerModel.findOne({ is_delete: 1, slug }).lean();
+    const data = await IPLAuctionPlayerModel.findOne({ is_delete: 1, slug }).select(selectedPlayerFields + ' teamsBids').lean();
     return data;
 };
 
@@ -147,7 +147,7 @@ const getTeams = async () => {
 };
 
 const getTeamDetails = async (slug) => {
-    const data = await IPLTeamsModel.findOne({ is_delete: 1, slug: slug }).select(selectedPlayerFields + ' teamsBids').lean();
+    const data = await IPLTeamsModel.findOne({ is_delete: 1, slug: slug }).select('name shortName purseLeft playerCount overseaPlayerCount slug totalSpend teamId colorCode image').lean();
     return data;
 };
 
