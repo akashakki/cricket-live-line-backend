@@ -30,12 +30,12 @@ async function login() {
 
 async function fetchGamesList() {
     try {
-        const requestBody = { 
-            limit: 50, 
-            pageno: 1, 
-            sport_id: 4, 
-            series_id: 0, 
-            type: "home" 
+        const requestBody = {
+            limit: 50,
+            pageno: 1,
+            sport_id: 4,
+            series_id: 0,
+            type: "home"
         };
 
         // Get the stored token from the database
@@ -80,7 +80,7 @@ async function fetchGamesList() {
 
         // Save the data to the database
         const { InplayMatches = [], UpCommingMatches = [] } = response?.data?.data || {};
-        
+
         for (const match of InplayMatches) {
             match.matchType = 'Inplay';
             match['matchFrom'] = 'bigbetexchange';
@@ -108,12 +108,12 @@ async function fetchGamesList() {
 
 async function fetchGamesListFromSikander() {
     try {
-        const requestBody = { 
-            limit: 50, 
-            pageno: 1, 
-            sport_id: "4", 
-            series_id: 0, 
-            type: "home" 
+        const requestBody = {
+            limit: 50,
+            pageno: 1,
+            sport_id: "4",
+            series_id: 0,
+            type: "home"
         };
 
         // Make the API request
@@ -129,20 +129,22 @@ async function fetchGamesListFromSikander() {
         const { InplayMatches = [], UpCommingMatches = [] } = response?.data?.data || {};
 
         for (const match of InplayMatches) {
-            match.matchType = 'Inplay';
-            match['matchFrom'] = 'sikander';
-            match['sport_id'] = 4;
+            if (match.match_id != '1734027746') {
+                match.matchType = 'Inplay';
+                match['matchFrom'] = 'sikander';
+                match['sport_id'] = 4;
 
-            // Check if the record already exists in the database
-            const existingRecord = await OodSeriesModel.findOne({
-                matchFrom: 'sikander',
-                series_id: match.series_id,
-                market_id: match.market_id
-            });
+                // Check if the record already exists in the database
+                const existingRecord = await OodSeriesModel.findOne({
+                    matchFrom: 'sikander',
+                    series_id: match.series_id,
+                    market_id: match.market_id
+                });
 
-            // Add only if the record does not exist
-            if (!existingRecord) {
-                await OodSeriesModel.create(match);
+                // Add only if the record does not exist
+                if (!existingRecord) {
+                    await OodSeriesModel.create(match);
+                }
             }
         }
 
@@ -298,7 +300,7 @@ async function fetchGamesListWithSikander() {
         await fetchGamesList();
 
         // After BigBetExchange, fetch games from Sikander
-        // await fetchGamesListFromSikander();
+        await fetchGamesListFromSikander();
     } catch (error) {
         console.error('Error in fetchGamesListWithSikander:', error.message);
     }
@@ -326,4 +328,4 @@ if (config.env == "production") {
     });
 }
 
-fetchGamesListWithSikander();
+// fetchGamesListWithSikander();

@@ -9,20 +9,19 @@ const API_BASE_URL = 'https://sikander777.com/api/v5';
 // Function to fetch data and save it
 async function fetchMatchDataAndSave(m_id, s_id) {
     try {
-        let tokenDoc = await Token.findOne({ type: 'sikander' });
-        let token = tokenDoc ? tokenDoc.token : null;
-        const response = await axios.post(`${API_BASE_URL}/event-detals`, {
+        // let tokenDoc = await Token.findOne({ type: 'sikander' });
+        // let token = tokenDoc ? tokenDoc.token : null;
+        const response = await axios.post(`${API_BASE_URL}/get-cricket-detail`, {
             match_id: m_id, // Replace with actual match_id
             sport_id: s_id  // Replace with actual sport_id
-        }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
         });
 
         const matchData = response.data?.data;
-        // console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchMatchDataAndSave ~ matchData:", matchData?.MatchDetails?.match_id)
-        await MatchesRunnerModel.findOneAndUpdate({ matchId: matchData?.MatchDetails?.match_id }, matchData, { upsert: true, new: true });
+        // console.log("🚀 ~ file: cricketOodCronJobSikander.js:20 ~ fetchMatchDataAndSave ~ matchData:", matchData)
+        console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchMatchDataAndSave ~ matchData:", m_id)
+        matchData['MatchDetails'] = matchData?.odds;
+        matchData['OtherMarketList'] = matchData?.others;
+        await MatchesRunnerModel.findOneAndUpdate({ matchId: m_id }, matchData, { upsert: true, new: true });
     } catch (error) {
         console.error('Error fetching or saving data:', error);
     }
@@ -30,13 +29,9 @@ async function fetchMatchDataAndSave(m_id, s_id) {
 
 async function fetchSessionDataAndSave(m_id) {
     try {
-        let tokenDoc = await Token.findOne({ type: 'sikander' });
-        let token = tokenDoc ? tokenDoc.token : null;
-        const response = await axios.post(`${API_BASE_URL}/event-session`, { match_id: m_id }, {
-            headers: {
-                Authorization: `Bearer ${token}`
-            }
-        });
+        // let tokenDoc = await Token.findOne({ type: 'sikander' });
+        // let token = tokenDoc ? tokenDoc.token : null;
+        const response = await axios.get(`${API_BASE_URL}/get-match-session?match_id=${m_id}`);
 
         const matchData = response.data?.data;
         // console.log("🚀 ~ file: cricketOodCronJob.js:81 ~ fetchSessionDataAndSave ~ m_id:", m_id)
@@ -76,12 +71,13 @@ async function fetchMatchScore(matchId) {
         // }
     } catch (error) {
         console.error("Error fetching match score:", error);
-        throw error; // Re-throw the error for further handling if needed
+        // throw error; // Re-throw the error for further handling if needed
     }
 }
 
 async function fetchInplayMatches() {
     const fetchInpaySeries = await OodSeriesModel.find({ matchType: 'Inplay', sport_id: 4, SportName: 'Cricket', matchFrom: 'sikander' });
+    // console.log("🚀 ~ file: cricketOodCronJobSikander.js:85 ~ fetchInplayMatches ~ fetchInpaySeries:", fetchInpaySeries?.length)
     for (const element of fetchInpaySeries) {
         // console.log("🚀 ~ file: cricketOodCronJob.js:101 ~ cron.schedule ~ element:", element?.match_id, element?.sport_id)
         fetchMatchDataAndSave(element?.match_id, element?.sport_id)
