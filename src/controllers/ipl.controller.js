@@ -5,7 +5,7 @@ const CONSTANT = require('../config/constant');
 
 
 const getIPLOverview = catchAsync(async (req, res) => {
-    const result = await IPLService.getIPLOverview();
+    const result = await IPLService.getIPLOverview(req.query?.auctionType);
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.DETAILS });
 });
 

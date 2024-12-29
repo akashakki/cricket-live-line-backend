@@ -3,10 +3,10 @@ const CONSTANT = require('../config/constant');
 
 let selectedPlayerFields = 'apiPlayerId auctionStatus isCappedPlayer basePrice countryFlag countryName countryName_short image iplTeamImage iplTeamName iplTeamName_short isCappedPlayer isOverseas name playingRole primaryTeamFlag primaryTeamName_short slug soldPrice teamId teamJerseyImage';
 
-const getIPLOverview = async () => {
+const getIPLOverview = async (auctionType) => {
     try {
         // Fetch IPL overview data
-        const overview = await IPLOverviewModel.findOne().lean(); // Use lean for better performance
+        const overview = await IPLOverviewModel.findOne({ auctionType }).lean(); // Use lean for better performance
         if (!overview) throw new Error("No IPL overview data found");
 
         const apiResponse = JSON.parse(overview.apiResponse);
@@ -25,7 +25,7 @@ const getIPLOverview = async () => {
             IPLAuctionPlayerModel.find({ ...commonCondition, auctionStatus: 'Sold' })
                 .sort({ soldPrice: -1 })
                 .limit(6)
-            .select(selectedPlayerFields),
+                .select(selectedPlayerFields),
 
             // Fetch Top All-Rounders
             IPLAuctionPlayerModel.find({
@@ -94,7 +94,7 @@ const queries = async (options) => {
             }]
         })
     }
-    
+
     if (options.auctionStatus && options.auctionStatus != 'undefined') {
         condition.$and.push({
             $or: [{

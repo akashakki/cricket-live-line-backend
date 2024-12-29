@@ -217,19 +217,19 @@ async function syncAuctionPlayers() {
 }
 
 async function assignPlayersImages() {
-    const players = await IPLAuctionPlayerModel.find();
+    const players = await IPLAuctionPlayerModel.find({auctionType: 'wpl'}).lean();
     for (const player of players) {
-        const predefineUrlForPlayerImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734423442/crichamp/Players_Image/';
-        const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
-        const predefineUrlForPlayerJerseyImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421956/crichamp/Team_Jersey_Image/';
-        const predefineUrlForCountryImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421743/crichamp/Country_Flag/';
-        const predefineUrlForPrimaryTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422215/crichamp/Primary_Team_Image/';
-        const playerData = JSON.parse(player?.apiResponse);
-        const uploadPlayerImage = playerData?.oPlayer?.oImg?.sUrl ? predefineUrlForPlayerImage + playerData?.oPlayer?.oImg?.sUrl?.split("/")[3] : 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734502815/head-placeholder_vlcpjd.png';
-        const uploadIPLTeamImage = predefineUrlForTeamImage + playerData?.oTeam?.oImg?.sUrl?.split("/")[2];
-        const uploadPlayerJerseyImage = playerData?.oPrimaryTeam?.oJersey?.sUrl ? predefineUrlForPlayerJerseyImage + playerData?.oPrimaryTeam?.oJersey?.sUrl?.split("/")[3] : 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734377837/jersey-placeholder_vcvgy6.png';
-        const uploadCountryImage = predefineUrlForCountryImage + playerData?.oCountry?.oImg?.sUrl?.split("/")[2];
-        const uploadPrimaryTeamImage = predefineUrlForPrimaryTeamImage + playerData?.oPrimaryTeam?.oImg?.sUrl?.split("/")[2];
+        // const predefineUrlForPlayerImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734423442/crichamp/Players_Image/';
+        // const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
+        // const predefineUrlForPlayerJerseyImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421956/crichamp/Team_Jersey_Image/';
+        // const predefineUrlForCountryImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421743/crichamp/Country_Flag/';
+        // const predefineUrlForPrimaryTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422215/crichamp/Primary_Team_Image/';
+        // const playerData = JSON.parse(player?.apiResponse);
+        // const uploadPlayerImage = playerData?.oPlayer?.oImg?.sUrl ? predefineUrlForPlayerImage + playerData?.oPlayer?.oImg?.sUrl?.split("/")[3] : 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734502815/head-placeholder_vlcpjd.png';
+        // const uploadIPLTeamImage = predefineUrlForTeamImage + playerData?.oTeam?.oImg?.sUrl?.split("/")[2];
+        // const uploadPlayerJerseyImage = playerData?.oPrimaryTeam?.oJersey?.sUrl ? predefineUrlForPlayerJerseyImage + playerData?.oPrimaryTeam?.oJersey?.sUrl?.split("/")[3] : 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734377837/jersey-placeholder_vcvgy6.png';
+        // const uploadCountryImage = predefineUrlForCountryImage + playerData?.oCountry?.oImg?.sUrl?.split("/")[2];
+        // const uploadPrimaryTeamImage = predefineUrlForPrimaryTeamImage + playerData?.oPrimaryTeam?.oImg?.sUrl?.split("/")[2];
         const bids = await syncPlayerBids(player?.apiPlayerId);
         console.log("🚀 ~ file: iplPlayerInformationCronJob.js:229 ~ assignPlayersImages ~ bids:", bids)
         await IPLAuctionPlayerModel.findOneAndUpdate({ _id: player._id }, {
@@ -246,7 +246,7 @@ async function assignPlayersImages() {
 
 async function syncPlayerBids(apiPlayerId) {
     try {
-        const response = await axios.get(`https://www.crictracker.com/_next/data/g2XS67JPUUk2arjd9gpx6/en/ipl-auction/auction-player-${apiPlayerId}.json?slug=ipl-auction&slug=auction-player-${apiPlayerId}`, {
+        const response = await axios.get(`https://www.crictracker.com/_next/data/rxkIm3VZGLUubtZLGJzch/en/t20/wpl-auction/auction-player-${apiPlayerId}.json?slug=t20&slug=wpl-auction&slug=auction-player-${apiPlayerId}`, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -295,8 +295,8 @@ async function syncPlayerBids(apiPlayerId) {
 //     });
 // }
 
-syncAuctionPlayers();
-// assignPlayersImages();
+// syncAuctionPlayers();
+assignPlayersImages();
 // Export the scheduling function to be called when the application starts
 module.exports = {
     // scheduleSyncJob,
