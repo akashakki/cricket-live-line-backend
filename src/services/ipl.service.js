@@ -3,10 +3,11 @@ const CONSTANT = require('../config/constant');
 
 let selectedPlayerFields = 'apiPlayerId auctionStatus isCappedPlayer basePrice countryFlag countryName countryName_short image iplTeamImage iplTeamName iplTeamName_short isCappedPlayer isOverseas name playingRole primaryTeamFlag primaryTeamName_short slug soldPrice teamId teamJerseyImage';
 
-const getIPLOverview = async (auctionType) => {
+const getIPLOverview = async (overviewType) => {
+    console.log("🚀 ~ file: ipl.service.js:7 ~ getIPLOverview ~ overviewType:", overviewType)
     try {
         // Fetch IPL overview data
-        const overview = await IPLOverviewModel.findOne({ auctionType }).lean(); // Use lean for better performance
+        const overview = await IPLOverviewModel.findOne({ overviewType }).lean(); // Use lean for better performance
         if (!overview) throw new Error("No IPL overview data found");
 
         const apiResponse = JSON.parse(overview.apiResponse);
