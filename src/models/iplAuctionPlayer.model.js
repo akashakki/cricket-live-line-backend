@@ -1,7 +1,7 @@
 // Import Mongoose
 const mongoose = require("mongoose");
-var Schema = mongoose.Schema;
-var ObjectId = Schema.ObjectId;
+// var Schema = mongoose.Schema;
+// var ObjectId = Schema.ObjectId;
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
 var slug = require('mongoose-slug-updater');
@@ -38,6 +38,7 @@ const AuctionPlayerSchema = new mongoose.Schema({
     iplTeamName_short: String,
     iplTeamImage: String,
     auctionStatus: String, //s for Sold, us for unsold, r for Retained
+    auctionType: {type: String, default: 'ipl'}, //ipl, wpl
     primaryTeamName: String,
     primaryTeamName_short: String,
     primaryTeamFlag: String,

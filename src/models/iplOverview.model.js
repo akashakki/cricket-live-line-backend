@@ -34,6 +34,7 @@ const IPLOverviewSchema = new mongoose.Schema({
         default: null
     },
     apiResponse: String,
+    overviewType: {type: String, default: 'ipl'}, //ipl, wpl
     is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin
     is_delete: { type: Number, default: 1 }, //0 is delete, 1 is Active this is for Admin
 }, {

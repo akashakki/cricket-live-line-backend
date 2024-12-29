@@ -210,7 +210,7 @@ async function removeDuplicatePlayers() {
     console.log("Duplicate players removed successfully.");
 }
 
-removeDuplicatePlayers();
+// removeDuplicatePlayers();
 
 // (async () => {
 //     await fetchPlayerList();
