@@ -15,11 +15,10 @@ const getIPLOverview = async (overviewType) => {
         // Extract player IDs from API response
         const allRounderPlayerIds = apiResponse.aTopAllRounderData.map(item => item._id);
         const allBattersPlayerIds = apiResponse.aTopBatterData.map(item => item._id);
-        console.log("🚀 ~ file: ipl.service.js:18 ~ getIPLOverview ~ allBattersPlayerIds:", allBattersPlayerIds)
         const allBowlerPlayerIds = apiResponse.aTopBowlerData.map(item => item._id);
 
         // Define common conditions
-        const commonCondition = { isCappedPlayer: true, auctionStatus: { $in: ['Sold', 'Retained'] } };
+        const commonCondition = { auctionStatus: { $in: ['Sold', 'Retained'] } };
 
         // Run all database queries concurrently
         const [topsPicks, TopAllRounderData, TopBatterData, TopBowlerData] = await Promise.all([
