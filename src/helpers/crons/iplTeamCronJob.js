@@ -147,7 +147,7 @@ async function syncWPLOverview() {
             console.log("🚀 ~ file: iplTeamCronJob.js:115 ~ syncIPLOverview ~ overview:", overview?.nTotalMoneySpent)
             // return overview;
             if (overview) {
-                const existingOverview = await IPLOverviewModel.findOne({});
+                const existingOverview = await IPLOverviewModel.findOne({overviewType: 'wpl'});
                 if (!existingOverview) {
                     const requestBody = {
                         totalMoneySpent: overview?.nTotalMoneySpent,
@@ -182,7 +182,7 @@ async function syncWPLTeams() {
             // console.log("🚀 ~ file: iplTeamCronJob.js:35 ~ syncIPLTeams ~ teams:", teams[1])
             if (teams.length > 0) {
                 for (const team of teams) {
-                    const existingTeam = await IPLTeamsModel.findOne({ apiTeamId: team?._id });
+                    const existingTeam = await IPLTeamsModel.findOne({ apiTeamId: team?._id, teamType: 'wpl' });
                     if (!existingTeam) {
                         const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
                         const uploadIPLTeamImage = predefineUrlForTeamImage + team?.oTeam?.oImg?.sUrl?.split("/")[2];
