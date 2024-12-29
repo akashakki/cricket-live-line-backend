@@ -15,6 +15,7 @@ const getIPLOverview = async (overviewType) => {
         // Extract player IDs from API response
         const allRounderPlayerIds = apiResponse.aTopAllRounderData.map(item => item._id);
         const allBattersPlayerIds = apiResponse.aTopBatterData.map(item => item._id);
+        console.log("🚀 ~ file: ipl.service.js:18 ~ getIPLOverview ~ allBattersPlayerIds:", allBattersPlayerIds)
         const allBowlerPlayerIds = apiResponse.aTopBowlerData.map(item => item._id);
 
         // Define common conditions
@@ -31,7 +32,7 @@ const getIPLOverview = async (overviewType) => {
             // Fetch Top All-Rounders
             IPLAuctionPlayerModel.find({
                 ...commonCondition,
-                playingRole: 'all',
+                // playingRole: 'all',
                 auctionType: overviewType,
                 apiPlayerId: { $in: allRounderPlayerIds }
             })
@@ -42,7 +43,7 @@ const getIPLOverview = async (overviewType) => {
             // Fetch Top Batters
             IPLAuctionPlayerModel.find({
                 ...commonCondition,
-                playingRole: 'bat',
+                // playingRole: 'bat',
                 auctionType: overviewType,
                 apiPlayerId: { $in: allBattersPlayerIds }
             })
@@ -53,7 +54,7 @@ const getIPLOverview = async (overviewType) => {
             // Fetch Top Bowlers
             IPLAuctionPlayerModel.find({
                 ...commonCondition,
-                playingRole: 'bowl',
+                // playingRole: 'bowl',
                 auctionType: overviewType,
                 apiPlayerId: { $in: allBowlerPlayerIds }
             })
