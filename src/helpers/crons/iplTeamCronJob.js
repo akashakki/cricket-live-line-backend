@@ -168,7 +168,53 @@ async function syncWPLOverview() {
     }
 }
 
+async function syncWPLTeams() {
+    try {
+        const response = await axios.get('https://www.crictracker.com/_next/data/rxkIm3VZGLUubtZLGJzch/en/wpl-auction/teams.json?slug=wpl-auction&slug=teams', {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        // console.log("🚀 ~ file: iplTeamCronJob.js:32 ~ syncIPLTeams ~ response.data:", response.data?.pageProps?.category?.actionTeamData?.listAuctionTeamFront)
+        if (response.data && response.data.pageProps && response.data?.pageProps?.category && response.data?.pageProps?.category?.actionTeamData?.listAuctionTeamFront && response.data?.pageProps?.category?.actionTeamData?.listAuctionTeamFront?.aData) {
+            const teams = response.data?.pageProps?.category?.actionTeamData?.listAuctionTeamFront?.aData;
+            // console.log("🚀 ~ file: iplTeamCronJob.js:35 ~ syncIPLTeams ~ teams:", teams[1])
+            if (teams.length > 0) {
+                for (const team of teams) {
+                    const existingTeam = await IPLTeamsModel.findOne({ apiTeamId: team?._id });
+                    if (!existingTeam) {
+                        const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
+                        const uploadIPLTeamImage = predefineUrlForTeamImage + team?.oTeam?.oImg?.sUrl?.split("/")[2];
+                        const requestBody = {
+                            totalSpend: team?.nTotalSpent,
+                            purseLeft: team?.nPurseLeft,
+                            playerCount: team?.nPlayerCount,
+                            overseaPlayerCount: team?.nOverseaPlayerCount,
+                            colorCode: team?.sColorCode,
+                            teamId: team?.oTeam?._id,
+                            apiId: team?._id,
+                            name: team?.oTeam?.sAltName,
+                            shortName: team?.oTeam?.sAbbr,
+                            image: uploadIPLTeamImage,
+                            apiResponse: JSON.stringify(team),
+                            teamType: 'wpl'
+                        };
+
+                        // Create database entry with or without image URLs
+                        await IPLTeamsModel.create(requestBody);
+                    }
+                }
+            }
+            console.log(`Synced ${teams.length} teams successfully`);
+        }
+    } catch (error) {
+        console.error('Error syncing teams:', error);
+    }
+}
+
 // syncIPLOverview();
 // syncIPLTeams();
 
 syncWPLOverview();
+syncWPLTeams();
