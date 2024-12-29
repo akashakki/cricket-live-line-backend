@@ -219,11 +219,11 @@ async function syncAuctionPlayers() {
 async function assignPlayersImages() {
     const players = await IPLAuctionPlayerModel.find({auctionType: 'wpl'}).lean();
     for (const player of players) {
-        const predefineUrlForPlayerImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734423442/crichamp/Players_Image/';
-        const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
-        const predefineUrlForPlayerJerseyImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421956/crichamp/Team_Jersey_Image/';
-        const predefineUrlForCountryImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734421743/crichamp/Country_Flag/';
-        const predefineUrlForPrimaryTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422215/crichamp/Primary_Team_Image/';
+        const predefineUrlForPlayerImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1735466313/crichamp/wplPlayers_Image/';
+        const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1735465773/crichamp/wpl/IPL_Team_Flag/';
+        const predefineUrlForPlayerJerseyImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1735465979/crichamp/wpl/Team_Jersey_Image/';
+        const predefineUrlForCountryImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1735466185/crichamp/wpl/';
+        const predefineUrlForPrimaryTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1735466189/crichamp/wpl/Primary_Team_Image/';
         const playerData = JSON.parse(player?.apiResponse);
         const uploadPlayerImage = playerData?.oPlayer?.oImg?.sUrl ? predefineUrlForPlayerImage + playerData?.oPlayer?.oImg?.sUrl?.split("/")[3] : 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734502815/head-placeholder_vlcpjd.png';
         const uploadIPLTeamImage = predefineUrlForTeamImage + playerData?.oTeam?.oImg?.sUrl?.split("/")[2];
@@ -259,7 +259,7 @@ async function syncPlayerBids(apiPlayerId) {
             let updatedBids = [];
             if (bids.length > 0) {
                 for (const team of bids) {
-                    const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1734422482/crichamp/IPL_Team_Flag/';
+                    const predefineUrlForTeamImage = 'https://res.cloudinary.com/dlokrlj7n/image/upload/v1735465773/crichamp/wpl/IPL_Team_Flag/';
                     const uploadIPLTeamImage = predefineUrlForTeamImage + team?.oTeam?.oImg?.sUrl?.split("/")[2];
                     const teamsBids = {
                         soldPrice: team?.nSoldPrice,
