@@ -135,5 +135,40 @@ async function syncIPLOverview() {
     }
 }
 
+async function syncWPLOverview() {
+    try {
+        const response = await axios.get(`https://www.crictracker.com/_next/data/rxkIm3VZGLUubtZLGJzch/en/t20/wpl-auction.json?slug=t20&slug=wpl-auction`, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.data && response.data.pageProps && response.data?.pageProps?.category && response.data?.pageProps?.category?.overView) {
+            const overview = response.data?.pageProps?.category?.overView;
+            console.log("🚀 ~ file: iplTeamCronJob.js:115 ~ syncIPLOverview ~ overview:", overview?.nTotalMoneySpent)
+            // return overview;
+            if (overview) {
+                const existingOverview = await IPLOverviewModel.findOne({});
+                if (!existingOverview) {
+                    const requestBody = {
+                        totalMoneySpent: overview?.nTotalMoneySpent,
+                        totalOverseasPlayer: overview?.nTotalOverseasPlayer,
+                        totalRegisteredPlayer: overview?.nTotalRegisteredPlayer,
+                        totalSoldPlayer: overview?.nTotalSoldPlayer,
+                        totalUnSoldPlayer: overview?.nTotalUnSoldPlayer,
+                        totalRTMUsed: overview?.nRTMUsed,
+                        apiResponse: JSON.stringify(overview),
+                        overviewType: 'wpl'
+                    }
+                    await IPLOverviewModel.create(requestBody);
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error syncing teams:', error);
+    }
+}
+
 // syncIPLOverview();
 // syncIPLTeams();
+
+syncWPLOverview();
