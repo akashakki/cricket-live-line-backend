@@ -23,7 +23,7 @@ const getIPLOverview = async (overviewType) => {
         // Run all database queries concurrently
         const [topsPicks, TopAllRounderData, TopBatterData, TopBowlerData] = await Promise.all([
             // Fetch Top Picks: 6 players with highest soldPrice and auctionStatus 'Sold'
-            IPLAuctionPlayerModel.find({ ...commonCondition, auctionStatus: 'Sold' })
+            IPLAuctionPlayerModel.find({ ...commonCondition, auctionStatus: 'Sold', auctionType: overviewType })
                 .sort({ soldPrice: -1 })
                 .limit(6)
                 .select(selectedPlayerFields),
