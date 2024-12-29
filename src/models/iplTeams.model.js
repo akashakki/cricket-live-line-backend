@@ -1,7 +1,7 @@
 // Import Mongoose
 const mongoose = require("mongoose");
-var Schema = mongoose.Schema;
-var ObjectId = Schema.ObjectId;
+// var Schema = mongoose.Schema;
+// var ObjectId = Schema.ObjectId;
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
 var slug = require('mongoose-slug-updater');
@@ -27,6 +27,7 @@ const IPLTeamSchema = new mongoose.Schema({
     apiResponse: String,
     teamId: String,
     apiId: String,
+    teamType: {type: String, default: 'ipl'}, //ipl, wpl
     is_status: { type: Number, default: 1 }, //0 is Inactive, 1 is Active this is for Admin
     is_delete: { type: Number, default: 1 }, //0 is delete, 1 is Active this is for Admin
 }, {

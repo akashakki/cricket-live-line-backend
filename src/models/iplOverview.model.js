@@ -1,7 +1,7 @@
 // Import Mongoose
 const mongoose = require("mongoose");
-var Schema = mongoose.Schema;
-var ObjectId = Schema.ObjectId;
+// var Schema = mongoose.Schema;
+// var ObjectId = Schema.ObjectId;
 const { toJSON } = require("./plugins");
 const mongoosePaginate = require('mongoose-paginate-v2');
 var slug = require('mongoose-slug-updater');
