@@ -32,6 +32,7 @@ const getIPLOverview = async (overviewType) => {
             IPLAuctionPlayerModel.find({
                 ...commonCondition,
                 playingRole: 'all',
+                auctionType: overviewType,
                 apiPlayerId: { $in: allRounderPlayerIds }
             })
                 .sort({ soldPrice: -1 })
@@ -42,6 +43,7 @@ const getIPLOverview = async (overviewType) => {
             IPLAuctionPlayerModel.find({
                 ...commonCondition,
                 playingRole: 'bat',
+                auctionType: overviewType,
                 apiPlayerId: { $in: allBattersPlayerIds }
             })
                 .sort({ soldPrice: -1 })
@@ -52,6 +54,7 @@ const getIPLOverview = async (overviewType) => {
             IPLAuctionPlayerModel.find({
                 ...commonCondition,
                 playingRole: 'bowl',
+                auctionType: overviewType,
                 apiPlayerId: { $in: allBowlerPlayerIds }
             })
                 .sort({ soldPrice: -1 })
@@ -76,6 +79,13 @@ const getIPLOverview = async (overviewType) => {
 
 const queries = async (options) => {
     var condition = { $and: [{ is_delete: 1 }] };
+    if (options.auctionType && options.auctionType != 'undefined') {
+        condition.$and.push({
+            $or: [{
+                auctionType: options.auctionType
+            }]
+        })
+    }
     if (options.searchBy && options.searchBy != 'undefined') {
         var searchBy = {
             $regex: ".*" + options.searchBy + ".*",
@@ -142,8 +152,8 @@ const getPlayerDetails = async (slug) => {
 };
 
 
-const getTeams = async () => {
-    const data = await IPLTeamsModel.find({ is_delete: 1 }).select('name shortName purseLeft playerCount overseaPlayerCount slug totalSpend teamId colorCode image').lean();
+const getTeams = async (teamType) => {
+    const data = await IPLTeamsModel.find({ is_delete: 1, teamType }).select('name shortName purseLeft playerCount overseaPlayerCount slug totalSpend teamId colorCode image').lean();
     return data;
 };
 

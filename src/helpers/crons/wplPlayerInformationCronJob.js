@@ -296,7 +296,7 @@ async function syncPlayerBids(apiPlayerId) {
 // }
 
 // syncAuctionPlayers();
-assignPlayersImages();
+// assignPlayersImages();
 // Export the scheduling function to be called when the application starts
 module.exports = {
     // scheduleSyncJob,

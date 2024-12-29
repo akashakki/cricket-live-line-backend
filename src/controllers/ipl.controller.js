@@ -10,13 +10,13 @@ const getIPLOverview = catchAsync(async (req, res) => {
 });
 
 const getLists = catchAsync(async (req, res) => {
-    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status', 'auctionStatus', 'isCappedPlayer', 'team', 'country', 'role']);
+    const options = pick(req.query, ['sortBy', 'limit', 'page', 'searchBy', 'status', 'auctionStatus', 'isCappedPlayer', 'team', 'country', 'role', 'auctionType']);
     const result = await IPLService.queries(options);
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
 const getIPLTeamList = catchAsync(async (req, res) => {
-    const result = await IPLService.getTeams();
+    const result = await IPLService.getTeams(req.query?.auctionType);
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
