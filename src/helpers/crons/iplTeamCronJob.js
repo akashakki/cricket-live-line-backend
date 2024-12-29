@@ -216,5 +216,5 @@ async function syncWPLTeams() {
 // syncIPLOverview();
 // syncIPLTeams();
 
-syncWPLOverview();
-syncWPLTeams();
+// syncWPLOverview();
+// syncWPLTeams();
