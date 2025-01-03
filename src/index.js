@@ -10,6 +10,7 @@ let port;
 if (config.env == "production") {
     db_url = `mongodb://${encodeURIComponent(config.mongoose.user)}:${encodeURIComponent(config.mongoose.pass)}@${config.mongoose.ip}/CricketLiveOddsLineDB?authSource=admin`;
     port = config.port;
+    console.log("🚀 ~ file: index.js:13 ~ db_url:", db_url)
 } else {
     db_url = config.mongoose.url;
     port = config.port;
