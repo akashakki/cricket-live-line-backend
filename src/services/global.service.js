@@ -6,6 +6,7 @@ const token = CONFIG?.CRICKET_CHAMPION_TOKEN//'deed03c60ab1c13b1dbef6453421ead6'
 const axios = require('axios');
 const FormData = require('form-data');
 const heroAPIBaseURL = CONFIG?.HERO_API_BASE_URL//'https://app.heroliveline.com/csadmin/api/'
+const heroAPIBaseIPURL = CONFIG?.HERO_API_BASE_URL_IP//'https://app.heroliveline.com/csadmin/api/'
 
 
 const globalFunctionFetchDataFromAPI = async (key, value, endpoint, method) => {
@@ -79,9 +80,31 @@ const globalFunctionFetchDataFromHeroPostMethod = async (value, endpoint, method
     }
 }
 
+const globalFunctionFetchDataFromHeroGETMethodForIP = async (endpoint, request, requestFor) => {
+    console.log("🚀 ~ file: global.service.js:84 ~ globalFunctionFetchDataFromHeroGETMethodForIP ~ request:", request, requestFor)
+    try {
+        let response;
+        let data;
+        if (requestFor === 'bulkLiveMatchInfo') {
+            const matchIds = request?.match_ids.join(',');
+            response = await axios.get(`${heroAPIBaseIPURL}${endpoint}/${matchIds}`)
+        }
+        // if (request) {
+        //     response = await axios.get(`${heroAPIBaseIPURL}${endpoint}`, { params: request })
+        // } else {
+        //     response = await axios.get(`${heroAPIBaseIPURL}${endpoint}`)
+        // }
+        data = response.data;
+        return data;
+    } catch (error) {
+        console.error('Error making API call Global Service 60:', error);
+    }
+}
+
 module.exports = {
     globalFunctionFetchDataFromAPI,
     globalFunctionFetchDataFromAPIGETMethod,
     globalFunctionFetchDataFromHeroGETMethod,
-    globalFunctionFetchDataFromHeroPostMethod
+    globalFunctionFetchDataFromHeroPostMethod,
+    globalFunctionFetchDataFromHeroGETMethodForIP
 };

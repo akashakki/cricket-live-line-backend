@@ -136,7 +136,8 @@ const getMatchOddHistoryV1 = catchAsync(async (req, res) => {
 
 const getMatchLiveBulkInfo = catchAsync(async (req, res) => {
     const { match_ids } = req.body;
-    const result = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ match_ids }, 'cron/matchLiveBulkInfo', 'post');
+    // const result = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ match_ids }, 'cron/matchLiveBulkInfo', 'post');
+    const result = await GlobalService.globalFunctionFetchDataFromHeroGETMethodForIP('client/match-live-bulk-info', { match_ids }, 'bulkLiveMatchInfo');
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
