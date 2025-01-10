@@ -103,7 +103,7 @@ const globalFunctionFetchDataFromHeroGETMethodForIP = async (endpoint, request, 
         // } else {
         //     response = await axios.get(`${heroAPIBaseIPURL}${endpoint}`)
         // }
-        data = response?.data?.data;
+        data = response;
         return data;
     } catch (error) {
         console.error('Error making API call Global Service 60:', error);
