@@ -87,7 +87,14 @@ const globalFunctionFetchDataFromHeroGETMethodForIP = async (endpoint, request, 
         let data;
         if (requestFor === 'bulkLiveMatchInfo') {
             const matchIds = request?.match_ids.join(',');
-            response = await axios.get(`${heroAPIBaseIPURL}${endpoint}/${matchIds}`)
+            const originalResponse = await axios.get(`${heroAPIBaseIPURL}${endpoint}/${matchIds}`);
+    
+            // Response ko transform karke bulk_matches.live format mein return
+            response = {
+                bulk_matches: {
+                    live: originalResponse.data
+                }
+            };
         }
         // if (request) {
         //     response = await axios.get(`${heroAPIBaseIPURL}${endpoint}`, { params: request })
