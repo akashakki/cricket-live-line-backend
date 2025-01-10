@@ -89,7 +89,7 @@ const globalFunctionFetchDataFromHeroGETMethodForIP = async (endpoint, request, 
             const matchIds = request?.match_ids.join(',');
             const originalResponse = await axios.get(`${heroAPIBaseIPURL}${endpoint}/${matchIds}`);
     
-            console.log("🚀 ~ file: global.service.js:92 ~ globalFunctionFetchDataFromHeroGETMethodForIP ~ originalResponse:", originalResponse)
+            // console.log("🚀 ~ file: global.service.js:92 ~ globalFunctionFetchDataFromHeroGETMethodForIP ~ originalResponse:", originalResponse)
             // Response ko transform karke bulk_matches.live format mein return
             let new_response = {
                 bulk_matches: {
