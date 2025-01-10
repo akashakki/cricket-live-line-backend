@@ -92,7 +92,7 @@ const globalFunctionFetchDataFromHeroGETMethodForIP = async (endpoint, request, 
             // Response ko transform karke bulk_matches.live format mein return
             response = {
                 bulk_matches: {
-                    live: originalResponse.data
+                    live: originalResponse
                 }
             };
         }
