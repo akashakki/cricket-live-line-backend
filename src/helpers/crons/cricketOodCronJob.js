@@ -290,7 +290,7 @@ async function fetchAndExtractIframeID(url, matchId) {
             console.log('No iframe found in the HTML.');
         }
     } catch (error) {
-        console.error('Error fetching or parsing HTML:', error);
+        console.error('Error fetching or parsing HTML 293 for Cricket odds======>:', error?.response?.data || error.message);
     }
 }
 
