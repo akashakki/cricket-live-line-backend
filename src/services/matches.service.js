@@ -37,6 +37,11 @@ const queriesForHomeList = async (options) => {
 
         console.log("🚀 ~ matchApiIds:", matchApiIds);
 
+        const currentDate = new Date();
+        const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+        const fourDaysLater = new Date(startOfDay.getTime() + 4 * 24 * 60 * 60 * 1000); // 4 days ahead
+        const threeDayBefore = new Date(startOfDay.getTime() - 72 * 60 * 60 * 1000); // 3 day before
+
         const commonProjection = {
             date_time: 1,
             match_date: 1,
@@ -93,9 +98,11 @@ const queriesForHomeList = async (options) => {
                             { match_id: { $in: matchApiIds } },
                             {
                                 match_status: "Finished",
-                                date_time: {
-                                    $gte: new Date(new Date().setHours(0, 0, 0, 0) - 3 * 24 * 60 * 60 * 1000), // Three days before
-                                    $lt: new Date() // Current date
+                                $expr: {
+                                    $and: [
+                                        { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDayBefore] },
+                                        { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
+                                    ]
                                 }
                             }
                         ]
