@@ -113,12 +113,11 @@ async function fetchMatchDetails(match) {
     try {
         if (match && match?.match_id) {
             const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'matchInfo', 'post'); //response.data?.data;
-            console.log("🚀 ~ file: matchCronJob.js:116 ~ fetchMatchDetails ~ matchData:", matchData)
             let matchDetails = {
                 ...match,
                 ...matchData
             }
-            // console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails?.match_id)
+            console.log("🚀 ~ file: matchCronJob.js:74 ~ fetchMatchDetails ~ matchDetails:", matchDetails?.match_id)
             if (matchDetails) {
                 // Remove match_status if it exists
                 delete matchDetails.match_status;
