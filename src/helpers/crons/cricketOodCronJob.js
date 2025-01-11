@@ -317,7 +317,7 @@ if (config.env == "production") {
     // Cron job to run every half second
     // cron.schedule('*/0.5 * * * * *', async ()=>{
     cron.schedule('* * * * * *', async () => {
-        console.log('Running cron job...every second');
+        // console.log('Running cron job...every second');
         fetchInplayMatches();
     });
 

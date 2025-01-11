@@ -68,6 +68,7 @@ async function fetchLiveMatchList() {
         // const response = await axios.get(`${baseURL}liveMatchList/${token}`) //'http://24.199.71.166:8700/v2/client/match-live-list');
         // const matchList = await GlobalService.globalFunctionFetchDataFromAPIGETMethod('liveMatchList'); //response.data?.data;
         const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_status": 'Live' }, 'web/getmatchlisting', 'post');
+        console.log("🚀 ~ file: matchCronJob.js:71 ~ fetchLiveMatchList ~ response:", response)
         const matchList = response?.matchData;
         if (matchList && matchList?.length != 0) {
             // await fetchMatchDetails(matchList[0]?.match_id);
