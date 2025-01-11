@@ -125,7 +125,7 @@ async function fetchPlayerDetailsByPlayerId(player_id) {
         );
 
         const playersDetail = response?.playersDetail;
-        console.log("🚀 ~ file: playerCronJob.js:128 ~ fetchPlayerDetailsByPlayerId ~ playersDetail:",player_id, playersDetail?.player_gender)
+        // console.log("🚀 ~ file: playerCronJob.js:128 ~ fetchPlayerDetailsByPlayerId ~ playersDetail:",player_id, playersDetail?.player_gender)
 
         // Only proceed if player data exists
         if (!playerData?.player) {
