@@ -298,7 +298,7 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
 }
 
 // fetchUpcomingMatches();
-fetchMatchList()
+// fetchMatchList()
 // fetchLiveMatchList()
 // fetchFinishedMatches();
-// fetchMatchListFromHero();
+fetchMatchListFromHero();
