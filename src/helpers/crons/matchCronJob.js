@@ -68,7 +68,7 @@ async function fetchLiveMatchList() {
         // const response = await axios.get(`${baseURL}liveMatchList/${token}`) //'http://24.199.71.166:8700/v2/client/match-live-list');
         // const matchList = await GlobalService.globalFunctionFetchDataFromAPIGETMethod('liveMatchList'); //response.data?.data;
         const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_status": 'Live' }, 'web/getmatchlisting', 'post');
-        console.log("🚀 ~ file: matchCronJob.js:71 ~ fetchLiveMatchList ~ response:", response)
+        // console.log("🚀 ~ file: matchCronJob.js:71 ~ fetchLiveMatchList ~ response:", response)
         const matchList = response?.matchData;
         if (matchList && matchList?.length != 0) {
             // await fetchMatchDetails(matchList[0]?.match_id);
@@ -113,6 +113,7 @@ async function fetchMatchDetails(match) {
     try {
         if (match && match?.match_id) {
             const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'matchInfo', 'post'); //response.data?.data;
+            console.log("🚀 ~ file: matchCronJob.js:116 ~ fetchMatchDetails ~ matchData:", matchData)
             let matchDetails = {
                 ...match,
                 ...matchData
@@ -301,4 +302,4 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
 // fetchMatchList()
 // fetchLiveMatchList()
 // fetchFinishedMatches();
-fetchMatchListFromHero();
+// fetchMatchListFromHero();
