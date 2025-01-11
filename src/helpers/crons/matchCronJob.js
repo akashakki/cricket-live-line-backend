@@ -262,7 +262,7 @@ if (config.env == "production") {// Schedule tasks to be run on the server.
 
     // cron.schedule('0 */1 * * *', async () => {
     cron.schedule('* * * * *', async () => {
-        console.log('Running a job every minute');
+        console.log('Running a job every minute for live matches');
         fetchLiveMatchList(); // Ensure this is an async function if it involves async operations
         fetchFinishedMatches();
     });
