@@ -25,16 +25,11 @@ const create = async (requestBody) => {
  */
 const queriesForHomeList = async (options) => {
     try {
-        // const currentDate = new Date();
-        // const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
-        // const fourDaysLater = new Date(startOfDay.getTime() + 4 * 24 * 60 * 60 * 1000); // 4 days ahead
-        // // const oneDayBefore = new Date(startOfDay.getTime() - 24 * 60 * 60 * 1000); // 1 day before
-        // const threeDayBefore = new Date(startOfDay.getTime() - 72 * 60 * 60 * 1000); // 1 day before
-
         const currentDate = new Date();
-        const startOfDay = new Date(Date.UTC(currentDate.getUTCFullYear(), currentDate.getUTCMonth(), currentDate.getUTCDate(), 0, 0, 0));
+        const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
         const fourDaysLater = new Date(startOfDay.getTime() + 4 * 24 * 60 * 60 * 1000); // 4 days ahead
-        const threeDayBefore = new Date(startOfDay.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 days before
+        // const oneDayBefore = new Date(startOfDay.getTime() - 24 * 60 * 60 * 1000); // 1 day before
+        const threeDayBefore = new Date(startOfDay.getTime() - 72 * 60 * 60 * 1000); // 1 day before
 
         const query = [
             // Stage 1: Separate live matches
@@ -56,8 +51,8 @@ const queriesForHomeList = async (options) => {
                                 match_status: "Upcoming",
                                 $expr: {
                                     $and: [
-                                        { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S", timezone: "Asia/Kolkata" } }, startOfDay] },
-                                        { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S", timezone: "Asia/Kolkata" } }, fourDaysLater] }
+                                        { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, startOfDay] },
+                                        { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
                                     ]
                                 }
                             }
@@ -75,8 +70,8 @@ const queriesForHomeList = async (options) => {
                                             match_status: "Finished",
                                             $expr: {
                                                 $and: [
-                                                    { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S", timezone: "Asia/Kolkata" } }, threeDayBefore] },
-                                                    { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S", timezone: "Asia/Kolkata" } }, fourDaysLater] }
+                                                    { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDayBefore] },
+                                                    { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
                                                 ]
                                             }
                                         }
