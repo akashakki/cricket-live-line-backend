@@ -88,24 +88,23 @@ const queriesForHomeList = async (options) => {
         const query = matchApiIds.length > 0
             ? [
                 {
-                    // $match: {
-                    //     match_id: { $in: matchApiIds }
-                    // }
-                    $or: [
-                        { match_id: { $in: matchApiIds } },
-                        {
-                            match_status: "Finished",
-                            date_time: {
-                                $gte: new Date().setHours(0, 0, 0, 0) - 3 * 24 * 60 * 60 * 1000, // Three days before
-                                $lt: new Date() // Current date
+                    $match: {
+                        $or: [
+                            { match_id: { $in: matchApiIds } },
+                            {
+                                match_status: "Finished",
+                                date_time: {
+                                    $gte: new Date(new Date().setHours(0, 0, 0, 0) - 3 * 24 * 60 * 60 * 1000), // Three days before
+                                    $lt: new Date() // Current date
+                                }
                             }
-                        }
-                    ]
+                        ]
+                    }
                 },
                 {
                     $project: commonProjection
                 }
-            ]
+            ]            
             : [
                 {
                     $match: {
