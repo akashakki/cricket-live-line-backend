@@ -29,7 +29,7 @@ const queriesForHomeList = async (options) => {
         const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_status": 'All' }, 'web/getmatchlisting', 'post');
         const matchList = response?.matchData;
 
-        const matchApiIds = matches.map(match => match.match_api_id);
+        const matchApiIds = matchList.map(match => match.match_api_id);
         console.log("🚀 ~ file: matches.service.js:33 ~ queriesForHomeList ~ matchApiIds:", matchApiIds)
         if (matchApiIds.length > 0) {
             const query = [
