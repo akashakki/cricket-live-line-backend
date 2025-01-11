@@ -27,7 +27,9 @@ const queriesForHomeList = async (options) => {
     try {
         const currentDate = new Date();
         const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+        console.log("🚀 ~ file: matches.service.js:30 ~ queriesForHomeList ~ startOfDay:", startOfDay)
         const fourDaysLater = new Date(startOfDay.getTime() + 4 * 24 * 60 * 60 * 1000); // 4 days ahead
+        console.log("🚀 ~ file: matches.service.js:32 ~ queriesForHomeList ~ fourDaysLater:", fourDaysLater)
         // const oneDayBefore = new Date(startOfDay.getTime() - 24 * 60 * 60 * 1000); // 1 day before
         const threeDayBefore = new Date(startOfDay.getTime() - 72 * 60 * 60 * 1000); // 1 day before
 
