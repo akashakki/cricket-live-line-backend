@@ -122,6 +122,8 @@ MatchSchema.set('toJSON', { virtuals: true });
 MatchSchema.plugin(toJSON);
 MatchSchema.plugin(mongoosePaginate);
 
+MatchSchema.index({ match_id: 1, match_status: 1, date_time: 1 })
+
 /**
  * Check if name is taken
  * @param {string} name - The user's name

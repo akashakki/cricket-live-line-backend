@@ -24,165 +24,282 @@ const create = async (requestBody) => {
  * Query For Home Page Match List
  * @returns {Promise<QueryResult>}
  */
-const queriesForHomeList = async (options) => {
+// const queriesForHomeList = async (options) => {
+//     try {
+//         const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod(
+//             { "match_status": 'All' }, 
+//             'web/getmatchlisting', 
+//             'post'
+//         );
+
+//         const matchList = response?.matchData || [];
+//         const matchApiIds = matchList.map(match => match.match_api_id);
+
+//         console.log("🚀 ~ matchApiIds:", matchApiIds);
+
+//         const currentDate = new Date();
+//         const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
+//         const fourDaysLater = new Date(startOfDay.getTime() + 4 * 24 * 60 * 60 * 1000); // 4 days ahead
+//         const threeDayBefore = new Date(startOfDay.getTime() - 72 * 60 * 60 * 1000); // 3 day before
+
+//         const commonProjection = {
+//             date_time: 1,
+//             match_date: 1,
+//             _id: 0,
+//             squad: 1,
+//             match_id: 1,
+//             forms: 1,
+//             fav_team: 1,
+//             min_rate: 1,
+//             max_rate: 1,
+//             head_to_head: 1,
+//             is_hundred: 1,
+//             man_of_match: 1,
+//             man_of_match_player: 1,
+//             match_time: 1,
+//             match_type: 1,
+//             matchs: 1,
+//             pace_spin: 1,
+//             place: 1,
+//             referee: 1,
+//             result: 1,
+//             series: 1,
+//             series_id: 407,
+//             series_type: 1,
+//             team_a: 1,
+//             team_a_id: 16,
+//             team_a_img: 1,
+//             team_a_over: 1,
+//             team_a_scores: 1,
+//             team_a_short: 1,
+//             team_b: 1,
+//             team_b_id: 1,
+//             team_b_img: 1,
+//             team_b_scores: 1,
+//             team_b_over: 1,
+//             team_b_short: 1,
+//             team_comparison: 1,
+//             third_umpire: 1,
+//             toss: 1,
+//             toss_comparison: 1,
+//             umpire: 1,
+//             venue: 1,
+//             venue_id: 1,
+//             venue_weather: 1,
+//             weather: 1,
+//             match_status: 1
+//         };
+
+//         const query = matchApiIds.length > 0
+//             ? [
+//                 {
+//                     $match: {
+//                         $or: [
+//                             { match_id: { $in: matchApiIds } },
+//                             {
+//                                 match_status: "Finished",
+//                                 $expr: {
+//                                     $and: [
+//                                         { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDayBefore] },
+//                                         { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
+//                                     ]
+//                                 }
+//                             }
+//                         ]
+//                     }
+//                 },
+//                 {
+//                     $project: commonProjection
+//                 }
+//             ]            
+//             : [
+//                 {
+//                     $match: {
+//                         match_status: "Live"
+//                     }
+//                 },
+//                 {
+//                     $sort: { date_time: 1 }
+//                 },
+//                 {
+//                     $unionWith: {
+//                         coll: "matches",
+//                         pipeline: [
+//                             {
+//                                 $match: {
+//                                     match_status: "Upcoming",
+//                                     $expr: {
+//                                         $and: [
+//                                             {
+//                                                 $gte: [
+//                                                     { $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } },
+//                                                     new Date().setHours(0, 0, 0, 0)
+//                                                 ]
+//                                             },
+//                                             {
+//                                                 $lt: [
+//                                                     { $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } },
+//                                                     new Date().setHours(0, 0, 0, 0) + 4 * 24 * 60 * 60 * 1000
+//                                                 ]
+//                                             }
+//                                         ]
+//                                     }
+//                                 }
+//                             },
+//                             { $sort: { date_time: 1 } },
+//                             {
+//                                 $unionWith: {
+//                                     coll: "matches",
+//                                     pipeline: [
+//                                         {
+//                                             $match: {
+//                                                 match_status: "Finished",
+//                                                 $expr: {
+//                                                     $and: [
+//                                                         {
+//                                                             $gte: [
+//                                                                 { $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } },
+//                                                                 new Date().setHours(0, 0, 0, 0) - 3 * 24 * 60 * 60 * 1000
+//                                                             ]
+//                                                         },
+//                                                         {
+//                                                             $lt: [
+//                                                                 { $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } },
+//                                                                 new Date().setHours(0, 0, 0, 0) + 4 * 24 * 60 * 60 * 1000
+//                                                             ]
+//                                                         }
+//                                                     ]
+//                                                 }
+//                                             }
+//                                         },
+//                                         { $sort: { date_time: 1 } }
+//                                     ]
+//                                 }
+//                             }
+//                         ]
+//                     }
+//                 },
+//                 { $sort: { date_time: 1 } },
+//                 { $limit: 50 },
+//                 { $project: commonProjection }
+//             ];
+
+//         const data = await MatchesModel.aggregate(query);
+//         return data;
+
+//     } catch (error) {
+//         console.error("Error fetching matches:", error);
+//         throw new Error("Error fetching match data");
+//     }
+// };
+
+
+const queriesForHomeList = async () => {
     try {
-        const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod(
-            { "match_status": 'All' }, 
-            'web/getmatchlisting', 
-            'post'
-        );
-
-        const matchList = response?.matchData || [];
-        const matchApiIds = matchList.map(match => match.match_api_id);
-
-        console.log("🚀 ~ matchApiIds:", matchApiIds);
-
         const currentDate = new Date();
         const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
-        const fourDaysLater = new Date(startOfDay.getTime() + 4 * 24 * 60 * 60 * 1000); // 4 days ahead
-        const threeDayBefore = new Date(startOfDay.getTime() - 72 * 60 * 60 * 1000); // 3 day before
+        const threeDaysLater = new Date(startOfDay.getTime() + 3 * 24 * 60 * 60 * 1000);
+        const threeDaysBefore = new Date(startOfDay.getTime() - 3 * 24 * 60 * 60 * 1000);
 
-        const commonProjection = {
-            date_time: 1,
-            match_date: 1,
-            _id: 0,
-            squad: 1,
-            match_id: 1,
-            forms: 1,
-            fav_team: 1,
-            min_rate: 1,
-            max_rate: 1,
-            head_to_head: 1,
-            is_hundred: 1,
-            man_of_match: 1,
-            man_of_match_player: 1,
-            match_time: 1,
-            match_type: 1,
-            matchs: 1,
-            pace_spin: 1,
-            place: 1,
-            referee: 1,
-            result: 1,
-            series: 1,
-            series_id: 407,
-            series_type: 1,
-            team_a: 1,
-            team_a_id: 16,
-            team_a_img: 1,
-            team_a_over: 1,
-            team_a_scores: 1,
-            team_a_short: 1,
-            team_b: 1,
-            team_b_id: 1,
-            team_b_img: 1,
-            team_b_scores: 1,
-            team_b_over: 1,
-            team_b_short: 1,
-            team_comparison: 1,
-            third_umpire: 1,
-            toss: 1,
-            toss_comparison: 1,
-            umpire: 1,
-            venue: 1,
-            venue_id: 1,
-            venue_weather: 1,
-            weather: 1,
-            match_status: 1
-        };
-
-        const query = matchApiIds.length > 0
-            ? [
-                {
-                    $match: {
-                        $or: [
-                            { match_id: { $in: matchApiIds } },
-                            {
+        const query = [
+            {
+                $facet: {
+                    liveMatches: [
+                        {
+                            $match: { match_status: "Live" }
+                        },
+                        { $sort: { date_time: 1 } }
+                    ],
+                    upcomingMatches: [
+                        {
+                            $match: {
+                                match_status: "Upcoming",
+                                $expr: {
+                                    $and: [
+                                        { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, startOfDay] },
+                                        { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDaysLater] }
+                                    ]
+                                }
+                            }
+                        },
+                        { $sort: { date_time: 1 } }
+                    ],
+                    finishedMatches: [
+                        {
+                            $match: {
                                 match_status: "Finished",
                                 $expr: {
                                     $and: [
-                                        { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDayBefore] },
-                                        { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
+                                        { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDaysBefore] },
+                                        { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDaysLater] }
                                     ]
                                 }
                             }
-                        ]
-                    }
-                },
-                {
-                    $project: commonProjection
+                        },
+                        { $sort: { date_time: 1 } }
+                    ]
                 }
-            ]            
-            : [
-                {
-                    $match: {
-                        match_status: "Live"
+            },
+            {
+                $project: {
+                    combinedMatches: {
+                        $concatArrays: ["$liveMatches", "$upcomingMatches", "$finishedMatches"]
                     }
-                },
-                {
-                    $sort: { date_time: 1 }
-                },
-                {
-                    $unionWith: {
-                        coll: "matches",
-                        pipeline: [
-                            {
-                                $match: {
-                                    match_status: "Upcoming",
-                                    $expr: {
-                                        $and: [
-                                            {
-                                                $gte: [
-                                                    { $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } },
-                                                    new Date().setHours(0, 0, 0, 0)
-                                                ]
-                                            },
-                                            {
-                                                $lt: [
-                                                    { $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } },
-                                                    new Date().setHours(0, 0, 0, 0) + 4 * 24 * 60 * 60 * 1000
-                                                ]
-                                            }
-                                        ]
-                                    }
-                                }
-                            },
-                            { $sort: { date_time: 1 } },
-                            {
-                                $unionWith: {
-                                    coll: "matches",
-                                    pipeline: [
-                                        {
-                                            $match: {
-                                                match_status: "Finished",
-                                                $expr: {
-                                                    $and: [
-                                                        {
-                                                            $gte: [
-                                                                { $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } },
-                                                                new Date().setHours(0, 0, 0, 0) - 3 * 24 * 60 * 60 * 1000
-                                                            ]
-                                                        },
-                                                        {
-                                                            $lt: [
-                                                                { $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } },
-                                                                new Date().setHours(0, 0, 0, 0) + 4 * 24 * 60 * 60 * 1000
-                                                            ]
-                                                        }
-                                                    ]
-                                                }
-                                            }
-                                        },
-                                        { $sort: { date_time: 1 } }
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                },
-                { $sort: { date_time: 1 } },
-                { $limit: 50 },
-                { $project: commonProjection }
-            ];
+                }
+            },
+            { $unwind: "$combinedMatches" },
+            { $replaceRoot: { newRoot: "$combinedMatches" } },
+            { $limit: 50 },
+            {
+                $project: {
+                    date_time: 1,
+                    match_date: 1,
+                    _id: 0,
+                    squad: 1,
+                    match_id: 1,
+                    forms: 1,
+                    fav_team: 1,
+                    min_rate: 1,
+                    max_rate: 1,
+                    head_to_head: 1,
+                    is_hundred: 1,
+                    man_of_match: 1,
+                    man_of_match_player: 1,
+                    match_time: 1,
+                    match_type: 1,
+                    matchs: 1,
+                    pace_spin: 1,
+                    place: 1,
+                    referee: 1,
+                    result: 1,
+                    series: 1,
+                    series_id: 407,
+                    series_type: 1,
+                    team_a: 1,
+                    team_a_id: 16,
+                    team_a_img: 1,
+                    team_a_over: 1,
+                    team_a_scores: 1,
+                    team_a_short: 1,
+                    team_b: 1,
+                    team_b_id: 1,
+                    team_b_img: 1,
+                    team_b_scores: 1,
+                    team_b_over: 1,
+                    team_b_short: 1,
+                    team_comparison: 1,
+                    third_umpire: 1,
+                    toss: 1,
+                    toss_comparison: 1,
+                    umpire: 1,
+                    venue: 1,
+                    venue_id: 1,
+                    venue_weather: 1,
+                    weather: 1,
+                    match_status: 1
+                }
+            }
+        ];
 
         const data = await MatchesModel.aggregate(query);
         return data;
@@ -193,204 +310,6 @@ const queriesForHomeList = async (options) => {
     }
 };
 
-
-// const queriesForHomeList = async (options) => {
-//     try {
-//         const response = await GlobalService.globalFunctionFetchDataFromHeroPostMethod({ "match_status": 'All' }, 'web/getmatchlisting', 'post');
-//         const matchList = response?.matchData;
-
-//         const matchApiIds = matchList.map(match => match.match_api_id);
-//         console.log("🚀 ~ file: matches.service.js:33 ~ queriesForHomeList ~ matchApiIds:", matchApiIds)
-//         if (matchApiIds.length > 0) {
-//             const query = [
-//                 {
-//                     $match: {
-//                         match_id: { $in: matchApiIds }
-//                     }
-//                 },
-//                 {
-//                     $project: {
-//                         date_time: 1,
-//                         match_date: 1,
-//                         _id: 0, // Exclude _id field if not needed
-//                         "squad": 1,
-//                         "match_id": 1,
-//                         "forms": 1,
-//                         "fav_team": 1,
-//                         "min_rate": 1,
-//                         "max_rate": 1,
-//                         "head_to_head": 1,
-//                         "is_hundred": 1,
-//                         "man_of_match": 1,
-//                         "man_of_match_player": 1,
-//                         "match_date": 1,
-//                         "match_time": 1,
-//                         "match_type": 1,
-//                         "matchs": 1,
-//                         "pace_spin": 1,
-//                         "place": 1,
-//                         "referee": 1,
-//                         "result": 1,
-//                         "series": 1,
-//                         "series_id": 407,
-//                         "series_type": 1,
-//                         "team_a": 1,
-//                         "team_a_id": 16,
-//                         "team_a_img": 1,
-//                         "team_a_over": 1,
-//                         "team_a_scores": 1,
-//                         "team_a_short": 1,
-//                         "team_b": 1,
-//                         "team_b_id": 1,
-//                         "team_b_img": 1,
-//                         "team_b_scores": 1,
-//                         "team_b_over": 1,
-//                         "team_b_short": 1,
-//                         "team_comparison": 1,
-//                         "third_umpire": 1,
-//                         "toss": 1,
-//                         "toss_comparison": 1,
-//                         "umpire": 1,
-//                         "venue": 1,
-//                         "venue_id": 1,
-//                         "venue_weather": 1,
-//                         "weather": 1,
-//                         "match_status": 1
-//                     }
-//                 }
-//             ];
-
-//             const matches = await MatchesModel.aggregate(query);
-//             return matches;
-
-//         } else {
-//             const currentDate = new Date();
-//             const startOfDay = new Date(currentDate.setHours(0, 0, 0, 0));
-//             const fourDaysLater = new Date(startOfDay.getTime() + 4 * 24 * 60 * 60 * 1000); // 4 days ahead
-//             // const oneDayBefore = new Date(startOfDay.getTime() - 24 * 60 * 60 * 1000); // 1 day before
-//             const threeDayBefore = new Date(startOfDay.getTime() - 72 * 60 * 60 * 1000); // 1 day before
-
-//             const query = [
-//                 // Stage 1: Separate live matches
-//                 {
-//                     $match: {
-//                         match_status: "Live"
-//                     }
-//                 },
-//                 {
-//                     $sort: { date_time: 1 } // Sort live matches by date
-//                 },
-//                 {
-//                     $unionWith: {
-//                         coll: "matches",
-//                         pipeline: [
-//                             // Stage 2: Upcoming matches for the next 4 days
-//                             {
-//                                 $match: {
-//                                     match_status: "Upcoming",
-//                                     $expr: {
-//                                         $and: [
-//                                             { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, startOfDay] },
-//                                             { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
-//                                         ]
-//                                     }
-//                                 }
-//                             },
-//                             {
-//                                 $sort: { date_time: 1 } // Sort upcoming matches by date
-//                             },
-//                             {
-//                                 $unionWith: {
-//                                     coll: "matches",
-//                                     pipeline: [
-//                                         // Stage 3: Finished matches from the previous 1 day
-//                                         {
-//                                             $match: {
-//                                                 match_status: "Finished",
-//                                                 $expr: {
-//                                                     $and: [
-//                                                         { $gte: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, threeDayBefore] },
-//                                                         { $lt: [{ $dateFromString: { dateString: "$date_time", format: "%Y-%m-%d %H:%M:%S" } }, fourDaysLater] }
-//                                                     ]
-//                                                 }
-//                                             }
-//                                         },
-//                                         {
-//                                             $sort: { date_time: 1 } // Sort finished matches by date
-//                                         }
-//                                     ]
-//                                 }
-//                             }
-//                         ]
-//                     }
-//                 },
-//                 {
-//                     $sort: { date_time: 1 } // Final sort by date
-//                 },
-//                 {
-//                     $limit: 40 // Limit the result to 40 records
-//                 },
-//                 {
-//                     $project: {
-//                         date_time: 1,
-//                         match_date: 1,
-//                         _id: 0, // Exclude _id field if not needed
-//                         "squad": 1,
-//                         "match_id": 1,
-//                         "forms": 1,
-//                         "fav_team": 1,
-//                         "min_rate": 1,
-//                         "max_rate": 1,
-//                         "head_to_head": 1,
-//                         "is_hundred": 1,
-//                         "man_of_match": 1,
-//                         "man_of_match_player": 1,
-//                         "match_date": 1,
-//                         "match_time": 1,
-//                         "match_type": 1,
-//                         "matchs": 1,
-//                         "pace_spin": 1,
-//                         "place": 1,
-//                         "referee": 1,
-//                         "result": 1,
-//                         "series": 1,
-//                         "series_id": 407,
-//                         "series_type": 1,
-//                         "team_a": 1,
-//                         "team_a_id": 16,
-//                         "team_a_img": 1,
-//                         "team_a_over": 1,
-//                         "team_a_scores": 1,
-//                         "team_a_short": 1,
-//                         "team_b": 1,
-//                         "team_b_id": 1,
-//                         "team_b_img": 1,
-//                         "team_b_scores": 1,
-//                         "team_b_over": 1,
-//                         "team_b_short": 1,
-//                         "team_comparison": 1,
-//                         "third_umpire": 1,
-//                         "toss": 1,
-//                         "toss_comparison": 1,
-//                         "umpire": 1,
-//                         "venue": 1,
-//                         "venue_id": 1,
-//                         "venue_weather": 1,
-//                         "weather": 1,
-//                         "match_status": 1
-//                     }
-//                 }
-//             ];
-
-//             const data = await MatchesModel.aggregate(query);
-//             return data;
-//         }
-
-//     } catch (error) {
-//         console.error("Error fetching matches:", error);
-//         throw new Error("Error fetching match data");
-//     }
-// };
 
 
 /**

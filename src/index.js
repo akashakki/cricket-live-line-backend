@@ -7,7 +7,7 @@ let server;
 // console.log('config.env===>>', config.env, config.mongoose)
 let db_url;
 let port;
-if (config.env == "production") {
+if (config.env == "development") {
     db_url = `mongodb://${encodeURIComponent(config.mongoose.user)}:${encodeURIComponent(config.mongoose.pass)}@${config.mongoose.ip}/CricketLiveOddsLineDB?authSource=admin`;
     port = config.port;
     console.log("🚀 ~ file: index.js:13 ~ db_url:", db_url)
