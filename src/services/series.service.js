@@ -36,6 +36,9 @@ const getSeriesListDateWise = async (requestBody) => {
         endDate = moment().endOf('month').utc().toDate();
     }
 
+    console.log('Start Date:', startDate);
+    console.log('End Date:', endDate);
+
     let data = await SeriesModel.find({
         start_date: { $gte: new Date(startDate) },
         end_date: { $lte: new Date(endDate) }
