@@ -27,34 +27,25 @@ const getSeriesList = async () => {
 const getSeriesListDateWise = async (requestBody) => {
     let startDate, endDate;
 
-    // Check if a date is provided in the requestBody
     if (requestBody && requestBody.date) {
-        // Parse the provided date and subtract 5 days
         const providedDate = moment(new Date(requestBody.date));
-
-        startDate = providedDate.subtract(5, 'days').startOf('day').toDate(); // 5 days before the provided date
-        endDate = providedDate.endOf('month').toDate(); // End of the month
-
+        startDate = providedDate.subtract(5, 'days').startOf('day').utc().toDate();
+        endDate = providedDate.endOf('month').utc().toDate();
     } else {
-        // No date provided, use the current month
-        startDate = moment().startOf('month').toDate(); // Start of the current month
-        endDate = moment().endOf('month').toDate(); // End of the current month
+        startDate = moment().startOf('month').utc().toDate();
+        endDate = moment().endOf('month').utc().toDate();
     }
 
-    // Fetch series that fall within the date range
     let data = await SeriesModel.find({
-        start_date: { $gte: startDate },
-        end_date: { $lte: endDate }
+        start_date: { $gte: new Date(startDate) },
+        end_date: { $lte: new Date(endDate) }
     });
 
-    // If no data is found, extend the end date by 15 more days
     if (data.length === 0) {
-        endDate = moment(endDate).add(15, 'days').toDate(); // Add 15 days to the original end date
-
-        // Query again with the extended date range
+        endDate = moment(endDate).add(15, 'days').utc().toDate();
         data = await SeriesModel.find({
-            start_date: { $gte: startDate },
-            end_date: { $lte: endDate }
+            start_date: { $gte: new Date(startDate) },
+            end_date: { $lte: new Date(endDate) }
         });
     }
 
