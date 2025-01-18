@@ -44,6 +44,7 @@ const getSeriesListDateWise = async (requestBody) => {
         end_date: { $lte: new Date(endDate) }
     });
 
+    console.log("🚀 ~ file: series.service.js:47 ~ getSeriesListDateWise ~ data.length:", data.length)
     if (data.length === 0) {
         endDate = moment(endDate).add(15, 'days').utc().toDate();
         data = await SeriesModel.find({
