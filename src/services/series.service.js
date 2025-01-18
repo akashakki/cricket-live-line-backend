@@ -29,7 +29,7 @@ const getSeriesListDateWise = async (requestBody) => {
 
     if (requestBody && requestBody.date) {
         const providedDate = moment(new Date(requestBody.date));
-        startDate = providedDate.subtract(5, 'days').startOf('day').utc().toDate();
+        startDate = providedDate.subtract(2, 'days').startOf('day').utc().toDate();
         endDate = providedDate.add(10, 'days').startOf('day').utc().toDate();
     } else {
         startDate = moment().startOf('month').utc().toDate();
