@@ -32,8 +32,7 @@ async function fetchMatchList() {
             for (let i = 0; i < matchList?.length; i++) {
                 const match = matchList[i];
                 // await MatchesModel.create(match);
-                // await fetchMatchDetails(match);
-                await fetchLiveMatchDetails(match);
+                await fetchMatchDetails(match);
                 await fetchMatchScorecard(match);
                 await fetchMatchSquadsByMatchId(match);
             }
@@ -78,7 +77,8 @@ async function fetchLiveMatchList() {
                 match['match_status'] = 'Live';
                 match['match_id'] = matchList[i]?.match_api_id;
                 // await MatchesModel.create(match);
-                await fetchMatchDetails(match);
+                // await fetchMatchDetails(match);
+                await fetchLiveMatchDetails(match);
                 await fetchMatchScorecard(match);
                 await fetchMatchSquadsByMatchId(match);
             }
