@@ -32,7 +32,8 @@ async function fetchMatchList() {
             for (let i = 0; i < matchList?.length; i++) {
                 const match = matchList[i];
                 // await MatchesModel.create(match);
-                await fetchMatchDetails(match);
+                // await fetchMatchDetails(match);
+                await fetchLiveMatchDetails(match);
                 await fetchMatchScorecard(match);
                 await fetchMatchSquadsByMatchId(match);
             }
@@ -170,6 +171,22 @@ async function fetchMatchDetails(match) {
         }
     } catch (error) {
         console.error('Error making API call match Odds 147:', error);
+    }
+}
+
+async function fetchLiveMatchDetails(match) {
+    try {
+        const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'livematch', 'post'); //response.data?.data;
+        // matchDetails['match_id'] = match?.match_id;
+        let matchDetails = {
+            ...match,
+            ...matchData
+        }
+        if (matchDetails) {
+            await MatchesModel.findOneAndUpdate({ match_id: match?.match_id }, matchDetails, { upsert: true, new: true });
+        }
+    } catch (error) {
+        console.log("🚀 ~ file: matchCronJob.js:189 ~ fetchLiveMatchDetails ~ error:", JSON.stringify(error))
     }
 }
 
