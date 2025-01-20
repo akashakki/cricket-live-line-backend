@@ -177,6 +177,7 @@ async function fetchMatchDetails(match) {
 async function fetchLiveMatchDetails(match) {
     try {
         const matchData = await GlobalService.globalFunctionFetchDataFromAPI('match_id', (match?.match_id).toString(), 'livematch', 'post'); //response.data?.data;
+        console.log("🚀 ~ file: matchCronJob.js:180 ~ fetchLiveMatchDetails ~ matchData:", match?.match_id)
         // matchDetails['match_id'] = match?.match_id;
         let matchDetails = {
             ...match,
