@@ -5,10 +5,7 @@ const mongoosePaginate = require('mongoose-paginate-v2');
 
 const matchBallByBallSchema = mongoose.Schema({
     match_id: { type: Number, required: true },
-    match_odd_history: {
-        type: Schema.Types.Mixed,  // Allows storing any type of data (string, number, object, etc.)
-        default: {}
-    }
+    match_odd_history: String
 }, {
     timestamps: true
 });

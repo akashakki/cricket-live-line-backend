@@ -1,8 +1,9 @@
-const { MatchesModel, MatchCommentaryModel } = require('../models');
+const { MatchesModel, MatchCommentaryModel, MatchBallByBallModel } = require('../models');
 const CONSTANT = require('../config/constant');
 // const { options } = require('joi');
 const moment = require('moment');
 const GlobalService = require('./global.service');
+// const MatchBallByBall = require('../models/matchBallByBall.model');
 
 /**
  * Create a Record
@@ -540,7 +541,43 @@ const updateCommentaryByMatchId = async (id) => {
     }
 };
 
+const updateBallByBallUsingMatchId = async (id) => {
+    try {
+        // Fetch data from 3rd party API
+        const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', id, 'matchOddHistory', 'post');
+
+        if (result && result.length > 0) {
+            // Stringify the result to store it in the database
+            const apiResponseString = JSON.stringify(result);
+
+            // Check if a document with the given match_id already exists
+            const existingBallByBall = await MatchBallByBallModel.findOne({ match_id: id });
+
+            if (existingBallByBall) {
+                // Update the existing document
+                existingBallByBall.match_odd_history = apiResponseString;
+                await existingBallByBall.save();
+                console.log(`Updated Ball By Ball for match_id: ${id}`);
+            } else {
+                // Create a new document
+                await MatchBallByBallModel.create({ match_id: id, match_odd_history: apiResponseString });
+                console.log(`Created new Ball By Ball for match_id: ${id}`);
+            }
+        }
+    } catch (error) {
+        console.error('Error updating Ball By Ball:', error.message);
+    }
+};
+
 const getCommentaryByMatchId = async (id) => {
+    const commentary = await MatchCommentaryModel.findOne({ match_id: id });
+    if (!commentary) {
+        return null;
+    }
+    return JSON.parse(commentary?.apiResponse);
+}
+
+const getBallByBallUsingMatchId = async (id) => {
     const commentary = await MatchCommentaryModel.findOne({ match_id: id });
     if (!commentary) {
         return null;
@@ -554,13 +591,13 @@ const getAllFinishedMatches = async () => {
     const updatePromises = matches.map((match) => {
         const matchId = match.match_id;
         console.log("🚀 ~ file: matches.service.js:558 ~ updatePromises ~ matchId:", matchId);
-        return updateCommentaryByMatchId(matchId);
+        return updateBallByBallUsingMatchId(matchId);
     });
 
     await Promise.all(updatePromises);
 };
 
-// getAllFinishedMatches();
+getAllFinishedMatches();
 
 
 module.exports = {
@@ -577,5 +614,7 @@ module.exports = {
     getUpcomingMatchesBySeriesId,
     getAllUpcomingMatchesBySeriesId,
     updateCommentaryByMatchId,
-    getCommentaryByMatchId
+    updateBallByBallUsingMatchId,
+    getCommentaryByMatchId,
+    getBallByBallUsingMatchId
 };

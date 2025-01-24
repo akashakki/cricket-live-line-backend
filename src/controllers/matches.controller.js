@@ -116,11 +116,16 @@ const getLiveMatchList = catchAsync(async (req, res) => {
 });
 
 const getMatchBallByBallOddHistory = catchAsync(async (req, res) => {
-    const { match_id } = req.body;
-    const matchDetails = await MatchService.getByMatchId(match_id);
-    const hero_match_id = await fetchMatchDetailsFromHero(match_id, matchDetails?.match_status);
-    const result = await fetchBallByBallMatchDetailsFromHero(hero_match_id);
-    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    const { match_id, match_status } = req.body;
+    if (match_status && match_status == 'Finished') {
+        const result = await MatchService.getBallByBallUsingMatchId(match_id);
+        res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    } else {
+        const matchDetails = await MatchService.getByMatchId(match_id);
+        const hero_match_id = await fetchMatchDetailsFromHero(match_id, matchDetails?.match_status);
+        const result = await fetchBallByBallMatchDetailsFromHero(hero_match_id);
+        res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    }
 });
 
 const getMatchOddHistoryV1 = catchAsync(async (req, res) => {
@@ -187,6 +192,7 @@ const getliveMatch = catchAsync(async (req, res) => {
     if (result?.result && result?.result?.includes("won")) {
         MatchService.updateByMatchId(match_id, { match_status: 'Finished', result: result?.result });
         MatchService.updateCommentaryByMatchId(match_id);
+        MatchService.updateBallByBallUsingMatchId(match_id);
     }
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
