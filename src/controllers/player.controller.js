@@ -26,6 +26,11 @@ const getTrendingPlayerLists = catchAsync(async (req, res) => {
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
 
+const getPlayingXiByMatchId = catchAsync(async (req, res) => {
+    const result = await PlayerService.getPlayingXiUsingMatchId(req);
+    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+});
+
 const getById = catchAsync(async (req, res) => {
     const data = await PlayerService.getById(req.params.id);
     if (!data) {
@@ -101,5 +106,6 @@ module.exports = {
     deleteById,
     getListWithoutPagination,
     getPlayerRanking,
-    getTrendingPlayerLists
+    getTrendingPlayerLists,
+    getPlayingXiByMatchId
 };

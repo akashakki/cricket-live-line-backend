@@ -1,5 +1,6 @@
-const { PlayerModel } = require('../models');
+const { PlayerModel, PlayerXiModel } = require('../models');
 const CONSTANT = require('../config/constant');
+const GlobalService = require('./global.service');
 
 /**
  * Create a Record
@@ -47,7 +48,7 @@ const queries = async (options) => {
             }]
         })
     }
-    
+
     if (options.play_role && options.play_role != 'undefined') {
         condition.$and.push({
             $or: [{
@@ -55,7 +56,7 @@ const queries = async (options) => {
             }]
         })
     }
-    
+
     if (options.nationality && options.nationality != 'undefined') {
         condition.$and.push({
             $or: [{
@@ -65,7 +66,7 @@ const queries = async (options) => {
     }
 
     options['sort'] = { createdAt: -1 };
-    if(options?.for == 'user'){
+    if (options?.for == 'user') {
         options['select'] = 'player_id play_role name player_team_flag player_team_name player_team_name_short birth_place born height image'
     }
     const data = await PlayerModel.paginate(condition, options);
@@ -83,7 +84,7 @@ const getById = async (id) => {
 };
 
 const getByPlyerId = async (player_id) => {
-    var data = await PlayerModel.findOne({player_id: player_id})
+    var data = await PlayerModel.findOne({ player_id: player_id })
     return data;
 };
 
@@ -153,9 +154,30 @@ const getListWithoutPagination = async (options) => {
 };
 
 const getTrendingPlayer = async () => {
-    var data = await PlayerModel.find({is_delete: 1, isTrending: true}).select('player_id play_role name player_team_flag player_team_name player_team_name_short birth_place born height image')
+    var data = await PlayerModel.find({ is_delete: 1, isTrending: true }).select('player_id play_role name player_team_flag player_team_name player_team_name_short birth_place born height image')
     return data;
 };
+
+const getPlayingXiUsingMatchId = async (req) => {
+    try {
+        const data = await PlayerXiModel.findOne({ match_id: req.body.match_id });
+ 
+        if (data) {
+            return data;
+        } else {
+            const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', req.body.match_id, 'playingXiByMatchId', 'post');
+            
+            if (result) {
+                result['match_id'] = req.body.match_id;
+                const data = await PlayerXiModel.create(result);
+                return data;
+            }
+        }
+    } catch (error) {
+        console.error('Error fetching playing XI:', error);
+        return error;
+    }
+ };
 
 module.exports = {
     create,
@@ -165,5 +187,6 @@ module.exports = {
     updateById,
     deleteById,
     getListWithoutPagination,
-    getTrendingPlayer
+    getTrendingPlayer,
+    getPlayingXiUsingMatchId
 };
