@@ -1,4 +1,4 @@
-const { MatchesModel } = require('../models');
+const { MatchesModel, MatchCommentaryModel } = require('../models');
 const CONSTANT = require('../config/constant');
 // const { options } = require('joi');
 const moment = require('moment');
@@ -512,6 +512,43 @@ const updateByMatchId = async (id, updateBody) => {
     await data.save();
 };
 
+const updateCommentaryByMatchId = async (id) => {
+    try {
+        // Fetch data from 3rd party API
+        const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', id, 'commentary', 'post');
+
+        if (result) {
+            // Stringify the result to store it in the database
+            const apiResponseString = JSON.stringify(result);
+
+            // Check if a document with the given match_id already exists
+            const existingCommentary = await MatchCommentaryModel.findOne({ match_id: id });
+
+            if (existingCommentary) {
+                // Update the existing document
+                existingCommentary.apiResponse = apiResponseString;
+                await existingCommentary.save();
+                console.log(`Updated commentary for match_id: ${id}`);
+            } else {
+                // Create a new document
+                await MatchCommentaryModel.create({ match_id: id, apiResponse: apiResponseString });
+                console.log(`Created new commentary for match_id: ${id}`);
+            }
+        }
+    } catch (error) {
+        console.error('Error updating commentary:', error.message);
+    }
+};
+
+const getCommentaryByMatchId = async (id) => {
+    const commentary = await MatchCommentaryModel.findOne({ match_id: id });
+    if (!commentary) {
+        return null;
+    }
+    return JSON.parse(commentary?.apiResponse);
+}
+
+updateCommentaryByMatchId(5697);
 
 module.exports = {
     create,
@@ -525,5 +562,7 @@ module.exports = {
     getListWithoutPagination,
     getRecentMatchesBySeriesId,
     getUpcomingMatchesBySeriesId,
-    getAllUpcomingMatchesBySeriesId
+    getAllUpcomingMatchesBySeriesId,
+    updateCommentaryByMatchId,
+    getCommentaryByMatchId
 };

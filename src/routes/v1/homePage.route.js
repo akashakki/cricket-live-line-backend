@@ -48,7 +48,7 @@ router.route('/playerInfo').post(validateApiRequest(), trackApiUsage, upload.any
 router.route('/playerList').get(validateApiRequest(), trackApiUsage, PlayerController.getListsForUser);
 router.route('/trendingPlayer').get(validateApiRequest(), trackApiUsage, PlayerController.getTrendingPlayerLists);
 router.route('/teamRanking').post(validateApiRequest(), trackApiUsage, upload.any(), TeamController.getTeamRanking);
-router.route('/playingXiByMatchId').post(validateApiRequest(), trackApiUsage, upload.any(), PlayerController.getPlayingXiByMatchId);
+router.route('/playingXiByMatchId').post(upload.any(), PlayerController.getPlayingXiByMatchId);
 
 //IPL related routes
 router.route('/ipl-auction-overview').get(validateApiRequest(), trackApiUsage, IPLController.getIPLOverview);

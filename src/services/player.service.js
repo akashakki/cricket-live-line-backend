@@ -166,10 +166,12 @@ const getPlayingXiUsingMatchId = async (req) => {
             return data;
         } else {
             const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', req.body.match_id, 'playingXiByMatchId', 'post');
+            console.log("🚀 ~ file: player.service.js:169 ~ getPlayingXiUsingMatchId ~ result:", result)
             
             if (result) {
                 result['match_id'] = req.body.match_id;
                 const data = await PlayerXiModel.create(result);
+                console.log("🚀 ~ file: player.service.js:174 ~ getPlayingXiUsingMatchId ~ data:", data)
                 return data;
             }
         }

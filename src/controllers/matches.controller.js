@@ -171,9 +171,14 @@ async function fetchBallByBallMatchDetailsFromHero(match_id) {
 }
 
 const getMatchCommentary = catchAsync(async (req, res) => {
-    const { match_id } = req.body;
-    const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'commentary', 'post');
-    res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    const { match_id, match_status } = req.body;
+    if (match_status && match_status == 'Finished') {
+        const result = await MatchService.getCommentaryByMatchId(match_id);
+        res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    } else {
+        const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'commentary', 'post');
+        res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
+    }
 });
 
 const getliveMatch = catchAsync(async (req, res) => {
@@ -181,6 +186,7 @@ const getliveMatch = catchAsync(async (req, res) => {
     const result = await GlobalService.globalFunctionFetchDataFromAPI('match_id', match_id, 'liveMatch', 'post');
     if (result?.result && result?.result?.includes("won")) {
         MatchService.updateByMatchId(match_id, { match_status: 'Finished', result: result?.result });
+        MatchService.updateCommentaryByMatchId(match_id);
     }
     res.send({ data: result, code: CONSTANT.SUCCESSFUL, message: CONSTANT.LIST });
 });
