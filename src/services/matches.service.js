@@ -548,7 +548,20 @@ const getCommentaryByMatchId = async (id) => {
     return JSON.parse(commentary?.apiResponse);
 }
 
-updateCommentaryByMatchId(5697);
+const getAllFinishedMatches = async () => {
+    const matches = await MatchesModel.find({ match_status: "Finished" });
+
+    const updatePromises = matches.map((match) => {
+        const matchId = match.match_id;
+        console.log("🚀 ~ file: matches.service.js:558 ~ updatePromises ~ matchId:", matchId);
+        return updateCommentaryByMatchId(matchId);
+    });
+
+    await Promise.all(updatePromises);
+};
+
+getAllFinishedMatches();
+
 
 module.exports = {
     create,
