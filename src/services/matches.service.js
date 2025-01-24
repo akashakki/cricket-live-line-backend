@@ -560,7 +560,7 @@ const getAllFinishedMatches = async () => {
     await Promise.all(updatePromises);
 };
 
-getAllFinishedMatches();
+// getAllFinishedMatches();
 
 
 module.exports = {
